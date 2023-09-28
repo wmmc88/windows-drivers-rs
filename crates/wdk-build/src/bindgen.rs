@@ -4,6 +4,7 @@
 use bindgen::Builder;
 
 use crate::{CPUArchitecture, Config, ConfigError, DriverConfig};
+
 pub trait BuilderExt {
     /// Returns a `bindgen::Builder` with the default configuration for
     /// generation of bindings to the WDK
@@ -57,10 +58,15 @@ impl BuilderExt for Builder {
                     // FIXME: Add support for KMDF_MINIMUM_VERSION_REQUIRED and
                     // UMDF_MINIMUM_VERSION_REQUIRED
                     DriverConfig::WDM() => {
-                        vec![]
+                        vec![
+                            // This is normally defined by msvc via /kernel flag
+                            "_KERNEL_MODE".to_string(),
+                        ]
                     }
                     DriverConfig::KMDFConfig(kmdf_config) => {
                         vec![
+                            // This is normally defined by msvc via /kernel flag
+                            "_KERNEL_MODE".to_string(),
                             format!("KMDF_VERSION_MAJOR={}", kmdf_config.kmdf_version_major),
                             format!("KMDF_VERSION_MINOR={}", kmdf_config.kmdf_version_minor),
                         ]
