@@ -18,24 +18,25 @@ use wdk_build::{BuilderExt, Config, ConfigError, DriverConfig, KMDFConfig};
 //     "2.0", "2.15", "2.17", "2.19", "2.21", "2.23", "2.25", "2.27", "2.31",
 // "2.33", ];
 
-fn generate_constants(out_path: &Path, config: Config) -> Result<(), ConfigError> {
-    Ok(
-        bindgen::Builder::wdk_default(vec!["src/ntddk-input.h", "src/wdf-input.h"], config)?
-            .with_codegen_config(CodegenConfig::VARS)
-            .generate()
-            .expect("Bindings should succeed to generate")
-            .write_to_file(out_path.join("constants.rs"))?,
-    )
-}
-
 fn generate_types(out_path: &Path, config: Config) -> Result<(), ConfigError> {
-    Ok(
-        bindgen::Builder::wdk_default(vec!["src/ntddk-input.h", "src/wdf-input.h"], config)?
-            .with_codegen_config(CodegenConfig::TYPES)
-            .generate()
-            .expect("Bindings should succeed to generate")
-            .write_to_file(out_path.join("types.rs"))?,
-    )
+    Ok(bindgen::Builder::wdk_default(
+        vec!["src/ntddk-input.h", "src/hid-input.h", "src/wdf-input.h"],
+        config,
+    )?
+    .with_codegen_config(CodegenConfig::TYPES)
+    .generate()
+    .expect("Bindings should succeed to generate")
+    .write_to_file(out_path.join("types.rs"))?)
+}
+fn generate_constants(out_path: &Path, config: Config) -> Result<(), ConfigError> {
+    Ok(bindgen::Builder::wdk_default(
+        vec!["src/ntddk-input.h", "src/hid-input.h", "src/wdf-input.h"],
+        config,
+    )?
+    .with_codegen_config(CodegenConfig::VARS)
+    .generate()
+    .expect("Bindings should succeed to generate")
+    .write_to_file(out_path.join("constants.rs"))?)
 }
 
 fn generate_ntddk(out_path: &Path, config: Config) -> Result<(), ConfigError> {
@@ -46,6 +47,32 @@ fn generate_ntddk(out_path: &Path, config: Config) -> Result<(), ConfigError> {
             .expect("Bindings should succeed to generate")
             .write_to_file(out_path.join("ntddk.rs"))?,
     )
+}
+
+fn generate_hid(out_path: &Path, config: Config) -> Result<(), ConfigError> {
+    let mut builder = bindgen::Builder::wdk_default(vec!["src/hid-input.h"], config)?
+        .with_codegen_config((CodegenConfig::TYPES | CodegenConfig::VARS).complement());
+
+    // Only allowlist files in the hid-specific files declared in hid-input.h to
+    // avoid duplicate definitions
+    for header_file in [
+        "hidclass.h",
+        "hidpddi.h",
+        "hidpi.h",
+        "hidport.h",
+        "hidsdi.h",
+        "hidspicx.h",
+        "kbdmou.h",
+        "ntdd8042.h",
+        "vhf.h",
+    ] {
+        builder = builder.allowlist_file(format!(".*{header_file}.*"));
+    }
+
+    Ok(builder
+        .generate()
+        .expect("Bindings should succeed to generate")
+        .write_to_file(out_path.join("hid.rs"))?)
 }
 
 fn generate_wdf(out_path: &Path, config: Config) -> Result<(), ConfigError> {
@@ -88,10 +115,11 @@ fn main() -> Result<(), ConfigError> {
     ];
 
     for out_path in out_paths {
-        generate_constants(&out_path, config.clone())?;
         generate_types(&out_path, config.clone())?;
+        generate_constants(&out_path, config.clone())?;
         generate_ntddk(&out_path, config.clone())?;
         generate_wdf(&out_path, config.clone())?;
+        generate_hid(&out_path, config.clone())?;
     }
 
     config.configure_library_build()?;

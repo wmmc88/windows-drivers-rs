@@ -5118,6 +5118,13 @@ pub const WNNC_NET_9P: u32 = 4718592;
 pub const WNNC_CRED_MANAGER: u32 = 4294901760;
 pub const WNNC_NET_LANMAN: u32 = 131072;
 pub const VOLSNAPCONTROLTYPE: u32 = 83;
+pub const HID_REVISION: u32 = 1;
+pub const HID_HID_DESCRIPTOR_TYPE: u32 = 33;
+pub const HID_REPORT_DESCRIPTOR_TYPE: u32 = 34;
+pub const HID_PHYSICAL_DESCRIPTOR_TYPE: u32 = 35;
+pub const HID_STRING_ID_IMANUFACTURER: u32 = 14;
+pub const HID_STRING_ID_IPRODUCT: u32 = 15;
+pub const HID_STRING_ID_ISERIALNUMBER: u32 = 16;
 pub const WDF_DRIVER_GLOBALS_NAME_LEN: u32 = 32;
 pub const WDF_FIRST_VERSION_SUPPORTING_CLIENT_VERSION_HIGHER_THAN_FRAMEWORK: u32 = 25;
 pub const WDF_ALWAYS_AVAILABLE_FUNCTION_COUNT: u32 = 453;
@@ -6132,6 +6139,39 @@ extern "C" {
 }
 extern "C" {
     pub static mut CcFastMdlReadWait: ULONG;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_HID: GUID;
+}
+extern "C" {
+    pub static GUID_HID_INTERFACE_NOTIFY: GUID;
+}
+extern "C" {
+    pub static GUID_HID_INTERFACE_HIDPARSE: GUID;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_HID_UsagePage: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_HID_UsageId: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_HID_IsReadOnly: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_HID_VendorId: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_HID_ProductId: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_HID_VersionNumber: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_HID_BackgroundAccess: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_HID_WakeScreenOnInputCapable: DEVPROPKEY;
 }
 extern "C" {
     pub static mut WdfFunctions_01033: *const WDFFUNC;
