@@ -4,6 +4,11 @@
 #include "ntifs.h"
 #include "ntddk.h"
 
+// FIXME: seperate into seperate cargo features
+#ifdef _KERNEL_MODE
+#include "ntintsafe.h"
+#endif
+
 // FIXME: Why is there no definition for this struct? Maybe blocklist this struct in bindgen. 
 typedef union _KGDTENTRY64
 {
