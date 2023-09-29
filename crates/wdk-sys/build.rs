@@ -26,6 +26,7 @@ fn generate_types(out_path: &Path, config: Config) -> Result<(), ConfigError> {
             "src/wdf-input.h",
             "src/usb-input.h",
             "src/parallel-ports-input.h",
+            "src/spb-input.h"
         ],
         config,
     )?
@@ -42,6 +43,7 @@ fn generate_constants(out_path: &Path, config: Config) -> Result<(), ConfigError
             "src/wdf-input.h",
             "src/usb-input.h",
             "src/parallel-ports-input.h",
+            "src/spb-input.h"
         ],
         config,
     )?
@@ -150,6 +152,27 @@ fn generate_usb(out_path: &Path, config: Config) -> Result<(), ConfigError> {
         .write_to_file(out_path.join("usb.rs"))?)
 }
 
+fn generate_spb(out_path: &Path, config: Config) -> Result<(), ConfigError> {
+    let mut builder = bindgen::Builder::wdk_default(vec!["src/spb-input.h"], config)?
+        .with_codegen_config((CodegenConfig::TYPES | CodegenConfig::VARS).complement());
+
+    // Only allowlist files in the usb-specific files declared in spb-input.h to
+    // avoid duplicate definitions
+    for header_file in [
+        "spb.h",
+        "spbcx.h",
+        "reshub.h",
+        "pwmutil.h",
+    ] {
+        builder = builder.allowlist_file(format!(".*{header_file}.*"));
+    }
+
+    Ok(builder
+        .generate()
+        .expect("Bindings should succeed to generate")
+        .write_to_file(out_path.join("spb.rs"))?)
+}
+
 fn main() -> Result<(), ConfigError> {
     tracing_subscriber::fmt::init();
 
@@ -181,6 +204,7 @@ fn main() -> Result<(), ConfigError> {
         generate_hid(&out_path, config.clone())?;
         generate_usb(&out_path, config.clone())?;
         generate_parallel_ports(&out_path, config.clone())?;
+        generate_spb(&out_path, config.clone())?;
     }
 
     config.configure_library_build()?;

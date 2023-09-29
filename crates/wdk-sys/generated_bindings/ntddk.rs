@@ -14222,6 +14222,1527 @@ extern "C" {
     ) -> NTSTATUS;
 }
 extern "C" {
+    pub fn __iob_func() -> *mut FILE;
+}
+extern "C" {
+    pub fn __acrt_iob_func(arg1: ::core::ffi::c_uint) -> *mut FILE;
+}
+extern "C" {
+    pub fn _filbuf(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _filbuf_s(arg1: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _flsbuf(_Ch: ::core::ffi::c_int, _File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _flsbuf_s(arg1: ::core::ffi::c_int, arg2: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fsopen(
+        _Filename: *const ::core::ffi::c_char,
+        _Mode: *const ::core::ffi::c_char,
+        _ShFlag: ::core::ffi::c_int,
+    ) -> *mut FILE;
+}
+extern "C" {
+    pub fn clearerr(_File: *mut FILE);
+}
+extern "C" {
+    pub fn clearerr_s(_File: *mut FILE) -> errno_t;
+}
+extern "C" {
+    pub fn fclose(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fcloseall() -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fdopen(
+        _FileHandle: ::core::ffi::c_int,
+        _Mode: *const ::core::ffi::c_char,
+    ) -> *mut FILE;
+}
+extern "C" {
+    pub fn feof(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn ferror(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fflush(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fgetc(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fgetchar() -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fgetpos(_File: *mut FILE, _Pos: *mut fpos_t) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fgets(
+        _Buf: *mut ::core::ffi::c_char,
+        _MaxCount: ::core::ffi::c_int,
+        _File: *mut FILE,
+    ) -> *mut ::core::ffi::c_char;
+}
+extern "C" {
+    pub fn _fileno(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _tempnam(
+        _DirName: *const ::core::ffi::c_char,
+        _FilePrefix: *const ::core::ffi::c_char,
+    ) -> *mut ::core::ffi::c_char;
+}
+extern "C" {
+    pub fn _flushall() -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fopen(
+        _Filename: *const ::core::ffi::c_char,
+        _Mode: *const ::core::ffi::c_char,
+    ) -> *mut FILE;
+}
+extern "C" {
+    pub fn fopen_s(
+        _File: *mut *mut FILE,
+        _Filename: *const ::core::ffi::c_char,
+        _Mode: *const ::core::ffi::c_char,
+    ) -> errno_t;
+}
+extern "C" {
+    pub fn fprintf(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fprintf_s(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fputc(_Ch: ::core::ffi::c_int, _File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fputchar(_Ch: ::core::ffi::c_int) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fputs(
+        _Str: *const ::core::ffi::c_char,
+        _File: *mut FILE,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fread(
+        _DstBuf: *mut ::core::ffi::c_void,
+        _ElementSize: ::core::ffi::c_ulonglong,
+        _Count: ::core::ffi::c_ulonglong,
+        _File: *mut FILE,
+    ) -> ::core::ffi::c_ulonglong;
+}
+extern "C" {
+    pub fn fread_s(
+        _DstBuf: *mut ::core::ffi::c_void,
+        _DstSize: usize,
+        _ElementSize: usize,
+        _Count: usize,
+        _File: *mut FILE,
+    ) -> usize;
+}
+extern "C" {
+    pub fn freopen(
+        _Filename: *const ::core::ffi::c_char,
+        _Mode: *const ::core::ffi::c_char,
+        _File: *mut FILE,
+    ) -> *mut FILE;
+}
+extern "C" {
+    pub fn freopen_s(
+        _File: *mut *mut FILE,
+        _Filename: *const ::core::ffi::c_char,
+        _Mode: *const ::core::ffi::c_char,
+        _OldFile: *mut FILE,
+    ) -> errno_t;
+}
+extern "C" {
+    pub fn fscanf(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fscanf_l(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fscanf_s(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fscanf_s_l(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fsetpos(_File: *mut FILE, _Pos: *const fpos_t) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fseek(
+        _File: *mut FILE,
+        _Offset: ::core::ffi::c_long,
+        _Origin: ::core::ffi::c_int,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn ftell(_File: *mut FILE) -> ::core::ffi::c_long;
+}
+extern "C" {
+    pub fn _fseeki64(
+        _File: *mut FILE,
+        _Offset: ::core::ffi::c_longlong,
+        _Origin: ::core::ffi::c_int,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _ftelli64(_File: *mut FILE) -> ::core::ffi::c_longlong;
+}
+extern "C" {
+    pub fn fwrite(
+        _Str: *const ::core::ffi::c_void,
+        _Size: ::core::ffi::c_ulonglong,
+        _Count: ::core::ffi::c_ulonglong,
+        _File: *mut FILE,
+    ) -> ::core::ffi::c_ulonglong;
+}
+extern "C" {
+    pub fn getc(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn getchar() -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _getmaxstdio() -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _getw(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn perror(_ErrMsg: *const ::core::ffi::c_char);
+}
+extern "C" {
+    pub fn _pclose(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _popen(
+        _Command: *const ::core::ffi::c_char,
+        _Mode: *const ::core::ffi::c_char,
+    ) -> *mut FILE;
+}
+extern "C" {
+    pub fn printf(_Format: *const ::core::ffi::c_char, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn printf_s(_Format: *const ::core::ffi::c_char, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn putc(_Ch: ::core::ffi::c_int, _File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn putchar(_Ch: ::core::ffi::c_int) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn puts(_Str: *const ::core::ffi::c_char) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _putw(_Word: ::core::ffi::c_int, _File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn remove(_Filename: *const ::core::ffi::c_char) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn rename(
+        _OldFilename: *const ::core::ffi::c_char,
+        _NewFilename: *const ::core::ffi::c_char,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _unlink(_Filename: *const ::core::ffi::c_char) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn unlink(_Filename: *const ::core::ffi::c_char) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn rewind(_File: *mut FILE);
+}
+extern "C" {
+    pub fn _rmtmp() -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn scanf(_Format: *const ::core::ffi::c_char, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _scanf_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn scanf_s(_Format: *const ::core::ffi::c_char, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _scanf_s_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn setbuf(_File: *mut FILE, _Buffer: *mut ::core::ffi::c_char);
+}
+extern "C" {
+    pub fn _setmaxstdio(_Max: ::core::ffi::c_int) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _set_output_format(_Format: ::core::ffi::c_uint) -> ::core::ffi::c_uint;
+}
+extern "C" {
+    pub fn _get_output_format() -> ::core::ffi::c_uint;
+}
+extern "C" {
+    pub fn setvbuf(
+        _File: *mut FILE,
+        _Buf: *mut ::core::ffi::c_char,
+        _Mode: ::core::ffi::c_int,
+        _Size: usize,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snprintf_s(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _SizeInBytes: usize,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn sprintf_s(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _SizeInBytes: usize,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _scprintf(_Format: *const ::core::ffi::c_char, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn sscanf(
+        _Src: *const ::core::ffi::c_char,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _sscanf_l(
+        _Src: *const ::core::ffi::c_char,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn sscanf_s(
+        _Src: *const ::core::ffi::c_char,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _sscanf_s_l(
+        _Src: *const ::core::ffi::c_char,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snscanf(
+        _Src: *const ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snscanf_l(
+        _Src: *const ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snscanf_s(
+        _Src: *const ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snscanf_s_l(
+        _Src: *const ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn tmpfile() -> *mut FILE;
+}
+extern "C" {
+    pub fn tmpfile_s(_File: *mut *mut FILE) -> errno_t;
+}
+extern "C" {
+    pub fn tmpnam_s(_Buf: *mut ::core::ffi::c_char, _Size: rsize_t) -> errno_t;
+}
+extern "C" {
+    pub fn tmpnam(_Buffer: *mut ::core::ffi::c_char) -> *mut ::core::ffi::c_char;
+}
+extern "C" {
+    pub fn ungetc(_Ch: ::core::ffi::c_int, _File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vfprintf(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: __builtin_va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vfprintf_s(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vprintf(
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: __builtin_va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vprintf_s(
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vsnprintf(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _MaxCount: ::core::ffi::c_ulonglong,
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: __builtin_va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vsnprintf_s(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _DstSize: usize,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsnprintf_s(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _SizeInBytes: usize,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snprintf(
+        _Dest: *mut ::core::ffi::c_char,
+        _Count: usize,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsnprintf(
+        _Dest: *mut ::core::ffi::c_char,
+        _Count: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Args: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vsprintf_s(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _SizeInBytes: usize,
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn sprintf(
+        _Dest: *mut ::core::ffi::c_char,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vsprintf(
+        _Dest: *mut ::core::ffi::c_char,
+        _Format: *const ::core::ffi::c_char,
+        _Args: __builtin_va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vscprintf(
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snprintf_c(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsnprintf_c(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fprintf_p(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _printf_p(_Format: *const ::core::ffi::c_char, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _sprintf_p(
+        _Dst: *mut ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vfprintf_p(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vprintf_p(
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsprintf_p(
+        _Dst: *mut ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _scprintf_p(_Format: *const ::core::ffi::c_char, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vscprintf_p(
+        _Format: *const ::core::ffi::c_char,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _set_printf_count_output(_Value: ::core::ffi::c_int) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _get_printf_count_output() -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _printf_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _printf_p_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _printf_s_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vprintf_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vprintf_p_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vprintf_s_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fprintf_l(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fprintf_p_l(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fprintf_s_l(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vfprintf_l(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vfprintf_p_l(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vfprintf_s_l(
+        _File: *mut FILE,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _sprintf_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _sprintf_p_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _sprintf_s_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _DstSize: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsprintf_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _Format: *const ::core::ffi::c_char,
+        arg1: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsprintf_p_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsprintf_s_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _DstSize: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _scprintf_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _scprintf_p_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vscprintf_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vscprintf_p_l(
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snprintf_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snprintf_c_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snprintf_s_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _DstSize: usize,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsnprintf_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsnprintf_c_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _MaxCount: usize,
+        arg1: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsnprintf_s_l(
+        _DstBuf: *mut ::core::ffi::c_char,
+        _DstSize: usize,
+        _MaxCount: usize,
+        _Format: *const ::core::ffi::c_char,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _wfsopen(
+        _Filename: *const wchar_t,
+        _Mode: *const wchar_t,
+        _ShFlag: ::core::ffi::c_int,
+    ) -> *mut FILE;
+}
+extern "C" {
+    pub fn fgetwc(_File: *mut FILE) -> wint_t;
+}
+extern "C" {
+    pub fn _fgetwchar() -> wint_t;
+}
+extern "C" {
+    pub fn fputwc(_Ch: wchar_t, _File: *mut FILE) -> wint_t;
+}
+extern "C" {
+    pub fn _fputwchar(_Ch: wchar_t) -> wint_t;
+}
+extern "C" {
+    pub fn getwc(_File: *mut FILE) -> wint_t;
+}
+extern "C" {
+    pub fn getwchar() -> wint_t;
+}
+extern "C" {
+    pub fn putwc(_Ch: wchar_t, _File: *mut FILE) -> wint_t;
+}
+extern "C" {
+    pub fn putwchar(_Ch: wchar_t) -> wint_t;
+}
+extern "C" {
+    pub fn ungetwc(_Ch: wint_t, _File: *mut FILE) -> wint_t;
+}
+extern "C" {
+    pub fn fgetws(
+        _Dst: *mut wchar_t,
+        _SizeInWords: ::core::ffi::c_int,
+        _File: *mut FILE,
+    ) -> *mut wchar_t;
+}
+extern "C" {
+    pub fn fputws(_Str: *const wchar_t, _File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _putws(_Str: *const wchar_t) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fwprintf(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fwprintf_s(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn wprintf(_Format: *const wchar_t, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn wprintf_s(_Format: *const wchar_t, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _scwprintf(_Format: *const wchar_t, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vfwprintf(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vfwprintf_s(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vwprintf(_Format: *const wchar_t, _ArgList: va_list) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vwprintf_s(_Format: *const wchar_t, _ArgList: va_list) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn swprintf_s(
+        _Dst: *mut wchar_t,
+        _SizeInWords: usize,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vswprintf_s(
+        _Dst: *mut wchar_t,
+        _SizeInWords: usize,
+        _Format: *const wchar_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn swprintf(arg1: *mut wchar_t, arg2: *const wchar_t, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn vswprintf(
+        arg1: *mut wchar_t,
+        arg2: *const wchar_t,
+        arg3: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _swprintf_c(
+        _DstBuf: *mut wchar_t,
+        _SizeInWords: usize,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vswprintf_c(
+        _DstBuf: *mut wchar_t,
+        _SizeInWords: usize,
+        _Format: *const wchar_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snwprintf_s(
+        _DstBuf: *mut wchar_t,
+        _SizeInWords: usize,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsnwprintf_s(
+        _DstBuf: *mut wchar_t,
+        _SizeInWords: usize,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snwprintf(
+        _Dest: *mut wchar_t,
+        _Count: usize,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsnwprintf(
+        _Dest: *mut wchar_t,
+        _Count: usize,
+        _Format: *const wchar_t,
+        _Args: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fwprintf_p(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _wprintf_p(_Format: *const wchar_t, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vfwprintf_p(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vwprintf_p(_Format: *const wchar_t, _ArgList: va_list) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _swprintf_p(
+        _DstBuf: *mut wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vswprintf_p(
+        _DstBuf: *mut wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _scwprintf_p(_Format: *const wchar_t, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vscwprintf_p(
+        _Format: *const wchar_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _wprintf_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _wprintf_p_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _wprintf_s_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vwprintf_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vwprintf_p_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vwprintf_s_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fwprintf_l(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fwprintf_p_l(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fwprintf_s_l(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vfwprintf_l(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vfwprintf_p_l(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vfwprintf_s_l(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _swprintf_c_l(
+        _DstBuf: *mut wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _swprintf_p_l(
+        _DstBuf: *mut wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _swprintf_s_l(
+        _DstBuf: *mut wchar_t,
+        _DstSize: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vswprintf_c_l(
+        _DstBuf: *mut wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vswprintf_p_l(
+        _DstBuf: *mut wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vswprintf_s_l(
+        _DstBuf: *mut wchar_t,
+        _DstSize: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _scwprintf_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _scwprintf_p_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vscwprintf_p_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snwprintf_l(
+        _DstBuf: *mut wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snwprintf_s_l(
+        _DstBuf: *mut wchar_t,
+        _DstSize: usize,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsnwprintf_l(
+        _DstBuf: *mut wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vsnwprintf_s_l(
+        _DstBuf: *mut wchar_t,
+        _DstSize: usize,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _swprintf(
+        _Dest: *mut wchar_t,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vswprintf(
+        _Dest: *mut wchar_t,
+        _Format: *const wchar_t,
+        _Args: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn __swprintf_l(
+        _Dest: *mut wchar_t,
+        _Format: *const wchar_t,
+        _Plocinfo: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn __vswprintf_l(
+        _Dest: *mut wchar_t,
+        _Format: *const wchar_t,
+        _Plocinfo: _locale_t,
+        _Args: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _wtempnam(
+        _Directory: *const wchar_t,
+        _FilePrefix: *const wchar_t,
+    ) -> *mut wchar_t;
+}
+extern "C" {
+    pub fn _vscwprintf(_Format: *const wchar_t, _ArgList: va_list) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _vscwprintf_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        _ArgList: va_list,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fwscanf(_File: *mut FILE, _Format: *const wchar_t, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fwscanf_l(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fwscanf_s(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fwscanf_s_l(
+        _File: *mut FILE,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn swscanf(
+        _Src: *const wchar_t,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _swscanf_l(
+        _Src: *const wchar_t,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn swscanf_s(
+        _Src: *const wchar_t,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _swscanf_s_l(
+        _Src: *const wchar_t,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snwscanf(
+        _Src: *const wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snwscanf_l(
+        _Src: *const wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snwscanf_s(
+        _Src: *const wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _snwscanf_s_l(
+        _Src: *const wchar_t,
+        _MaxCount: usize,
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn wscanf(_Format: *const wchar_t, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _wscanf_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn wscanf_s(_Format: *const wchar_t, ...) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _wscanf_s_l(
+        _Format: *const wchar_t,
+        _Locale: _locale_t,
+        ...
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _wfdopen(_FileHandle: ::core::ffi::c_int, _Mode: *const wchar_t) -> *mut FILE;
+}
+extern "C" {
+    pub fn _wfopen(_Filename: *const wchar_t, _Mode: *const wchar_t) -> *mut FILE;
+}
+extern "C" {
+    pub fn _wfopen_s(
+        _File: *mut *mut FILE,
+        _Filename: *const wchar_t,
+        _Mode: *const wchar_t,
+    ) -> errno_t;
+}
+extern "C" {
+    pub fn _wfreopen(
+        _Filename: *const wchar_t,
+        _Mode: *const wchar_t,
+        _OldFile: *mut FILE,
+    ) -> *mut FILE;
+}
+extern "C" {
+    pub fn _wfreopen_s(
+        _File: *mut *mut FILE,
+        _Filename: *const wchar_t,
+        _Mode: *const wchar_t,
+        _OldFile: *mut FILE,
+    ) -> errno_t;
+}
+extern "C" {
+    pub fn _wperror(_ErrMsg: *const wchar_t);
+}
+extern "C" {
+    pub fn _wpopen(_Command: *const wchar_t, _Mode: *const wchar_t) -> *mut FILE;
+}
+extern "C" {
+    pub fn _wremove(_Filename: *const wchar_t) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _wtmpnam_s(_DstBuf: *mut wchar_t, _SizeInWords: usize) -> errno_t;
+}
+extern "C" {
+    pub fn _wtmpnam(_Buffer: *mut wchar_t) -> *mut wchar_t;
+}
+extern "C" {
+    pub fn _fgetwc_nolock(_File: *mut FILE) -> wint_t;
+}
+extern "C" {
+    pub fn _fputwc_nolock(_Ch: wchar_t, _File: *mut FILE) -> wint_t;
+}
+extern "C" {
+    pub fn _ungetwc_nolock(_Ch: wint_t, _File: *mut FILE) -> wint_t;
+}
+extern "C" {
+    pub fn _fclose_nolock(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fflush_nolock(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _fread_nolock(
+        _DstBuf: *mut ::core::ffi::c_void,
+        _ElementSize: usize,
+        _Count: usize,
+        _File: *mut FILE,
+    ) -> usize;
+}
+extern "C" {
+    pub fn _fread_nolock_s(
+        _DstBuf: *mut ::core::ffi::c_void,
+        _DstSize: usize,
+        _ElementSize: usize,
+        _Count: usize,
+        _File: *mut FILE,
+    ) -> usize;
+}
+extern "C" {
+    pub fn _fseek_nolock(
+        _File: *mut FILE,
+        _Offset: ::core::ffi::c_long,
+        _Origin: ::core::ffi::c_int,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _ftell_nolock(_File: *mut FILE) -> ::core::ffi::c_long;
+}
+extern "C" {
+    pub fn _fseeki64_nolock(
+        _File: *mut FILE,
+        _Offset: ::core::ffi::c_longlong,
+        _Origin: ::core::ffi::c_int,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn _ftelli64_nolock(_File: *mut FILE) -> ::core::ffi::c_longlong;
+}
+extern "C" {
+    pub fn _fwrite_nolock(
+        _DstBuf: *const ::core::ffi::c_void,
+        _Size: usize,
+        _Count: usize,
+        _File: *mut FILE,
+    ) -> usize;
+}
+extern "C" {
+    pub fn _ungetc_nolock(
+        _Ch: ::core::ffi::c_int,
+        _File: *mut FILE,
+    ) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn tempnam(
+        _Directory: *const ::core::ffi::c_char,
+        _FilePrefix: *const ::core::ffi::c_char,
+    ) -> *mut ::core::ffi::c_char;
+}
+extern "C" {
+    pub fn fcloseall() -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fdopen(
+        _FileHandle: ::core::ffi::c_int,
+        _Format: *const ::core::ffi::c_char,
+    ) -> *mut FILE;
+}
+extern "C" {
+    pub fn fgetchar() -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fileno(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn flushall() -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn fputchar(_Ch: ::core::ffi::c_int) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn getw(_File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn putw(_Ch: ::core::ffi::c_int, _File: *mut FILE) -> ::core::ffi::c_int;
+}
+extern "C" {
+    pub fn rmtmp() -> ::core::ffi::c_int;
+}
+extern "C" {
     #[must_use]
     pub fn PoFxRegisterPlugin(
         PepInformation: PPEP_INFORMATION,

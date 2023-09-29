@@ -7,6 +7,7 @@
 // FIXME: seperate into seperate cargo features
 #ifdef _KERNEL_MODE
 #include "ntintsafe.h"
+#include "ntstrsafe.h"
 #include "pepfx.h"
 #endif
 

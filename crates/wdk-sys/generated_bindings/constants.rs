@@ -5139,6 +5139,62 @@ pub const UINT_ERROR: u32 = 4294967295;
 pub const LONG_ERROR: i32 = -1;
 pub const ULONG_ERROR: u32 = 4294967295;
 pub const DWORD_ERROR: u32 = 4294967295;
+pub const BUFSIZ: u32 = 512;
+pub const _NSTREAM_: u32 = 512;
+pub const _IOB_ENTRIES: u32 = 20;
+pub const EOF: i32 = -1;
+pub const _P_tmpdir: &[u8; 2] = b"\\\0";
+pub const _wP_tmpdir: &[u8; 2] = b"\\\0";
+pub const SEEK_CUR: u32 = 1;
+pub const SEEK_END: u32 = 2;
+pub const SEEK_SET: u32 = 0;
+pub const FILENAME_MAX: u32 = 260;
+pub const FOPEN_MAX: u32 = 20;
+pub const _SYS_OPEN: u32 = 20;
+pub const TMP_MAX: u32 = 32767;
+pub const _TMP_MAX_S: u32 = 2147483647;
+pub const _IOREAD: u32 = 1;
+pub const _IOWRT: u32 = 2;
+pub const _IOFBF: u32 = 0;
+pub const _IOLBF: u32 = 64;
+pub const _IONBF: u32 = 4;
+pub const _IOMYBUF: u32 = 8;
+pub const _IOEOF: u32 = 16;
+pub const _IOERR: u32 = 32;
+pub const _IOSTRG: u32 = 64;
+pub const _IORW: u32 = 128;
+pub const _TWO_DIGIT_EXPONENT: u32 = 1;
+pub const P_tmpdir: &[u8; 2] = b"\\\0";
+pub const SYS_OPEN: u32 = 20;
+pub const NTSTRSAFE_USE_SECURE_CRT: u32 = 0;
+pub const NTSTRSAFE_MAX_CCH: u32 = 2147483647;
+pub const NTSTRSAFE_MAX_LENGTH: u32 = 2147483646;
+pub const STRSAFE_IGNORE_NULLS: u32 = 256;
+pub const STRSAFE_FILL_BEHIND_NULL: u32 = 512;
+pub const STRSAFE_FILL_ON_FAILURE: u32 = 1024;
+pub const STRSAFE_NULL_ON_FAILURE: u32 = 2048;
+pub const STRSAFE_NO_TRUNCATION: u32 = 4096;
+pub const STRSAFE_FILL_BEHIND: u32 = 512;
+pub const STRSAFE_ZERO_LENGTH_ON_FAILURE: u32 = 2048;
+pub const STRSAFE_VALID_FLAGS: u32 = 8191;
+pub const STRSAFE_UNICODE_STRING_VALID_FLAGS: u32 = 8191;
+pub const __WARNING_CYCLOMATIC_COMPLEXITY: u32 = 28734;
+pub const __WARNING_USING_UNINIT_VAR: u32 = 6001;
+pub const __WARNING_RETURN_UNINIT_VAR: u32 = 6101;
+pub const __WARNING_DEREF_NULL_PTR: u32 = 6011;
+pub const __WARNING_MISSING_ZERO_TERMINATION2: u32 = 6054;
+pub const __WARNING_INVALID_PARAM_VALUE_1: u32 = 6387;
+pub const __WARNING_INCORRECT_ANNOTATION: u32 = 26007;
+pub const __WARNING_POTENTIAL_BUFFER_OVERFLOW_HIGH_PRIORITY: u32 = 26015;
+pub const __WARNING_PRECONDITION_NULLTERMINATION_VIOLATION: u32 = 26035;
+pub const __WARNING_POSTCONDITION_NULLTERMINATION_VIOLATION: u32 = 26036;
+pub const __WARNING_HIGH_PRIORITY_OVERFLOW_POSTCONDITION: u32 = 26045;
+pub const __WARNING_RANGE_POSTCONDITION_VIOLATION: u32 = 26061;
+pub const __WARNING_POTENTIAL_RANGE_POSTCONDITION_VIOLATION: u32 = 26071;
+pub const __WARNING_INVALID_PARAM_VALUE_3: u32 = 28183;
+pub const __WARNING_RETURNING_BAD_RESULT: u32 = 28196;
+pub const __WARNING_BANNED_API_USAGE: u32 = 28719;
+pub const __WARNING_POST_EXPECTED: u32 = 28210;
 pub const ACPI_METHOD_ARGUMENT_INTEGER: u32 = 0;
 pub const ACPI_METHOD_ARGUMENT_STRING: u32 = 1;
 pub const ACPI_METHOD_ARGUMENT_BUFFER: u32 = 2;
@@ -7463,6 +7519,49 @@ pub const INACTIVE: u32 = 0;
 pub const DONT_CARE: u32 = 2;
 pub const DVRH_USE_FAST_MACROS: u32 = 1;
 pub const DVRH_USE_NIBBLE_MACROS: u32 = 1;
+pub const SPB_TARGET_NAME_PREFIX: &[u8; 6] = b"\\SPB\\\0";
+pub const RESOURCE_HUB_DEVICE_NAME: &[u8; 21] = b"\\Device\\RESOURCE_HUB\0";
+pub const RESOURCE_HUB_SYMBOLIC_NAME: &[u8; 25] = b"\\DosDevices\\RESOURCE_HUB\0";
+pub const RESOURCE_HUB_DEVICE_NAME_PREFIX: &[u8; 22] = b"\\Device\\RESOURCE_HUB\\\0";
+pub const FILE_DEVICE_RESOURCE_HUB: u32 = 42;
+pub const RH_QUERY_CONNECTION_PROPERTIES_INPUT_VERSION: u32 = 1;
+pub const RH_QUERY_CONNECTION_PROPERTIES_OUTPUT_VERSION: u32 = 1;
+pub const RH_ALLOCATE_CONNECTION_INPUT_VERSION: u32 = 1;
+pub const RH_ALLOCATE_CONNECTION_OUTPUT_VERSION: u32 = 1;
+pub const RH_FREE_CONNECTION_INPUT_VERSION: u32 = 1;
+pub const RH_FREE_CONNECTION_OUTPUT_VERSION: u32 = 1;
+pub const RH_UPDATE_CONNECTION_PROPERTIES_INPUT_VERSION: u32 = 1;
+pub const RH_UPDATE_CONNECTION_PROPERTIES_OUTPUT_VERSION: u32 = 1;
+pub const RH_QUERY_ACTIVE_BOTH_INITIAL_POLARITY_INPUT_VERSION: u32 = 1;
+pub const RH_QUERY_ACTIVE_BOTH_INITIAL_POLARITY_OUTPUT_VERSION: u32 = 1;
+pub const RH_UPDATE_ACTIVE_BOTH_INITIAL_POLARITY_INPUT_VERSION: u32 = 1;
+pub const RH_UPDATE_ACTIVE_BOTH_INITIAL_POLARITY_OUTPUT_VERSION: u32 = 1;
+pub const RH_UPDATE_CONNECTIONAL_MASK_ALL: u32 = 65535;
+pub const FUNCTION_CONFIG_DESCRIPTOR: u32 = 141;
+pub const PNP_FUNCTION_CONFIG_DESCRIPTOR_REVISION: u32 = 1;
+pub const PNP_FUNCTION_CONFIG_DESCRIPTOR_REVISION_MINIMUM: u32 = 1;
+pub const GPIO_INTERRUPT_IO_DESCRIPTOR: u32 = 140;
+pub const PNP_GPIO_IRQ_DESCRIPTOR_REVISION: u32 = 1;
+pub const PNP_GPIO_IRQ_DESCRIPTOR_TYPE_INTERRUPT: u32 = 0;
+pub const PNP_GPIO_IRQ_DESCRIPTOR_TYPE_IO: u32 = 1;
+pub const PNP_GPIO_IRQ_DESCRIPTOR_REVISION_MINIMUM: u32 = 1;
+pub const PNP_GPIO_IRQ_RESOURCE_CONSUMER_ONLY: u32 = 1;
+pub const PNP_GPIO_IRQ_MODE: u32 = 1;
+pub const PNP_GPIO_IRQ_POLARITY: u32 = 6;
+pub const PNP_GPIO_IRQ_SHARED: u32 = 8;
+pub const PNP_GPIO_IRQ_WAKE_HINT: u32 = 16;
+pub const PNP_GPIO_IRQ_MODE_EDGE: u32 = 1;
+pub const PNP_GPIO_IRQ_MODE_LEVEL: u32 = 0;
+pub const PNP_GPIO_IRQ_POLARITY_LOW: u32 = 2;
+pub const PNP_GPIO_IRQ_POLARITY_HIGH: u32 = 0;
+pub const PNP_GPIO_IRQ_POLARITY_BOTH: u32 = 4;
+pub const SERIAL_BUS_DESCRIPTOR: u32 = 142;
+pub const SERIAL_BUS_DESCRIPTOR_REVISION: u32 = 1;
+pub const SERIAL_BUS_DESCRIPTOR_REVISION_V2: u32 = 2;
+pub const SERIAL_BUS_I2C_DESCRIPTOR_TYPE: u32 = 1;
+pub const SERIAL_BUS_SPI_DESCRIPTOR_TYPE: u32 = 2;
+pub const SERIAL_BUS_UART_DESCRIPTOR_TYPE: u32 = 3;
+pub const SERIAL_BUS_FLAG_SHARED_DESCRIPTOR: u32 = 4;
 extern "C" {
     pub static mut KeNumberProcessors: CCHAR;
 }
@@ -8465,6 +8564,9 @@ extern "C" {
 }
 extern "C" {
     pub static mut CcFastMdlReadWait: ULONG;
+}
+extern "C" {
+    pub static mut _iob: [FILE; 0usize];
 }
 extern "C" {
     pub static PEP_PPM_POWER_CONTROL_QUERY_PARKING_PAGE: GUID;
@@ -9777,4 +9879,10 @@ extern "C" {
 }
 extern "C" {
     pub static mut LegacyZipModeQualifier: [UCHAR; 3usize];
+}
+extern "C" {
+    pub static mut SpbFunctions: [SPBFUNC; 0usize];
+}
+extern "C" {
+    pub static mut SpbDriverGlobals: PSPB_DRIVER_GLOBALS;
 }
