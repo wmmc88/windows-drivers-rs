@@ -7267,6 +7267,202 @@ pub const USB_TEST_MODE_TEST_FORCE_ENABLE: u32 = 5;
 pub const MAX_INTERFACE_NAME_LENGTH: u32 = 40;
 pub const MAX_ALTERNATE_NAME_LENGTH: u32 = 40;
 pub const MAX_ASSOCIATION_NAME_LENGTH: u32 = 40;
+pub const GPIO_CLIENT_VERSION: u32 = 4;
+pub const GPIO_CONTROLLER_BASIC_INFORMATION_VERSION: u32 = 1;
+pub const GPIO_BANK_POWER_INFORMATION_OUTPUT_VERSION: u32 = 1;
+pub const GPIO_BANK_INTERRUPT_BINDING_INFORMATION_OUTPUT_VERSION: u32 = 1;
+pub const GPIO_IOCTL_BANK_MAPPING_INFORMATION_OUTPUT_VERSION: u32 = 1;
+pub const GPIO_BANK_INTERRUPT_BINDING_RESERVED_INDEX: u32 = 65535;
+pub const GPIO_PIN_PULL_CONFIGURATION_DEFAULT: u32 = 0;
+pub const GPIO_PIN_PULL_CONFIGURATION_PULLUP: u32 = 1;
+pub const GPIO_PIN_PULL_CONFIGURATION_PULLDOWN: u32 = 2;
+pub const GPIO_PIN_PULL_CONFIGURATION_NONE: u32 = 3;
+pub const GPIO_CLIENT_REGISTRATION_FLAGS_NONE: u32 = 0;
+pub const GPIO_CLIENT_REGISTRATION_FLAGS_PAGING_PATH_SUPPORT: u32 = 1;
+pub const IOCTL_PAR_BASE: u32 = 22;
+pub const PARALLEL_INIT: u32 = 1;
+pub const PARALLEL_AUTOFEED: u32 = 2;
+pub const PARALLEL_PAPER_EMPTY: u32 = 4;
+pub const PARALLEL_OFF_LINE: u32 = 8;
+pub const PARALLEL_POWER_OFF: u32 = 16;
+pub const PARALLEL_NOT_CONNECTED: u32 = 32;
+pub const PARALLEL_BUSY: u32 = 64;
+pub const PARALLEL_SELECTED: u32 = 128;
+pub const NONE: u32 = 0;
+pub const CENTRONICS: u32 = 1;
+pub const IEEE_COMPATIBILITY: u32 = 2;
+pub const NIBBLE: u32 = 4;
+pub const CHANNEL_NIBBLE: u32 = 8;
+pub const BYTE_BIDIR: u32 = 16;
+pub const EPP_HW: u32 = 32;
+pub const EPP_SW: u32 = 64;
+pub const EPP_ANY: u32 = 96;
+pub const BOUNDED_ECP: u32 = 128;
+pub const ECP_HW_NOIRQ: u32 = 256;
+pub const ECP_HW_IRQ: u32 = 512;
+pub const ECP_SW: u32 = 1024;
+pub const ECP_ANY: u32 = 1920;
+pub const SERIAL_EV_RXCHAR: u32 = 1;
+pub const SERIAL_EV_RXFLAG: u32 = 2;
+pub const SERIAL_EV_TXEMPTY: u32 = 4;
+pub const SERIAL_EV_CTS: u32 = 8;
+pub const SERIAL_EV_DSR: u32 = 16;
+pub const SERIAL_EV_RLSD: u32 = 32;
+pub const SERIAL_EV_BREAK: u32 = 64;
+pub const SERIAL_EV_ERR: u32 = 128;
+pub const SERIAL_EV_RING: u32 = 256;
+pub const SERIAL_EV_PERR: u32 = 512;
+pub const SERIAL_EV_RX80FULL: u32 = 1024;
+pub const SERIAL_EV_EVENT1: u32 = 2048;
+pub const SERIAL_EV_EVENT2: u32 = 4096;
+pub const SERIAL_PURGE_TXABORT: u32 = 1;
+pub const SERIAL_PURGE_RXABORT: u32 = 2;
+pub const SERIAL_PURGE_TXCLEAR: u32 = 4;
+pub const SERIAL_PURGE_RXCLEAR: u32 = 8;
+pub const STOP_BIT_1: u32 = 0;
+pub const STOP_BITS_1_5: u32 = 1;
+pub const STOP_BITS_2: u32 = 2;
+pub const NO_PARITY: u32 = 0;
+pub const ODD_PARITY: u32 = 1;
+pub const EVEN_PARITY: u32 = 2;
+pub const MARK_PARITY: u32 = 3;
+pub const SPACE_PARITY: u32 = 4;
+pub const DD_PARALLEL_PORT_BASE_NAME_U: &[u8; 13] = b"ParallelPort\0";
+pub const IEEE_1284_3_DAISY_CHAIN_MAX_ID: u32 = 3;
+pub const MODE_LEN_1284_3: u32 = 7;
+pub const LEGACYZIP_MODE_LEN: u32 = 3;
+pub const CPP_ASSIGN_ADDR: u32 = 0;
+pub const CPP_SELECT: u32 = 224;
+pub const CPP_DESELECT: u32 = 48;
+pub const CPP_QUERY_INT: u32 = 8;
+pub const CPP_DISABLE_INT: u32 = 64;
+pub const CPP_ENABLE_INT: u32 = 72;
+pub const CPP_CLEAR_INT_LAT: u32 = 80;
+pub const CPP_SET_INT_LAT: u32 = 88;
+pub const CPP_COMMAND_FILTER: u32 = 248;
+pub const PPT_NO_HARDWARE_PRESENT: u32 = 0;
+pub const PPT_ECP_PRESENT: u32 = 1;
+pub const PPT_EPP_PRESENT: u32 = 2;
+pub const PPT_EPP_32_PRESENT: u32 = 4;
+pub const PPT_BYTE_PRESENT: u32 = 8;
+pub const PPT_BIDI_PRESENT: u32 = 8;
+pub const PPT_1284_3_PRESENT: u32 = 16;
+pub const DOT3_END_OF_CHAIN_ID: u32 = 4;
+pub const DOT3_LEGACY_ZIP_ID: u32 = 5;
+pub const INITIAL_MODE: u32 = 0;
+pub const PARCHIP_ECR_ARBITRATOR: u32 = 1;
+pub const OLD_PARCLASS: u32 = 0;
+pub const DATA_OFFSET: u32 = 0;
+pub const OFFSET_ECP_AFIFO: u32 = 0;
+pub const AFIFO_OFFSET: u32 = 0;
+pub const DSR_OFFSET: u32 = 1;
+pub const DCR_OFFSET: u32 = 2;
+pub const EPP_OFFSET: u32 = 4;
+pub const DVRH_USE_PARPORT_ECP_ADDR: u32 = 0;
+pub const ECP_OFFSET: u32 = 1024;
+pub const CNFGB_OFFSET: u32 = 1025;
+pub const ECR_OFFSET: u32 = 1026;
+pub const FIFO_OFFSET: u32 = 1024;
+pub const CFIFO_OFFSET: u32 = 1024;
+pub const CNFGA_OFFSET: u32 = 1024;
+pub const ECP_DFIFO_OFFSET: u32 = 1024;
+pub const TFIFO_OFFSET: u32 = 1024;
+pub const OFFSET_ECP_DFIFO: u32 = 1024;
+pub const OFFSET_TFIFO: u32 = 1024;
+pub const OFFSET_CFIFO: u32 = 1024;
+pub const OFFSET_ECR: u32 = 1026;
+pub const OFFSET_PARALLEL_REGISTER_SPAN: u32 = 3;
+pub const ECP_SPAN: u32 = 3;
+pub const EPP_SPAN: u32 = 4;
+pub const DSR_NOT_BUSY: u32 = 128;
+pub const DSR_NOT_ACK: u32 = 64;
+pub const DSR_PERROR: u32 = 32;
+pub const DSR_SELECT: u32 = 16;
+pub const DSR_NOT_FAULT: u32 = 8;
+pub const DSR_NOT_PTR_BUSY: u32 = 128;
+pub const DSR_NOT_PERIPH_ACK: u32 = 128;
+pub const DSR_WAIT: u32 = 128;
+pub const DSR_PTR_CLK: u32 = 64;
+pub const DSR_PERIPH_CLK: u32 = 64;
+pub const DSR_INTR: u32 = 64;
+pub const DSR_ACK_DATA_REQ: u32 = 32;
+pub const DSR_NOT_ACK_REVERSE: u32 = 32;
+pub const DSR_XFLAG: u32 = 16;
+pub const DSR_NOT_DATA_AVAIL: u32 = 8;
+pub const DSR_NOT_PERIPH_REQUEST: u32 = 8;
+pub const DCR_RESERVED: u32 = 192;
+pub const DCR_DIRECTION: u32 = 32;
+pub const DCR_ACKINT_ENABLED: u32 = 16;
+pub const DCR_SELECT_IN: u32 = 8;
+pub const DCR_NOT_INIT: u32 = 4;
+pub const DCR_AUTOFEED: u32 = 2;
+pub const DCR_STROBE: u32 = 1;
+pub const DCR_NOT_1284_ACTIVE: u32 = 8;
+pub const DCR_ASTRB: u32 = 8;
+pub const DCR_NOT_REVERSE_REQUEST: u32 = 4;
+pub const DCR_NULL: u32 = 4;
+pub const DCR_NOT_HOST_BUSY: u32 = 2;
+pub const DCR_NOT_HOST_ACK: u32 = 2;
+pub const DCR_DSTRB: u32 = 2;
+pub const DCR_NOT_HOST_CLK: u32 = 1;
+pub const DCR_WRITE: u32 = 1;
+pub const CNFGA_IMPID_MASK: u32 = 112;
+pub const CNFGA_IMPID_16BIT: u32 = 0;
+pub const CNFGA_IMPID_8BIT: u32 = 16;
+pub const CNFGA_IMPID_32BIT: u32 = 32;
+pub const CNFGA_NO_TRANS_BYTE: u32 = 4;
+pub const ECR_ERRINT_DISABLED: u32 = 16;
+pub const ECR_DMA_ENABLED: u32 = 8;
+pub const ECR_SVC_INT_DISABLED: u32 = 4;
+pub const ECR_MODE_MASK: u32 = 31;
+pub const ECR_SPP_MODE: u32 = 0;
+pub const ECR_BYTE_MODE: u32 = 32;
+pub const ECR_BYTE_PIO_MODE: u32 = 52;
+pub const ECR_FASTCENT_MODE: u32 = 64;
+pub const ECR_ECP_MODE: u32 = 96;
+pub const ECR_ECP_PIO_MODE: u32 = 116;
+pub const ECR_EPP_MODE: u32 = 128;
+pub const ECR_EPP_PIO_MODE: u32 = 148;
+pub const ECR_RESERVED_MODE: u32 = 16;
+pub const ECR_TEST_MODE: u32 = 192;
+pub const ECR_CONFIG_MODE: u32 = 224;
+pub const DEFAULT_ECR_TEST: u32 = 212;
+pub const DEFAULT_ECR_COMPATIBILITY: u32 = 20;
+pub const DEFAULT_ECR_CONFIGURATION: u32 = 244;
+pub const ECR_FIFO_MASK: u32 = 3;
+pub const ECR_FIFO_FULL: u32 = 2;
+pub const ECR_FIFO_EMPTY: u32 = 1;
+pub const ECR_FIFO_SOME_DATA: u32 = 0;
+pub const ECP_MAX_FIFO_DEPTH: u32 = 4098;
+pub const CNFGA_IMPID_SHIFT: u32 = 4;
+pub const FIFO_PWORD_8BIT: u32 = 1;
+pub const FIFO_PWORD_16BIT: u32 = 0;
+pub const FIFO_PWORD_32BIT: u32 = 2;
+pub const BIT_7: u32 = 7;
+pub const BIT_6: u32 = 6;
+pub const BIT_5: u32 = 5;
+pub const BIT_4: u32 = 4;
+pub const BIT_3: u32 = 3;
+pub const BIT_2: u32 = 2;
+pub const BIT_1: u32 = 1;
+pub const BIT_0: u32 = 0;
+pub const BIT_7_SET: u32 = 128;
+pub const BIT_6_SET: u32 = 64;
+pub const BIT_5_SET: u32 = 32;
+pub const BIT_4_SET: u32 = 16;
+pub const BIT_3_SET: u32 = 8;
+pub const BIT_2_SET: u32 = 4;
+pub const BIT_1_SET: u32 = 2;
+pub const BIT_0_SET: u32 = 1;
+pub const DIR_READ: u32 = 1;
+pub const DIR_WRITE: u32 = 0;
+pub const IRQEN_ENABLE: u32 = 1;
+pub const IRQEN_DISABLE: u32 = 0;
+pub const ACTIVE: u32 = 1;
+pub const INACTIVE: u32 = 0;
+pub const DONT_CARE: u32 = 2;
+pub const DVRH_USE_FAST_MACROS: u32 = 1;
+pub const DVRH_USE_NIBBLE_MACROS: u32 = 1;
 extern "C" {
     pub static mut KeNumberProcessors: CCHAR;
 }
@@ -9551,4 +9747,34 @@ extern "C" {
 }
 extern "C" {
     pub static mut UdecxDriverGlobals: PUDECX_DRIVER_GLOBALS;
+}
+extern "C" {
+    pub static mut GpioClxExportedInterfaces: [PGPIO_CLX_EXPORTED_INTERFACES; 6usize];
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_PARALLEL: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_PARCLASS: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_COMPORT: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_SERENUM_BUS_ENUMERATOR: GUID;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_Serial_UsbVendorId: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_Serial_UsbProductId: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_DeviceInterface_Serial_PortName: DEVPROPKEY;
+}
+extern "C" {
+    pub static mut ModeQualifier: [UCHAR; 7usize];
+}
+extern "C" {
+    pub static mut LegacyZipModeQualifier: [UCHAR; 3usize];
 }

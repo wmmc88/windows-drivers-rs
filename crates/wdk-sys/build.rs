@@ -20,7 +20,13 @@ use wdk_build::{BuilderExt, Config, ConfigError, DriverConfig, KMDFConfig};
 
 fn generate_types(out_path: &Path, config: Config) -> Result<(), ConfigError> {
     Ok(bindgen::Builder::wdk_default(
-        vec!["src/ntddk-input.h", "src/hid-input.h", "src/wdf-input.h", "src/usb-input.h"],
+        vec![
+            "src/ntddk-input.h",
+            "src/hid-input.h",
+            "src/wdf-input.h",
+            "src/usb-input.h",
+            "src/parallel-ports-input.h",
+        ],
         config,
     )?
     .with_codegen_config(CodegenConfig::TYPES)
@@ -30,7 +36,13 @@ fn generate_types(out_path: &Path, config: Config) -> Result<(), ConfigError> {
 }
 fn generate_constants(out_path: &Path, config: Config) -> Result<(), ConfigError> {
     Ok(bindgen::Builder::wdk_default(
-        vec!["src/ntddk-input.h", "src/hid-input.h", "src/wdf-input.h", "src/usb-input.h"],
+        vec![
+            "src/ntddk-input.h",
+            "src/hid-input.h",
+            "src/wdf-input.h",
+            "src/usb-input.h",
+            "src/parallel-ports-input.h",
+        ],
         config,
     )?
     .with_codegen_config(CodegenConfig::VARS)
@@ -73,6 +85,28 @@ fn generate_hid(out_path: &Path, config: Config) -> Result<(), ConfigError> {
         .generate()
         .expect("Bindings should succeed to generate")
         .write_to_file(out_path.join("hid.rs"))?)
+}
+
+fn generate_parallel_ports(out_path: &Path, config: Config) -> Result<(), ConfigError> {
+    let mut builder = bindgen::Builder::wdk_default(vec!["src/parallel-ports-input.h"], config)?
+        .with_codegen_config((CodegenConfig::TYPES | CodegenConfig::VARS).complement());
+
+    // Only allowlist files in the parallel ports-specific files declared in
+    // parallel-ports-input.h to avoid duplicate definitions
+    for header_file in [
+        "gpio.h",
+        "gpioclx.h",
+        "ntddpar.h",
+        "ntddser.h",
+        "parallel.h",
+    ] {
+        builder = builder.allowlist_file(format!(".*{header_file}.*"));
+    }
+
+    Ok(builder
+        .generate()
+        .expect("Bindings should succeed to generate")
+        .write_to_file(out_path.join("parallel_ports.rs"))?)
 }
 
 fn generate_wdf(out_path: &Path, config: Config) -> Result<(), ConfigError> {
@@ -146,6 +180,7 @@ fn main() -> Result<(), ConfigError> {
         generate_wdf(&out_path, config.clone())?;
         generate_hid(&out_path, config.clone())?;
         generate_usb(&out_path, config.clone())?;
+        generate_parallel_ports(&out_path, config.clone())?;
     }
 
     config.configure_library_build()?;
