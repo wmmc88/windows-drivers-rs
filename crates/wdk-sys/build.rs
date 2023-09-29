@@ -20,7 +20,7 @@ use wdk_build::{BuilderExt, Config, ConfigError, DriverConfig, KMDFConfig};
 
 fn generate_types(out_path: &Path, config: Config) -> Result<(), ConfigError> {
     Ok(bindgen::Builder::wdk_default(
-        vec!["src/ntddk-input.h", "src/hid-input.h", "src/wdf-input.h"],
+        vec!["src/ntddk-input.h", "src/hid-input.h", "src/wdf-input.h", "src/usb-input.h"],
         config,
     )?
     .with_codegen_config(CodegenConfig::TYPES)
@@ -30,7 +30,7 @@ fn generate_types(out_path: &Path, config: Config) -> Result<(), ConfigError> {
 }
 fn generate_constants(out_path: &Path, config: Config) -> Result<(), ConfigError> {
     Ok(bindgen::Builder::wdk_default(
-        vec!["src/ntddk-input.h", "src/hid-input.h", "src/wdf-input.h"],
+        vec!["src/ntddk-input.h", "src/hid-input.h", "src/wdf-input.h", "src/usb-input.h"],
         config,
     )?
     .with_codegen_config(CodegenConfig::VARS)
@@ -91,6 +91,31 @@ fn generate_wdf(out_path: &Path, config: Config) -> Result<(), ConfigError> {
     )
 }
 
+fn generate_usb(out_path: &Path, config: Config) -> Result<(), ConfigError> {
+    let mut builder = bindgen::Builder::wdk_default(vec!["src/usb-input.h"], config)?
+        .with_codegen_config((CodegenConfig::TYPES | CodegenConfig::VARS).complement());
+
+    // Only allowlist files in the usb-specific files declared in usb-input.h to
+    // avoid duplicate definitions
+    for header_file in [
+        "usb.h",
+        "usbbusif.h",
+        "usbdlib.h",
+        "usbfnattach.h",
+        "usbfnbase.h",
+        "usbfnioctl.h",
+        "usbioctl.h",
+        "usbspec.h",
+    ] {
+        builder = builder.allowlist_file(format!(".*{header_file}.*"));
+    }
+
+    Ok(builder
+        .generate()
+        .expect("Bindings should succeed to generate")
+        .write_to_file(out_path.join("usb.rs"))?)
+}
+
 fn main() -> Result<(), ConfigError> {
     tracing_subscriber::fmt::init();
 
@@ -120,6 +145,7 @@ fn main() -> Result<(), ConfigError> {
         generate_ntddk(&out_path, config.clone())?;
         generate_wdf(&out_path, config.clone())?;
         generate_hid(&out_path, config.clone())?;
+        generate_usb(&out_path, config.clone())?;
     }
 
     config.configure_library_build()?;

@@ -13,10 +13,14 @@ mod types;
 
 pub use crate::{constants::*, types::*};
 
-pub mod hid;
-pub mod macros;
 pub mod ntddk;
+
 pub mod wdf;
+
+pub mod hid;
+pub mod usb;
+
+pub mod macros;
 
 #[cfg(feature = "test-stubs")]
 pub mod test_stubs;
