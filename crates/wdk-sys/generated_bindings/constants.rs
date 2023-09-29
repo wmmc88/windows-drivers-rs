@@ -5345,6 +5345,1506 @@ pub const HID_PHYSICAL_DESCRIPTOR_TYPE: u32 = 35;
 pub const HID_STRING_ID_IMANUFACTURER: u32 = 14;
 pub const HID_STRING_ID_IPRODUCT: u32 = 15;
 pub const HID_STRING_ID_ISERIALNUMBER: u32 = 16;
+pub const DD_KEYBOARD_DEVICE_NAME: &[u8; 22] = b"\\Device\\KeyboardClass\0";
+pub const DD_KEYBOARD_DEVICE_NAME_U: &[u8; 22] = b"\\Device\\KeyboardClass\0";
+pub const KEYBOARD_OVERRUN_MAKE_CODE: u32 = 255;
+pub const KEY_MAKE: u32 = 0;
+pub const KEY_BREAK: u32 = 1;
+pub const KEY_E0: u32 = 2;
+pub const KEY_E1: u32 = 4;
+pub const KEY_TERMSRV_SET_LED: u32 = 8;
+pub const KEY_TERMSRV_SHADOW: u32 = 16;
+pub const KEY_TERMSRV_VKPACKET: u32 = 32;
+pub const KEY_RIM_VKEY: u32 = 64;
+pub const KEY_FROM_KEYBOARD_OVERRIDER: u32 = 128;
+pub const KEY_UNICODE_SEQUENCE_ITEM: u32 = 256;
+pub const KEY_UNICODE_SEQUENCE_END: u32 = 512;
+pub const KEYBOARD_EXTENDED_ATTRIBUTES_STRUCT_VERSION_1: u32 = 1;
+pub const KEYBOARD_LED_INJECTED: u32 = 32768;
+pub const KEYBOARD_SHADOW: u32 = 16384;
+pub const KEYBOARD_KANA_LOCK_ON: u32 = 8;
+pub const KEYBOARD_CAPS_LOCK_ON: u32 = 4;
+pub const KEYBOARD_NUM_LOCK_ON: u32 = 2;
+pub const KEYBOARD_SCROLL_LOCK_ON: u32 = 1;
+pub const KEYBOARD_ERROR_VALUE_BASE: u32 = 10000;
+pub const DD_MOUSE_DEVICE_NAME: &[u8; 21] = b"\\Device\\PointerClass\0";
+pub const DD_MOUSE_DEVICE_NAME_U: &[u8; 21] = b"\\Device\\PointerClass\0";
+pub const MOUSE_LEFT_BUTTON_DOWN: u32 = 1;
+pub const MOUSE_LEFT_BUTTON_UP: u32 = 2;
+pub const MOUSE_RIGHT_BUTTON_DOWN: u32 = 4;
+pub const MOUSE_RIGHT_BUTTON_UP: u32 = 8;
+pub const MOUSE_MIDDLE_BUTTON_DOWN: u32 = 16;
+pub const MOUSE_MIDDLE_BUTTON_UP: u32 = 32;
+pub const MOUSE_BUTTON_1_DOWN: u32 = 1;
+pub const MOUSE_BUTTON_1_UP: u32 = 2;
+pub const MOUSE_BUTTON_2_DOWN: u32 = 4;
+pub const MOUSE_BUTTON_2_UP: u32 = 8;
+pub const MOUSE_BUTTON_3_DOWN: u32 = 16;
+pub const MOUSE_BUTTON_3_UP: u32 = 32;
+pub const MOUSE_BUTTON_4_DOWN: u32 = 64;
+pub const MOUSE_BUTTON_4_UP: u32 = 128;
+pub const MOUSE_BUTTON_5_DOWN: u32 = 256;
+pub const MOUSE_BUTTON_5_UP: u32 = 512;
+pub const MOUSE_WHEEL: u32 = 1024;
+pub const MOUSE_HWHEEL: u32 = 2048;
+pub const MOUSE_MOVE_RELATIVE: u32 = 0;
+pub const MOUSE_MOVE_ABSOLUTE: u32 = 1;
+pub const MOUSE_VIRTUAL_DESKTOP: u32 = 2;
+pub const MOUSE_ATTRIBUTES_CHANGED: u32 = 4;
+pub const MOUSE_MOVE_NOCOALESCE: u32 = 8;
+pub const MOUSE_TERMSRV_SRC_SHADOW: u32 = 256;
+pub const MOUSE_INPORT_HARDWARE: u32 = 1;
+pub const MOUSE_I8042_HARDWARE: u32 = 2;
+pub const MOUSE_SERIAL_HARDWARE: u32 = 4;
+pub const BALLPOINT_I8042_HARDWARE: u32 = 8;
+pub const BALLPOINT_SERIAL_HARDWARE: u32 = 16;
+pub const WHEELMOUSE_I8042_HARDWARE: u32 = 32;
+pub const WHEELMOUSE_SERIAL_HARDWARE: u32 = 64;
+pub const MOUSE_HID_HARDWARE: u32 = 128;
+pub const WHEELMOUSE_HID_HARDWARE: u32 = 256;
+pub const HORIZONTAL_WHEEL_PRESENT: u32 = 32768;
+pub const MOUSE_ERROR_VALUE_BASE: u32 = 20000;
+pub const DD_KEYBOARD_PORT_DEVICE_NAME: &[u8; 21] = b"\\Device\\KeyboardPort\0";
+pub const DD_KEYBOARD_PORT_DEVICE_NAME_U: &[u8; 21] = b"\\Device\\KeyboardPort\0";
+pub const DD_KEYBOARD_PORT_BASE_NAME_U: &[u8; 13] = b"KeyboardPort\0";
+pub const DD_POINTER_PORT_DEVICE_NAME: &[u8; 20] = b"\\Device\\PointerPort\0";
+pub const DD_POINTER_PORT_DEVICE_NAME_U: &[u8; 20] = b"\\Device\\PointerPort\0";
+pub const DD_POINTER_PORT_BASE_NAME_U: &[u8; 12] = b"PointerPort\0";
+pub const DD_KEYBOARD_CLASS_BASE_NAME_U: &[u8; 14] = b"KeyboardClass\0";
+pub const DD_POINTER_CLASS_BASE_NAME_U: &[u8; 13] = b"PointerClass\0";
+pub const DD_KEYBOARD_RESOURCE_CLASS_NAME_U: &[u8; 9] = b"Keyboard\0";
+pub const DD_POINTER_RESOURCE_CLASS_NAME_U: &[u8; 8] = b"Pointer\0";
+pub const DD_KEYBOARD_MOUSE_COMBO_RESOURCE_CLASS_NAME_U: &[u8; 17] = b"Keyboard/Pointer\0";
+pub const POINTER_PORTS_MAXIMUM: u32 = 8;
+pub const KEYBOARD_PORTS_MAXIMUM: u32 = 8;
+pub const MSWmi_MofData_Unused1_ID: u32 = 1;
+pub const MSWmi_MofData_Unused2_ID: u32 = 2;
+pub const MSWmi_MofData_Size_ID: u32 = 3;
+pub const MSWmi_MofData_Unused4_ID: u32 = 4;
+pub const MSWmi_MofData_BinaryMofData_ID: u32 = 5;
+pub const MSWmi_PnPDeviceId_PnPDeviceId_ID: u32 = 1;
+pub const MSWmi_PnPInstanceNames_Count_ID: u32 = 1;
+pub const MSWmi_PnPInstanceNames_InstanceNameList_ID: u32 = 2;
+pub const MSWmi_Guid_Guid_ID: u32 = 1;
+pub const MSWmi_GuidRegistrationInfo_Operation_ID: u32 = 1;
+pub const MSWmi_GuidRegistrationInfo_GuidCount_ID: u32 = 2;
+pub const MSWmi_GuidRegistrationInfo_GuidList_ID: u32 = 3;
+pub const MSAcpiInfo_BootArchitecture_ID: u32 = 1;
+pub const MSAcpiInfo_PreferredProfile_ID: u32 = 2;
+pub const MSAcpiInfo_Capabilities_ID: u32 = 3;
+pub const GetErrorInjectionCapabilitiesRtn: u32 = 1;
+pub const GET_INJECTION_CAPABILITIES_OUT_Status_ID: u32 = 1;
+pub const GET_INJECTION_CAPABILITIES_OUT_Capabilities_ID: u32 = 2;
+pub const InjectErrorRtn: u32 = 2;
+pub const INJECT_HARDWARE_ERROR_IN_ErrorType_ID: u32 = 1;
+pub const INJECT_HARDWARE_ERROR_IN_Parameter1_ID: u32 = 2;
+pub const INJECT_HARDWARE_ERROR_IN_Parameter2_ID: u32 = 3;
+pub const INJECT_HARDWARE_ERROR_IN_Parameter3_ID: u32 = 4;
+pub const INJECT_HARDWARE_ERROR_IN_Parameter4_ID: u32 = 5;
+pub const INJECT_HARDWARE_ERROR_OUT_Status_ID: u32 = 6;
+pub const GetAllErrorSourcesRtn: u32 = 1;
+pub const GET_ALL_ERROR_SOURCES_OUT_Status_ID: u32 = 1;
+pub const GET_ALL_ERROR_SOURCES_OUT_Count_ID: u32 = 2;
+pub const GET_ALL_ERROR_SOURCES_OUT_Length_ID: u32 = 3;
+pub const GET_ALL_ERROR_SOURCES_OUT_ErrorSourceArray_ID: u32 = 4;
+pub const GetErrorSourceInfoRtn: u32 = 2;
+pub const GET_ERROR_SOURCE_INFO_IN_ErrorSourceId_ID: u32 = 2;
+pub const GET_ERROR_SOURCE_INFO_OUT_Status_ID: u32 = 1;
+pub const GET_ERROR_SOURCE_INFO_OUT_Length_ID: u32 = 3;
+pub const GET_ERROR_SOURCE_INFO_OUT_ErrorSourceInfo_ID: u32 = 4;
+pub const SetErrorSourceInfoRtn: u32 = 3;
+pub const SET_ERROR_SOURCE_INFO_IN_Length_ID: u32 = 2;
+pub const SET_ERROR_SOURCE_INFO_IN_ErrorSourceInfo_ID: u32 = 3;
+pub const SET_ERROR_SOURCE_INFO_OUT_Status_ID: u32 = 1;
+pub const EnableErrorSourceRtn: u32 = 4;
+pub const ENABLE_ERROR_SOURCE_IN_ErrorSourceId_ID: u32 = 2;
+pub const ENABLE_ERROR_SOURCE_OUT_Status_ID: u32 = 1;
+pub const DisableErrorSourceRtn: u32 = 5;
+pub const DISABLE_ERROR_SOURCE_IN_ErrorSourceId_ID: u32 = 2;
+pub const DISABLE_ERROR_SOURCE_OUT_Status_ID: u32 = 1;
+pub const WheaGetAllPolicyRtn: u32 = 1;
+pub const GET_ALL_POLICY_OUT_Status_ID: u32 = 1;
+pub const GET_ALL_POLICY_OUT_Count_ID: u32 = 2;
+pub const GET_ALL_POLICY_OUT_Length_ID: u32 = 3;
+pub const GET_ALL_POLICY_OUT_Values_ID: u32 = 4;
+pub const WheaGetPolicyRtn: u32 = 2;
+pub const GET_SINGLE_POLICY_IN_Type_ID: u32 = 2;
+pub const GET_SINGLE_POLICY_OUT_Status_ID: u32 = 1;
+pub const GET_SINGLE_POLICY_OUT_Value_ID: u32 = 3;
+pub const WheaSetPolicyRtn: u32 = 3;
+pub const SET_SINGLE_POLICY_IN_Type_ID: u32 = 2;
+pub const SET_SINGLE_POLICY_IN_Value_ID: u32 = 3;
+pub const SET_SINGLE_POLICY_OUT_Status_ID: u32 = 1;
+pub const WheaCommitPolicyRtn: u32 = 4;
+pub const COMMIT_POLICY_OUT_Status_ID: u32 = 1;
+pub const WheaResetPolicyRtn: u32 = 5;
+pub const RESET_POLICY_OUT_Status_ID: u32 = 1;
+pub const WheaPluginCtlInterfaceRtn: u32 = 1;
+pub const WHEA_PLUGIN_CTL_INTERFACE_IN_InputLength_ID: u32 = 1;
+pub const WHEA_PLUGIN_CTL_INTERFACE_IN_InputBuffer_ID: u32 = 2;
+pub const WHEA_PLUGIN_CTL_INTERFACE_OUT_Status_ID: u32 = 3;
+pub const WHEA_PLUGIN_CTL_INTERFACE_OUT_OutputLength_ID: u32 = 4;
+pub const WHEA_PLUGIN_CTL_INTERFACE_OUT_OutputBuffer_ID: u32 = 5;
+pub const WheaPageOfflineInterfaceRtn: u32 = 1;
+pub const WHEA_PAGE_OFFLINING_INTERFACE_IN_InputLength_ID: u32 = 1;
+pub const WHEA_PAGE_OFFLINING_INTERFACE_IN_InputBuffer_ID: u32 = 2;
+pub const WHEA_PAGE_OFFLINING_INTERFACE_OUT_Status_ID: u32 = 3;
+pub const MSSmBios_RawSMBiosTables_Used20CallingMethod_ID: u32 = 1;
+pub const MSSmBios_RawSMBiosTables_SmbiosMajorVersion_ID: u32 = 2;
+pub const MSSmBios_RawSMBiosTables_SmbiosMinorVersion_ID: u32 = 3;
+pub const MSSmBios_RawSMBiosTables_DmiRevision_ID: u32 = 4;
+pub const MSSmBios_RawSMBiosTables_Size_ID: u32 = 5;
+pub const MSSmBios_RawSMBiosTables_SMBiosData_ID: u32 = 6;
+pub const SYSID_UUID_Uuid_ID: u32 = 1;
+pub const MSSmBios_SysidUUIDList_Count_ID: u32 = 1;
+pub const MSSmBios_SysidUUIDList_List_ID: u32 = 2;
+pub const SYSID_1394_x1394_ID: u32 = 1;
+pub const MSSmBios_Sysid1394List_Count_ID: u32 = 1;
+pub const MSSmBios_Sysid1394List_List_ID: u32 = 2;
+pub const MSMCAEvent_Header_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_Header_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_Header_Type_ID: u32 = 3;
+pub const MSMCAEvent_Header_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_Header_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_Header_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_BusError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_BusError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_BusError_Type_ID: u32 = 3;
+pub const MSMCAEvent_BusError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_BusError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_BusError_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_BusError_Participation_ID: u32 = 7;
+pub const MSMCAEvent_BusError_MemoryHierarchyLevel_ID: u32 = 8;
+pub const MSMCAEvent_BusError_RequestType_ID: u32 = 9;
+pub const MSMCAEvent_BusError_MemOrIo_ID: u32 = 10;
+pub const MSMCAEvent_BusError_Address_ID: u32 = 11;
+pub const MSMCAEvent_BusError_Size_ID: u32 = 12;
+pub const MSMCAEvent_BusError_RawRecord_ID: u32 = 13;
+pub const MSMCAEvent_TLBError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_TLBError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_TLBError_Type_ID: u32 = 3;
+pub const MSMCAEvent_TLBError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_TLBError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_TLBError_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_TLBError_TransactionType_ID: u32 = 7;
+pub const MSMCAEvent_TLBError_MemoryHierarchyLevel_ID: u32 = 8;
+pub const MSMCAEvent_TLBError_Address_ID: u32 = 9;
+pub const MSMCAEvent_TLBError_Size_ID: u32 = 10;
+pub const MSMCAEvent_TLBError_RawRecord_ID: u32 = 11;
+pub const MSMCAEvent_MemoryHierarchyError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_MemoryHierarchyError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_MemoryHierarchyError_Type_ID: u32 = 3;
+pub const MSMCAEvent_MemoryHierarchyError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_MemoryHierarchyError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_MemoryHierarchyError_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_MemoryHierarchyError_TransactionType_ID: u32 = 7;
+pub const MSMCAEvent_MemoryHierarchyError_MemoryHierarchyLevel_ID: u32 = 8;
+pub const MSMCAEvent_MemoryHierarchyError_RequestType_ID: u32 = 9;
+pub const MSMCAEvent_MemoryHierarchyError_Address_ID: u32 = 10;
+pub const MSMCAEvent_MemoryHierarchyError_Size_ID: u32 = 11;
+pub const MSMCAEvent_MemoryHierarchyError_RawRecord_ID: u32 = 12;
+pub const MSMCAEvent_CPUError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_CPUError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_CPUError_Type_ID: u32 = 3;
+pub const MSMCAEvent_CPUError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_CPUError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_CPUError_LogToEventlog_ID: u32 = 6;
+pub const MCACpuCacheError: u32 = 0;
+pub const MCACpuTlbError: u32 = 1;
+pub const MCACpuBusError: u32 = 2;
+pub const MCACpuRegFileError: u32 = 3;
+pub const MCACpuMSError: u32 = 4;
+pub const MSMCAEvent_CPUError_MajorErrorType_ID: u32 = 7;
+pub const MSMCAEvent_CPUError_Level_ID: u32 = 8;
+pub const MSMCAEvent_CPUError_CacheOp_ID: u32 = 9;
+pub const MSMCAEvent_CPUError_CacheMesi_ID: u32 = 10;
+pub const MSMCAEvent_CPUError_TLBOp_ID: u32 = 11;
+pub const MSMCAEvent_CPUError_BusType_ID: u32 = 12;
+pub const MSMCAEvent_CPUError_BusSev_ID: u32 = 13;
+pub const MSMCAEvent_CPUError_RegFileId_ID: u32 = 14;
+pub const MSMCAEvent_CPUError_RegFileOp_ID: u32 = 15;
+pub const MSMCAEvent_CPUError_MSSid_ID: u32 = 16;
+pub const MSMCAEvent_CPUError_MSOp_ID: u32 = 17;
+pub const MSMCAEvent_CPUError_MSArrayId_ID: u32 = 18;
+pub const MSMCAEvent_CPUError_MSIndex_ID: u32 = 19;
+pub const MSMCAEvent_CPUError_Size_ID: u32 = 20;
+pub const MSMCAEvent_CPUError_RawRecord_ID: u32 = 21;
+pub const MSMCAEvent_MemoryError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_MemoryError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_MemoryError_Type_ID: u32 = 3;
+pub const MSMCAEvent_MemoryError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_MemoryError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_MemoryError_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_MemoryError_VALIDATION_BITS_ID: u32 = 7;
+pub const MSMCAEvent_MemoryError_MEM_ERROR_STATUS_ID: u32 = 8;
+pub const MSMCAEvent_MemoryError_MEM_PHYSICAL_ADDR_ID: u32 = 9;
+pub const MSMCAEvent_MemoryError_MEM_PHYSICAL_MASK_ID: u32 = 10;
+pub const MSMCAEvent_MemoryError_RESPONDER_ID_ID: u32 = 11;
+pub const MSMCAEvent_MemoryError_TARGET_ID_ID: u32 = 12;
+pub const MSMCAEvent_MemoryError_REQUESTOR_ID_ID: u32 = 13;
+pub const MSMCAEvent_MemoryError_BUS_SPECIFIC_DATA_ID: u32 = 14;
+pub const MSMCAEvent_MemoryError_MEM_NODE_ID: u32 = 15;
+pub const MSMCAEvent_MemoryError_MEM_CARD_ID: u32 = 16;
+pub const MSMCAEvent_MemoryError_MEM_BANK_ID: u32 = 17;
+pub const MSMCAEvent_MemoryError_xMEM_DEVICE_ID: u32 = 18;
+pub const MSMCAEvent_MemoryError_MEM_MODULE_ID: u32 = 19;
+pub const MSMCAEvent_MemoryError_MEM_ROW_ID: u32 = 20;
+pub const MSMCAEvent_MemoryError_MEM_COLUMN_ID: u32 = 21;
+pub const MSMCAEvent_MemoryError_MEM_BIT_POSITION_ID: u32 = 22;
+pub const MSMCAEvent_MemoryError_Size_ID: u32 = 23;
+pub const MSMCAEvent_MemoryError_RawRecord_ID: u32 = 24;
+pub const MSMCAEvent_PCIBusError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_PCIBusError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_PCIBusError_Type_ID: u32 = 3;
+pub const MSMCAEvent_PCIBusError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_PCIBusError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_PCIBusError_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_PCIBusError_VALIDATION_BITS_ID: u32 = 7;
+pub const MSMCAEvent_PCIBusError_PCI_BUS_ERROR_STATUS_ID: u32 = 8;
+pub const MSMCAEvent_PCIBusError_PCI_BUS_ADDRESS_ID: u32 = 9;
+pub const MSMCAEvent_PCIBusError_PCI_BUS_DATA_ID: u32 = 10;
+pub const MSMCAEvent_PCIBusError_PCI_BUS_CMD_ID: u32 = 11;
+pub const MSMCAEvent_PCIBusError_PCI_BUS_REQUESTOR_ID_ID: u32 = 12;
+pub const MSMCAEvent_PCIBusError_PCI_BUS_RESPONDER_ID_ID: u32 = 13;
+pub const MSMCAEvent_PCIBusError_PCI_BUS_TARGET_ID_ID: u32 = 14;
+pub const MSMCAEvent_PCIBusError_PCI_BUS_ERROR_TYPE_ID: u32 = 15;
+pub const MSMCAEvent_PCIBusError_PCI_BUS_ID_BusNumber_ID: u32 = 16;
+pub const MSMCAEvent_PCIBusError_PCI_BUS_ID_SegmentNumber_ID: u32 = 17;
+pub const MSMCAEvent_PCIBusError_Size_ID: u32 = 18;
+pub const MSMCAEvent_PCIBusError_RawRecord_ID: u32 = 19;
+pub const MSMCAEvent_PCIComponentError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_PCIComponentError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_PCIComponentError_Type_ID: u32 = 3;
+pub const MSMCAEvent_PCIComponentError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_PCIComponentError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_PCIComponentError_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_PCIComponentError_VALIDATION_BITS_ID: u32 = 7;
+pub const MSMCAEvent_PCIComponentError_PCI_COMP_ERROR_STATUS_ID: u32 = 8;
+pub const MSMCAEvent_PCIComponentError_PCI_COMP_INFO_VendorId_ID: u32 = 9;
+pub const MSMCAEvent_PCIComponentError_PCI_COMP_INFO_DeviceId_ID: u32 = 10;
+pub const MSMCAEvent_PCIComponentError_PCI_COMP_INFO_ClassCodeInterface_ID: u32 = 11;
+pub const MSMCAEvent_PCIComponentError_PCI_COMP_INFO_ClassCodeSubClass_ID: u32 = 12;
+pub const MSMCAEvent_PCIComponentError_PCI_COMP_INFO_ClassCodeBaseClass_ID: u32 = 13;
+pub const MSMCAEvent_PCIComponentError_PCI_COMP_INFO_FunctionNumber_ID: u32 = 14;
+pub const MSMCAEvent_PCIComponentError_PCI_COMP_INFO_DeviceNumber_ID: u32 = 15;
+pub const MSMCAEvent_PCIComponentError_PCI_COMP_INFO_BusNumber_ID: u32 = 16;
+pub const MSMCAEvent_PCIComponentError_PCI_COMP_INFO_SegmentNumber_ID: u32 = 17;
+pub const MSMCAEvent_PCIComponentError_Size_ID: u32 = 18;
+pub const MSMCAEvent_PCIComponentError_RawRecord_ID: u32 = 19;
+pub const MSMCAEvent_SystemEventError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_SystemEventError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_SystemEventError_Type_ID: u32 = 3;
+pub const MSMCAEvent_SystemEventError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_SystemEventError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_SystemEventError_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_SystemEventError_VALIDATION_BITS_ID: u32 = 7;
+pub const MSMCAEvent_SystemEventError_SEL_TIME_STAMP_ID: u32 = 8;
+pub const MSMCAEvent_SystemEventError_SEL_RECORD_ID_ID: u32 = 9;
+pub const MSMCAEvent_SystemEventError_SEL_GENERATOR_ID_ID: u32 = 10;
+pub const MSMCAEvent_SystemEventError_SEL_RECORD_TYPE_ID: u32 = 11;
+pub const MSMCAEvent_SystemEventError_SEL_EVM_REV_ID: u32 = 12;
+pub const MSMCAEvent_SystemEventError_SEL_SENSOR_TYPE_ID: u32 = 13;
+pub const MSMCAEvent_SystemEventError_SEL_SENSOR_NUM_ID: u32 = 14;
+pub const MSMCAEvent_SystemEventError_SEL_EVENT_DIR_TYPE_ID: u32 = 15;
+pub const MSMCAEvent_SystemEventError_SEL_DATA1_ID: u32 = 16;
+pub const MSMCAEvent_SystemEventError_SEL_DATA2_ID: u32 = 17;
+pub const MSMCAEvent_SystemEventError_SEL_DATA3_ID: u32 = 18;
+pub const MSMCAEvent_SystemEventError_Size_ID: u32 = 19;
+pub const MSMCAEvent_SystemEventError_RawRecord_ID: u32 = 20;
+pub const MSMCAEvent_SMBIOSError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_SMBIOSError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_SMBIOSError_Type_ID: u32 = 3;
+pub const MSMCAEvent_SMBIOSError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_SMBIOSError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_SMBIOSError_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_SMBIOSError_VALIDATION_BITS_ID: u32 = 7;
+pub const MSMCAEvent_SMBIOSError_SMBIOS_EVENT_TYPE_ID: u32 = 8;
+pub const MSMCAEvent_SMBIOSError_Size_ID: u32 = 9;
+pub const MSMCAEvent_SMBIOSError_RawRecord_ID: u32 = 10;
+pub const MSMCAEvent_PlatformSpecificError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_PlatformSpecificError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_PlatformSpecificError_Type_ID: u32 = 3;
+pub const MSMCAEvent_PlatformSpecificError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_PlatformSpecificError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_PlatformSpecificError_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_PlatformSpecificError_VALIDATION_BITS_ID: u32 = 7;
+pub const MSMCAEvent_PlatformSpecificError_PLATFORM_ERROR_STATUS_ID: u32 = 8;
+pub const MSMCAEvent_PlatformSpecificError_PLATFORM_REQUESTOR_ID_ID: u32 = 9;
+pub const MSMCAEvent_PlatformSpecificError_PLATFORM_RESPONDER_ID_ID: u32 = 10;
+pub const MSMCAEvent_PlatformSpecificError_PLATFORM_TARGET_ID_ID: u32 = 11;
+pub const MSMCAEvent_PlatformSpecificError_PLATFORM_BUS_SPECIFIC_DATA_ID: u32 = 12;
+pub const MSMCAEvent_PlatformSpecificError_OEM_COMPONENT_ID_ID: u32 = 13;
+pub const MSMCAEvent_PlatformSpecificError_Size_ID: u32 = 14;
+pub const MSMCAEvent_PlatformSpecificError_RawRecord_ID: u32 = 15;
+pub const MSMCAEvent_InvalidError_RecordId_ID: u32 = 1;
+pub const MSMCAEvent_InvalidError_ErrorSeverity_ID: u32 = 2;
+pub const MSMCAEvent_InvalidError_Type_ID: u32 = 3;
+pub const MSMCAEvent_InvalidError_Cpu_ID: u32 = 4;
+pub const MSMCAEvent_InvalidError_AdditionalErrors_ID: u32 = 5;
+pub const MSMCAEvent_InvalidError_LogToEventlog_ID: u32 = 6;
+pub const MSMCAEvent_InvalidError_Size_ID: u32 = 7;
+pub const MSMCAEvent_InvalidError_RawRecord_ID: u32 = 8;
+pub const MSMCAEvent_MemoryPageRemoved_PhysicalAddress_ID: u32 = 1;
+pub const MSMCAInfo_Entry_Length_ID: u32 = 1;
+pub const MSMCAInfo_Entry_Data_ID: u32 = 2;
+pub const MSMCAInfo_RawMCAData_Count_ID: u32 = 1;
+pub const MSMCAInfo_RawMCAData_Records_ID: u32 = 2;
+pub const MSMCAInfo_RawCMCEvent_Count_ID: u32 = 1;
+pub const MSMCAInfo_RawCMCEvent_Records_ID: u32 = 2;
+pub const MSMCAInfo_RawMCAEvent_Count_ID: u32 = 1;
+pub const MSMCAInfo_RawMCAEvent_Records_ID: u32 = 2;
+pub const MSMCAInfo_RawCorrectedPlatformEvent_Count_ID: u32 = 1;
+pub const MSMCAInfo_RawCorrectedPlatformEvent_Records_ID: u32 = 2;
+pub const MSPower_DeviceEnable_Enable_ID: u32 = 1;
+pub const MSPower_DeviceWakeEnable_Enable_ID: u32 = 1;
+pub const MSNdis_NetworkAddress_Address_ID: u32 = 1;
+pub const MSNdis_NetworkShortAddress_Address_ID: u32 = 1;
+pub const MSNdis_NetworkLinkSpeed_Outbound_ID: u32 = 1;
+pub const MSNdis_NetworkLinkSpeed_Inbound_ID: u32 = 2;
+pub const MSNdis_EnumerateAdapter_DeviceName_ID: u32 = 1;
+pub const MSNdis_NotifyAdapterRemoval_DeviceName_ID: u32 = 1;
+pub const MSNdis_NotifyAdapterArrival_DeviceName_ID: u32 = 1;
+pub const MSNdis_DeviceWakeOnMagicPacketOnly_EnableWakeOnMagicPacketOnly_ID: u32 = 1;
+pub const MSNdis_RSSEnabled_RSSEnabled_ID: u32 = 1;
+pub const MSNdis_NetworkDirectState_Enabled_ID: u32 = 1;
+pub const MSNdis_NetworkDirectVersion_MajorVersionNumber_ID: u32 = 1;
+pub const MSNdis_NetworkDirectVersion_MinorVersionNumber_ID: u32 = 2;
+pub const MSNdis_NetworkDirectAdapterInfo_Version_ID: u32 = 1;
+pub const MSNdis_NetworkDirectAdapterInfo_VendorId_ID: u32 = 2;
+pub const MSNdis_NetworkDirectAdapterInfo_DeviceId_ID: u32 = 3;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxRegistrationSize_ID: u32 = 4;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxWindowSize_ID: u32 = 5;
+pub const MSNdis_NetworkDirectAdapterInfo_FRMRPageCount_ID: u32 = 6;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxInitiatorRequestSge_ID: u32 = 7;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxReceiveRequestSge_ID: u32 = 8;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxReadRequestSge_ID: u32 = 9;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxTransferLength_ID: u32 = 10;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxInlineDataSize_ID: u32 = 11;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxInboundReadLimit_ID: u32 = 12;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxOutboundReadLimit_ID: u32 = 13;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxReceiveQueueDepth_ID: u32 = 14;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxInitiatorQueueDepth_ID: u32 = 15;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxSrqDepth_ID: u32 = 16;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxCqDepth_ID: u32 = 17;
+pub const MSNdis_NetworkDirectAdapterInfo_LargeRequestThreshold_ID: u32 = 18;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxCallerData_ID: u32 = 19;
+pub const MSNdis_NetworkDirectAdapterInfo_MaxCalleeData_ID: u32 = 20;
+pub const MSNdis_NetworkDirectAdapterInfo_InOrderDMA_ID: u32 = 21;
+pub const MSNdis_NetworkDirectAdapterInfo_SupportsCQResize_ID: u32 = 22;
+pub const MSNdis_NetworkDirectAdapterInfo_SupportsLoopbackConnections_ID: u32 = 23;
+pub const MSNdis_NetworkDirectAdapterCapabilities_MaxQpCount_ID: u32 = 1;
+pub const MSNdis_NetworkDirectAdapterCapabilities_MaxCqCount_ID: u32 = 2;
+pub const MSNdis_NetworkDirectAdapterCapabilities_MaxMrCount_ID: u32 = 3;
+pub const MSNdis_NetworkDirectAdapterCapabilities_MaxPdCount_ID: u32 = 4;
+pub const MSNdis_NetworkDirectAdapterCapabilities_MaxInboundReadLimit_ID: u32 = 5;
+pub const MSNdis_NetworkDirectAdapterCapabilities_MaxOutboundReadLimit_ID: u32 = 6;
+pub const MSNdis_NetworkDirectAdapterCapabilities_MaxMwCount_ID: u32 = 7;
+pub const MSNdis_NetworkDirectAdapterCapabilities_MaxSrqCount_ID: u32 = 8;
+pub const MSNdis_NetworkDirectAdapterCapabilities_MissingCounterMask_ID: u32 = 9;
+pub const MSNdis_NetworkDirectAdapterCapabilities_NdAdapterInfo_ID: u32 = 10;
+pub const MSNdis_NetworkDirectCapabilities_NdCapabilities_ID: u32 = 1;
+pub const MSNdis_HardwareStatus_NdisHardwareStatus_ID: u32 = 1;
+pub const MSNdis_MediaSupported_NumberElements_ID: u32 = 1;
+pub const MSNdis_MediaSupported_NdisMediaSupported_ID: u32 = 2;
+pub const MSNdis_MediaInUse_NumberElements_ID: u32 = 1;
+pub const MSNdis_MediaInUse_NdisMediaInUse_ID: u32 = 2;
+pub const MSNdis_MaximumLookahead_NdisMaximumLookahead_ID: u32 = 1;
+pub const MSNdis_MaximumFrameSize_NdisMaximumFrameSize_ID: u32 = 1;
+pub const MSNdis_LinkSpeed_NdisLinkSpeed_ID: u32 = 1;
+pub const MSNdis_TransmitBufferSpace_NdisTransmitBufferSpace_ID: u32 = 1;
+pub const MSNdis_ReceiveBufferSpace_NdisReceiveBufferSpace_ID: u32 = 1;
+pub const MSNdis_TransmitBlockSize_NdisTransmitBlockSize_ID: u32 = 1;
+pub const MSNdis_ReceiveBlockSize_NdisReceiveBlockSize_ID: u32 = 1;
+pub const MSNdis_VendorID_NdisVendorID_ID: u32 = 1;
+pub const MSNdis_VendorDescription_NdisVendorDescription_ID: u32 = 1;
+pub const MSNdis_CurrentPacketFilter_NdisCurrentPacketFilter_ID: u32 = 1;
+pub const MSNdis_CurrentLookahead_NdisCurrentLookahead_ID: u32 = 1;
+pub const MSNdis_DriverVersion_NdisDriverVersion_ID: u32 = 1;
+pub const MSNdis_MaximumTotalSize_NdisMaximumTotalSize_ID: u32 = 1;
+pub const MSNdis_MacOptions_NdisMacOptions_ID: u32 = 1;
+pub const MSNdis_MediaConnectStatus_NdisMediaConnectStatus_ID: u32 = 1;
+pub const MSNdis_MaximumSendPackets_NdisMaximumSendPackets_ID: u32 = 1;
+pub const MSNdis_VendorDriverVersion_NdisVendorDriverVersion_ID: u32 = 1;
+pub const MSNdis_VlanIdentifier_NdisVlanId_ID: u32 = 1;
+pub const MSNdis_PhysicalMediumType_NdisPhysicalMediumType_ID: u32 = 1;
+pub const MSNdis_TransmitsOk_NdisTransmitsOk_ID: u32 = 1;
+pub const MSNdis_ReceivesOk_NdisReceivesOk_ID: u32 = 1;
+pub const MSNdis_TransmitsError_NdisTransmitsError_ID: u32 = 1;
+pub const MSNdis_ReceiveError_NdisReceiveError_ID: u32 = 1;
+pub const MSNdis_ReceiveNoBuffer_NdisReceiveNoBuffer_ID: u32 = 1;
+pub const MSNdis_CoHardwareStatus_NdisCoHardwareStatus_ID: u32 = 1;
+pub const MSNdis_CoMediaSupported_NumberElements_ID: u32 = 1;
+pub const MSNdis_CoMediaSupported_NdisCoMediaSupported_ID: u32 = 2;
+pub const MSNdis_CoMediaInUse_NumberElements_ID: u32 = 1;
+pub const MSNdis_CoMediaInUse_NdisCoMediaInUse_ID: u32 = 2;
+pub const MSNdis_CoLinkSpeed_NdisCoLinkSpeed_ID: u32 = 1;
+pub const MSNdis_CoVendorId_NdisCoVendorID_ID: u32 = 1;
+pub const MSNdis_CoVendorDescription_NdisCoVendorDescription_ID: u32 = 1;
+pub const MSNdis_CoDriverVersion_NdisCoDriverVersion_ID: u32 = 1;
+pub const MSNdis_CoMacOptions_NdisCoMacOptions_ID: u32 = 1;
+pub const MSNdis_CoMediaConnectStatus_NdisCoMediaConnectStatus_ID: u32 = 1;
+pub const MSNdis_CoVendorDriverVersion_NdisCoVendorDriverVersion_ID: u32 = 1;
+pub const MSNdis_CoMinimumLinkSpeed_NdisCoMinimumLinkSpeed_ID: u32 = 1;
+pub const MSNdis_CoTransmitPdusOk_NdisCoTransmitPdusOk_ID: u32 = 1;
+pub const MSNdis_CoReceivePdusOk_NdisCoReceivePdusOk_ID: u32 = 1;
+pub const MSNdis_CoTransmitPduErrors_NdisCoTransmitPduErrors_ID: u32 = 1;
+pub const MSNdis_CoReceivePduErrors_NdisCoReceivePduErrors_ID: u32 = 1;
+pub const MSNdis_CoReceivePdusNoBuffer_NdisCoReceivePdusNoBuffer_ID: u32 = 1;
+pub const MSNdis_AtmSupportedVcRates_MinCellRate_ID: u32 = 1;
+pub const MSNdis_AtmSupportedVcRates_MaxCellRate_ID: u32 = 2;
+pub const MSNdis_AtmSupportedServiceCategory_NdisAtmSupportedServiceCategory_ID: u32 = 1;
+pub const MSNdis_AtmSupportedAalTypes_NdisAtmSupportedAalTypes_ID: u32 = 1;
+pub const MSNdis_AtmHardwareCurrentAddress_NdisAtmHardwareCurrentAddress_ID: u32 = 1;
+pub const MSNdis_AtmMaxActiveVcs_NdisAtmMaxActiveVcs_ID: u32 = 1;
+pub const MSNdis_AtmMaxActiveVciBits_NdisAtmMaxActiveVciBits_ID: u32 = 1;
+pub const MSNdis_AtmMaxActiveVpiBits_NdisAtmMaxActiveVpiBits_ID: u32 = 1;
+pub const MSNdis_AtmMaxAal0PacketSize_NdisAtmMaxAal0PacketSize_ID: u32 = 1;
+pub const MSNdis_AtmMaxAal1PacketSize_NdisAtmMaxAal1PacketSize_ID: u32 = 1;
+pub const MSNdis_AtmMaxAal34PacketSize_NdisAtmMaxAal34PacketSize_ID: u32 = 1;
+pub const MSNdis_AtmMaxAal5PacketSize_NdisAtmMaxAal5PacketSize_ID: u32 = 1;
+pub const MSNdis_AtmReceiveCellsOk_NdisAtmReceiveCellsOk_ID: u32 = 1;
+pub const MSNdis_AtmTransmitCellsOk_NdisAtmTransmitCellsOk_ID: u32 = 1;
+pub const MSNdis_AtmReceiveCellsDropped_NdisAtmReceiveCellsDropped_ID: u32 = 1;
+pub const MSNdis_EthernetPermanentAddress_NdisPermanentAddress_ID: u32 = 1;
+pub const MSNdis_EthernetCurrentAddress_NdisCurrentAddress_ID: u32 = 1;
+pub const MSNdis_EthernetMulticastList_NumberElements_ID: u32 = 1;
+pub const MSNdis_EthernetMulticastList_NdisMulticastList_ID: u32 = 2;
+pub const MSNdis_EthernetMaximumMulticastListSize_NdisEthernetMaximumMulticastListSize_ID: u32 = 1;
+pub const MSNdis_EthernetMacOptions_NdisEthernetMacOptions_ID: u32 = 1;
+pub const MSNdis_EthernetReceiveErrorAlignment_NdisEthernetReceiveErrorAlignment_ID: u32 = 1;
+pub const MSNdis_EthernetOneTransmitCollision_NdisEthernetOneTransmitCollision_ID: u32 = 1;
+pub const MSNdis_EthernetMoreTransmitCollisions_NdisEthernetMoreTransmitCollisions_ID: u32 = 1;
+pub const MSNdis_TokenRingPermanentAddress_NdisPermanentAddress_ID: u32 = 1;
+pub const MSNdis_TokenRingCurrentAddress_NdisCurrentAddress_ID: u32 = 1;
+pub const MSNdis_TokenRingCurrentFunctional_NdisTokenRingCurrentFunctional_ID: u32 = 1;
+pub const MSNdis_TokenRingCurrentGroup_NdisTokenRingCurrentGroup_ID: u32 = 1;
+pub const MSNdis_TokenRingLastOpenStatus_NdisTokenRingLastOpenStatus_ID: u32 = 1;
+pub const MSNdis_TokenRingCurrentRingStatus_NdisTokenRingCurrentRingStatus_ID: u32 = 1;
+pub const MSNdis_TokenRingCurrentRingState_NdisTokenRingCurrentRingState_ID: u32 = 1;
+pub const MSNdis_TokenRingLineErrors_NdisTokenRingLineErrors_ID: u32 = 1;
+pub const MSNdis_TokenRingLostFrames_NdisTokenRingLostFrames_ID: u32 = 1;
+pub const MSNdis_FddiLongPermanentAddress_NdisPermanentAddress_ID: u32 = 1;
+pub const MSNdis_FddiLongCurrentAddress_NdisCurrentAddress_ID: u32 = 1;
+pub const MSNdis_FddiLongMulticastList_NumberElements_ID: u32 = 1;
+pub const MSNdis_FddiLongMulticastList_NdisMulticastList_ID: u32 = 2;
+pub const MSNdis_FddiLongMaximumListSize_NdisFddiLongMaximumListSize_ID: u32 = 1;
+pub const MSNdis_FddiShortPermanentAddress_NdisPermanentAddress_ID: u32 = 1;
+pub const MSNdis_FddiShortCurrentAddress_NdisCurrentAddress_ID: u32 = 1;
+pub const MSNdis_FddiShortMulticastList_NumberElements_ID: u32 = 1;
+pub const MSNdis_FddiShortMulticastList_NdisMulticastList_ID: u32 = 2;
+pub const MSNdis_FddiShortMaximumListSize_NdisFddiShortMaximumListSize_ID: u32 = 1;
+pub const MSNdis_FddiAttachmentType_NdisFddiAttachmentType_ID: u32 = 1;
+pub const MSNdis_FddiUpstreamNodeLong_NdisFddiUpstreamNodeLong_ID: u32 = 1;
+pub const MSNdis_FddiDownstreamNodeLong_NdisFddiDownstreamNodeLong_ID: u32 = 1;
+pub const MSNdis_FddiFrameErrors_NdisFddiFrameErrors_ID: u32 = 1;
+pub const MSNdis_FddiFramesLost_NdisFddiFramesLost_ID: u32 = 1;
+pub const MSNdis_FddiRingManagmentState_NdisFddiRingManagmentState_ID: u32 = 1;
+pub const MSNdis_FddiLctFailures_NdisFddiLctFailures_ID: u32 = 1;
+pub const MSNdis_FddiLemRejects_NdisFddiLemRejects_ID: u32 = 1;
+pub const MSNdis_FddiLConnectionState_NdisFddiLConnectionState_ID: u32 = 1;
+pub const MSNdis_ObjectHeader_Type_ID: u32 = 1;
+pub const MSNdis_ObjectHeader_Revision_ID: u32 = 2;
+pub const MSNdis_ObjectHeader_Size_ID: u32 = 3;
+pub const MSNdis_WmiMethodHeader_Header_ID: u32 = 1;
+pub const MSNdis_WmiMethodHeader_PortNumber_ID: u32 = 2;
+pub const MSNdis_WmiMethodHeader_NetLuid_ID: u32 = 3;
+pub const MSNdis_WmiMethodHeader_RequestId_ID: u32 = 4;
+pub const MSNdis_WmiMethodHeader_Timeout_ID: u32 = 5;
+pub const MSNdis_WmiMethodHeader_Padding_ID: u32 = 6;
+pub const MSNdis_WmiSetHeader_Header_ID: u32 = 1;
+pub const MSNdis_WmiSetHeader_PortNumber_ID: u32 = 2;
+pub const MSNdis_WmiSetHeader_NetLuid_ID: u32 = 3;
+pub const MSNdis_WmiSetHeader_RequestId_ID: u32 = 4;
+pub const MSNdis_WmiSetHeader_Timeout_ID: u32 = 5;
+pub const MSNdis_WmiSetHeader_Padding_ID: u32 = 6;
+pub const MSNdis_WmiOutputInfo_Header_ID: u32 = 1;
+pub const MSNdis_WmiOutputInfo_Flags_ID: u32 = 2;
+pub const MSNdis_WmiOutputInfo_SupportedRevision_ID: u32 = 3;
+pub const MSNdis_WmiOutputInfo_Padding1_ID: u32 = 4;
+pub const MSNdis_WmiOutputInfo_Padding2_ID: u32 = 5;
+pub const MSNdis_WmiOutputInfo_DataOffset_ID: u32 = 6;
+pub const MSNdis_WmiEnumAdapter_Header_ID: u32 = 1;
+pub const MSNdis_WmiEnumAdapter_IfIndex_ID: u32 = 2;
+pub const MSNdis_WmiEnumAdapter_NetLuid_ID: u32 = 3;
+pub const MSNdis_WmiEnumAdapter_DeviceName_ID: u32 = 4;
+pub const MSNdis_LinkStateData_Header_ID: u32 = 1;
+pub const MSNdis_LinkStateData_MediaConnectState_ID: u32 = 2;
+pub const MSNdis_LinkStateData_MediaDuplexState_ID: u32 = 3;
+pub const MSNdis_LinkStateData_XmitLinkSpeed_ID: u32 = 4;
+pub const MSNdis_LinkStateData_RcvLinkSpeed_ID: u32 = 5;
+pub const MSNdis_LinkStateData_PauseFunctions_ID: u32 = 6;
+pub const MSNdis_LinkStateData_AutoNegotiationFlags_ID: u32 = 7;
+pub const MSNdis_LinkParameters_Header_ID: u32 = 1;
+pub const MSNdis_LinkParameters_MediaDuplexState_ID: u32 = 2;
+pub const MSNdis_LinkParameters_XmitLinkSpeed_ID: u32 = 3;
+pub const MSNdis_LinkParameters_RcvLinkSpeed_ID: u32 = 4;
+pub const MSNdis_LinkParameters_PauseFunctions_ID: u32 = 5;
+pub const MSNdis_LinkParameters_AutoNegotiationFlags_ID: u32 = 6;
+pub const MSNdis_InterruptModerationParameters_Header_ID: u32 = 1;
+pub const MSNdis_InterruptModerationParameters_Flags_ID: u32 = 2;
+pub const MSNdis_InterruptModerationParameters_InterruptModeration_ID: u32 = 3;
+pub const MSNdis_StatisticsInfo_Header_ID: u32 = 1;
+pub const MSNdis_StatisticsInfo_SupportedStatistics_ID: u32 = 2;
+pub const MSNdis_StatisticsInfo_ifInDiscards_ID: u32 = 3;
+pub const MSNdis_StatisticsInfo_ifInErrors_ID: u32 = 4;
+pub const MSNdis_StatisticsInfo_ifHCInOctets_ID: u32 = 5;
+pub const MSNdis_StatisticsInfo_ifHCInUcastPkts_ID: u32 = 6;
+pub const MSNdis_StatisticsInfo_ifHCInMulticastPkts_ID: u32 = 7;
+pub const MSNdis_StatisticsInfo_ifHCInBroadcastPkts_ID: u32 = 8;
+pub const MSNdis_StatisticsInfo_ifHCOutOctets_ID: u32 = 9;
+pub const MSNdis_StatisticsInfo_ifHCOutUcastPkts_ID: u32 = 10;
+pub const MSNdis_StatisticsInfo_ifHCOutMulticastPkts_ID: u32 = 11;
+pub const MSNdis_StatisticsInfo_ifHCOutBroadcastPkts_ID: u32 = 12;
+pub const MSNdis_StatisticsInfo_ifOutErrors_ID: u32 = 13;
+pub const MSNdis_StatisticsInfo_ifOutDiscards_ID: u32 = 14;
+pub const MSNdis_StatisticsInfo_ifHCInUcastOctets_ID: u32 = 15;
+pub const MSNdis_StatisticsInfo_ifHCInMulticastOctets_ID: u32 = 16;
+pub const MSNdis_StatisticsInfo_ifHCInBroadcastOctets_ID: u32 = 17;
+pub const MSNdis_StatisticsInfo_ifHCOutUcastOctets_ID: u32 = 18;
+pub const MSNdis_StatisticsInfo_ifHCOutMulticastOctets_ID: u32 = 19;
+pub const MSNdis_StatisticsInfo_ifHCOutBroadcastOctets_ID: u32 = 20;
+pub const MSNdis_PortStateData_Header_ID: u32 = 1;
+pub const MSNdis_PortStateData_MediaConnectState_ID: u32 = 2;
+pub const MSNdis_PortStateData_XmitLinkSpeed_ID: u32 = 3;
+pub const MSNdis_PortStateData_RcvLinkSpeed_ID: u32 = 4;
+pub const MSNdis_PortStateData_Direction_ID: u32 = 5;
+pub const MSNdis_PortStateData_SendControlState_ID: u32 = 6;
+pub const MSNdis_PortStateData_RcvControlState_ID: u32 = 7;
+pub const MSNdis_PortStateData_SendAuthorizationState_ID: u32 = 8;
+pub const MSNdis_PortStateData_RcvAuthorizationState_ID: u32 = 9;
+pub const MSNdis_PortStateData_Flags_ID: u32 = 10;
+pub const MSNdis_PortAuthParameters_Header_ID: u32 = 1;
+pub const MSNdis_PortAuthParameters_SendControlState_ID: u32 = 2;
+pub const MSNdis_PortAuthParameters_RcvControlState_ID: u32 = 3;
+pub const MSNdis_PortAuthParameters_SendAuthorizationState_ID: u32 = 4;
+pub const MSNdis_PortAuthParameters_RcvAuthorizationState_ID: u32 = 5;
+pub const MSNdis_PortChar_Header_ID: u32 = 1;
+pub const MSNdis_PortChar_PortNumber_ID: u32 = 2;
+pub const MSNdis_PortChar_Flags_ID: u32 = 3;
+pub const MSNdis_PortChar_Type_ID: u32 = 4;
+pub const MSNdis_PortChar_MediaConnectState_ID: u32 = 5;
+pub const MSNdis_PortChar_XmitLinkSpeed_ID: u32 = 6;
+pub const MSNdis_PortChar_RcvLinkSpeed_ID: u32 = 7;
+pub const MSNdis_PortChar_Direction_ID: u32 = 8;
+pub const MSNdis_PortChar_SendControlState_ID: u32 = 9;
+pub const MSNdis_PortChar_RcvControlState_ID: u32 = 10;
+pub const MSNdis_PortChar_SendAuthorizationState_ID: u32 = 11;
+pub const MSNdis_PortChar_RcvAuthorizationState_ID: u32 = 12;
+pub const MSNdis_PortArray_Header_ID: u32 = 1;
+pub const MSNdis_PortArray_NumberOfPorts_ID: u32 = 2;
+pub const MSNdis_PortArray_OffsetFirstPort_ID: u32 = 3;
+pub const MSNdis_PortArray_ElementSize_ID: u32 = 4;
+pub const MSNdis_PortArray_Port_ID: u32 = 5;
+pub const MSNdis_PciDeviceProperty_Header_ID: u32 = 1;
+pub const MSNdis_PciDeviceProperty_DeviceType_ID: u32 = 2;
+pub const MSNdis_PciDeviceProperty_CurrentSpeedAndMode_ID: u32 = 3;
+pub const MSNdis_PciDeviceProperty_CurrentPayloadSize_ID: u32 = 4;
+pub const MSNdis_PciDeviceProperty_MaxPayloadSize_ID: u32 = 5;
+pub const MSNdis_PciDeviceProperty_MaxReadRequestSize_ID: u32 = 6;
+pub const MSNdis_PciDeviceProperty_CurrentLinkSpeed_ID: u32 = 7;
+pub const MSNdis_PciDeviceProperty_CurrentLinkWidth_ID: u32 = 8;
+pub const MSNdis_PciDeviceProperty_MaxLinkSpeed_ID: u32 = 9;
+pub const MSNdis_PciDeviceProperty_MaxLinkWidth_ID: u32 = 10;
+pub const MSNdis_WmiTcpLargeSendOffloadV1_IPv4_Encapsulation_ID: u32 = 1;
+pub const MSNdis_WmiTcpLargeSendOffloadV1_IPv4_MaxOffLoadSize_ID: u32 = 2;
+pub const MSNdis_WmiTcpLargeSendOffloadV1_IPv4_MinSegmentCount_ID: u32 = 3;
+pub const MSNdis_WmiTcpLargeSendOffloadV1_IPv4_TcpOptions_ID: u32 = 4;
+pub const MSNdis_WmiTcpLargeSendOffloadV1_IPv4_IpOptions_ID: u32 = 5;
+pub const MSNdis_WmiTcpLargeSendOffloadV1_WmiIPv4_ID: u32 = 1;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv4TransmitReceive_Encapsulation_ID: u32 = 1;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv4TransmitReceive_IpOptionsSupported_ID: u32 = 2;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv4TransmitReceive_TcpOptionsSupported_ID: u32 = 3;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv4TransmitReceive_TcpChecksum_ID: u32 = 4;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv4TransmitReceive_UdpChecksum_ID: u32 = 5;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv4TransmitReceive_IpChecksum_ID: u32 = 6;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv6TransmitReceive_Encapsulation_ID: u32 = 1;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv6TransmitReceive_IpExtensionHeadersSupported_ID: u32 = 2;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv6TransmitReceive_TcpOptionsSupported_ID: u32 = 3;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv6TransmitReceive_TcpChecksum_ID: u32 = 4;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv6TransmitReceive_UdpChecksum_ID: u32 = 5;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv4Transmit_ID: u32 = 1;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv4Receive_ID: u32 = 2;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv6Transmit_ID: u32 = 3;
+pub const MSNdis_WmiTcpIpChecksumOffload_IPv6Receive_ID: u32 = 4;
+pub const MSNdis_WmiIPSecOffloadV1_Supported_Encapsulation_ID: u32 = 1;
+pub const MSNdis_WmiIPSecOffloadV1_Supported_AhEspCombined_ID: u32 = 2;
+pub const MSNdis_WmiIPSecOffloadV1_Supported_TransportTunnelCombined_ID: u32 = 3;
+pub const MSNdis_WmiIPSecOffloadV1_Supported_IPv4Options_ID: u32 = 4;
+pub const MSNdis_WmiIPSecOffloadV1_Supported_Flags_ID: u32 = 5;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4AH_Md5_ID: u32 = 1;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4AH_Sha_1_ID: u32 = 2;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4AH_Transport_ID: u32 = 3;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4AH_Tunnel_ID: u32 = 4;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4AH_Send_ID: u32 = 5;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4AH_Receive_ID: u32 = 6;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4ESP_Des_ID: u32 = 1;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4ESP_Reserved_ID: u32 = 2;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4ESP_TripleDes_ID: u32 = 3;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4ESP_NullEsp_ID: u32 = 4;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4ESP_Transport_ID: u32 = 5;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4ESP_Tunnel_ID: u32 = 6;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4ESP_Send_ID: u32 = 7;
+pub const MSNdis_WmiIPSecOffloadV1_IPv4ESP_Receive_ID: u32 = 8;
+pub const MSNdis_WmiIPSecOffloadV1_WmiSupported_ID: u32 = 1;
+pub const MSNdis_WmiIPSecOffloadV1_WmiIPv4AH_ID: u32 = 2;
+pub const MSNdis_WmiIPSecOffloadV1_WmiIPv4ESP_ID: u32 = 3;
+pub const MSNdis_WmiTcpLargeSendOffloadV2_IPv4_Encapsulation_ID: u32 = 1;
+pub const MSNdis_WmiTcpLargeSendOffloadV2_IPv4_MaxOffLoadSize_ID: u32 = 2;
+pub const MSNdis_WmiTcpLargeSendOffloadV2_IPv4_MinSegmentCount_ID: u32 = 3;
+pub const MSNdis_WmiTcpLargeSendOffloadV2_IPv6_Encapsulation_ID: u32 = 1;
+pub const MSNdis_WmiTcpLargeSendOffloadV2_IPv6_MaxOffLoadSize_ID: u32 = 2;
+pub const MSNdis_WmiTcpLargeSendOffloadV2_IPv6_MinSegmentCount_ID: u32 = 3;
+pub const MSNdis_WmiTcpLargeSendOffloadV2_IPv6_IpExtensionHeadersSupported_ID: u32 = 4;
+pub const MSNdis_WmiTcpLargeSendOffloadV2_IPv6_TcpOptionsSupported_ID: u32 = 5;
+pub const MSNdis_WmiTcpLargeSendOffloadV2_WmiIPv4_ID: u32 = 1;
+pub const MSNdis_WmiTcpLargeSendOffloadV2_WmiIPv6_ID: u32 = 2;
+pub const MSNdis_WmiOffload_Header_ID: u32 = 1;
+pub const MSNdis_WmiOffload_Checksum_ID: u32 = 2;
+pub const MSNdis_WmiOffload_LsoV1_ID: u32 = 3;
+pub const MSNdis_WmiOffload_IPsecV1_ID: u32 = 4;
+pub const MSNdis_WmiOffload_LsoV2_ID: u32 = 5;
+pub const MSNdis_WmiOffload_Flags_ID: u32 = 6;
+pub const MSNdis_TcpOffloadParameters_Header_ID: u32 = 1;
+pub const MSNdis_TcpOffloadParameters_IPv4Checksum_ID: u32 = 2;
+pub const MSNdis_TcpOffloadParameters_TCPIPv4Checksum_ID: u32 = 3;
+pub const MSNdis_TcpOffloadParameters_UDPIPv4Checksum_ID: u32 = 4;
+pub const MSNdis_TcpOffloadParameters_TCPIPv6Checksum_ID: u32 = 5;
+pub const MSNdis_TcpOffloadParameters_UDPIPv6Checksum_ID: u32 = 6;
+pub const MSNdis_TcpOffloadParameters_LsoV1_ID: u32 = 7;
+pub const MSNdis_TcpOffloadParameters_IPsec_ID: u32 = 8;
+pub const MSNdis_TcpOffloadParameters_LsoV2IPv4_ID: u32 = 9;
+pub const MSNdis_TcpOffloadParameters_LsoV2IPv6_ID: u32 = 10;
+pub const MSNdis_TcpOffloadParameters_TcpConnectionIPv4_ID: u32 = 11;
+pub const MSNdis_TcpOffloadParameters_TcpConnectionIPv6_ID: u32 = 12;
+pub const MSNdis_TcpOffloadParameters_Flags_ID: u32 = 13;
+pub const MSNdis_WmiTcpConnectionOffload_Header_ID: u32 = 1;
+pub const MSNdis_WmiTcpConnectionOffload_Encapsulation_ID: u32 = 2;
+pub const MSNdis_WmiTcpConnectionOffload_SupportIp4_ID: u32 = 3;
+pub const MSNdis_WmiTcpConnectionOffload_SupportIp6_ID: u32 = 4;
+pub const MSNdis_WmiTcpConnectionOffload_SupportIp6ExtensionHeaders_ID: u32 = 5;
+pub const MSNdis_WmiTcpConnectionOffload_SupportSack_ID: u32 = 6;
+pub const MSNdis_WmiTcpConnectionOffload_TcpConnectionOffloadCapacity_ID: u32 = 7;
+pub const MSNdis_WmiTcpConnectionOffload_Flags_ID: u32 = 8;
+pub const MSNdis_WmiHDSplitCurrentConfig_Header_ID: u32 = 1;
+pub const MSNdis_WmiHDSplitCurrentConfig_HardwareCapabilities_ID: u32 = 2;
+pub const MSNdis_WmiHDSplitCurrentConfig_CurrentCapabilities_ID: u32 = 3;
+pub const MSNdis_WmiHDSplitCurrentConfig_HDSplitFlags_ID: u32 = 4;
+pub const MSNdis_WmiHDSplitCurrentConfig_HDSplitCombineFlags_ID: u32 = 5;
+pub const MSNdis_WmiHDSplitCurrentConfig_BackfillSize_ID: u32 = 6;
+pub const MSNdis_WmiHDSplitCurrentConfig_MaxHeaderSize_ID: u32 = 7;
+pub const MSNdis_HDSplitParameters_Header_ID: u32 = 1;
+pub const MSNdis_HDSplitParameters_HDSplitCombineFlags_ID: u32 = 2;
+pub const MSNdis_WmiReceiveScaleCapabilities_Header_ID: u32 = 1;
+pub const MSNdis_WmiReceiveScaleCapabilities_CapabilitiesFlags_ID: u32 = 2;
+pub const MSNdis_WmiReceiveScaleCapabilities_NumberOfInterruptMessages_ID: u32 = 3;
+pub const MSNdis_WmiReceiveScaleCapabilities_NumberOfReceiveQueues_ID: u32 = 4;
+pub const MSNdis_ReceiveFilterCapabilities_Header_ID: u32 = 1;
+pub const MSNdis_ReceiveFilterCapabilities_Flags_ID: u32 = 2;
+pub const MSNdis_ReceiveFilterCapabilities_EnabledFilterTypes_ID: u32 = 3;
+pub const MSNdis_ReceiveFilterCapabilities_EnabledQueueTypes_ID: u32 = 4;
+pub const MSNdis_ReceiveFilterCapabilities_NumQueues_ID: u32 = 5;
+pub const MSNdis_ReceiveFilterCapabilities_SupportedQueueProperties_ID: u32 = 6;
+pub const MSNdis_ReceiveFilterCapabilities_SupportedFilterTests_ID: u32 = 7;
+pub const MSNdis_ReceiveFilterCapabilities_SupportedHeaders_ID: u32 = 8;
+pub const MSNdis_ReceiveFilterCapabilities_SupportedMacHeaderFields_ID: u32 = 9;
+pub const MSNdis_ReceiveFilterCapabilities_MaxMacHeaderFilters_ID: u32 = 10;
+pub const MSNdis_ReceiveFilterCapabilities_MaxQueueGroups_ID: u32 = 11;
+pub const MSNdis_ReceiveFilterCapabilities_MaxQueuesPerQueueGroup_ID: u32 = 12;
+pub const MSNdis_ReceiveFilterCapabilities_MinLookaheadSplitSize_ID: u32 = 13;
+pub const MSNdis_ReceiveFilterCapabilities_MaxLookaheadSplitSize_ID: u32 = 14;
+pub const MSNdis_ReceiveFilterGlobalParameters_Header_ID: u32 = 1;
+pub const MSNdis_ReceiveFilterGlobalParameters_Flags_ID: u32 = 2;
+pub const MSNdis_ReceiveFilterGlobalParameters_EnabledFilterTypes_ID: u32 = 3;
+pub const MSNdis_ReceiveFilterGlobalParameters_EnabledQueueTypes_ID: u32 = 4;
+pub const MSNdis_CountedString_Length_ID: u32 = 1;
+pub const MSNdis_CountedString_String_ID: u32 = 2;
+pub const MSNdis_ReceiveFilterInfo_Header_ID: u32 = 1;
+pub const MSNdis_ReceiveFilterInfo_Flags_ID: u32 = 2;
+pub const MSNdis_ReceiveFilterInfo_FilterType_ID: u32 = 3;
+pub const MSNdis_ReceiveFilterInfo_FilterId_ID: u32 = 4;
+pub const MSNdis_ReceiveFilterInfoArray_Header_ID: u32 = 1;
+pub const MSNdis_ReceiveFilterInfoArray_QueueId_ID: u32 = 2;
+pub const MSNdis_ReceiveFilterInfoArray_FirstElementOffset_ID: u32 = 3;
+pub const MSNdis_ReceiveFilterInfoArray_NumElements_ID: u32 = 4;
+pub const MSNdis_ReceiveFilterInfoArray_ElementSize_ID: u32 = 5;
+pub const MSNdis_ReceiveFilterInfoArray_Filter_ID: u32 = 6;
+pub const MSNdis_ReceiveFilterFieldParameters_Header_ID: u32 = 1;
+pub const MSNdis_ReceiveFilterFieldParameters_Flags_ID: u32 = 2;
+pub const MSNdis_ReceiveFilterFieldParameters_FrameHeader_ID: u32 = 3;
+pub const MSNdis_ReceiveFilterFieldParameters_ReceiveFilterTest_ID: u32 = 4;
+pub const MSNdis_ReceiveFilterFieldParameters_MacHeaderField_ID: u32 = 5;
+pub const MSNdis_ReceiveFilterFieldParameters_FieldByteArrayValue_ID: u32 = 6;
+pub const MSNdis_ReceiveFilterFieldParameters_ResultByteArrayValue_ID: u32 = 7;
+pub const MSNdis_ReceiveFilterParameters_Header_ID: u32 = 1;
+pub const MSNdis_ReceiveFilterParameters_Flags_ID: u32 = 2;
+pub const MSNdis_ReceiveFilterParameters_FilterType_ID: u32 = 3;
+pub const MSNdis_ReceiveFilterParameters_QueueId_ID: u32 = 4;
+pub const MSNdis_ReceiveFilterParameters_FilterId_ID: u32 = 5;
+pub const MSNdis_ReceiveFilterParameters_FieldParametersArrayOffset_ID: u32 = 6;
+pub const MSNdis_ReceiveFilterParameters_FieldParametersArrayNumElements_ID: u32 = 7;
+pub const MSNdis_ReceiveFilterParameters_FieldParametersArrayElementSize_ID: u32 = 8;
+pub const MSNdis_ReceiveFilterParameters_RequestedFilterIdBitCount_ID: u32 = 9;
+pub const MSNdis_ReceiveFilterParameters_FieldParameters_ID: u32 = 10;
+pub const MSNdis_NicSwitchCapabilities_Header_ID: u32 = 1;
+pub const MSNdis_NicSwitchCapabilities_Flags_ID: u32 = 2;
+pub const MSNdis_NicSwitchCapabilities_NdisReserved1_ID: u32 = 3;
+pub const MSNdis_NicSwitchCapabilities_NumTotalMacAddresses_ID: u32 = 4;
+pub const MSNdis_NicSwitchCapabilities_NumMacAddressesPerPort_ID: u32 = 5;
+pub const MSNdis_NicSwitchCapabilities_NumVlansPerPort_ID: u32 = 6;
+pub const MSNdis_NicSwitchCapabilities_NdisReserved2_ID: u32 = 7;
+pub const MSNdis_NicSwitchCapabilities_NdisReserved3_ID: u32 = 8;
+pub const MSNdis_GroupAffinity_Mask_ID: u32 = 1;
+pub const MSNdis_GroupAffinity_Group_ID: u32 = 2;
+pub const MSNdis_GroupAffinity_Reserved_ID: u32 = 3;
+pub const MSNdis_ReceiveQueueParameters_Header_ID: u32 = 1;
+pub const MSNdis_ReceiveQueueParameters_Flags_ID: u32 = 2;
+pub const MSNdis_ReceiveQueueParameters_QueueType_ID: u32 = 3;
+pub const MSNdis_ReceiveQueueParameters_QueueId_ID: u32 = 4;
+pub const MSNdis_ReceiveQueueParameters_QueueGroupId_ID: u32 = 5;
+pub const MSNdis_ReceiveQueueParameters_ProcessorAffinity_ID: u32 = 6;
+pub const MSNdis_ReceiveQueueParameters_NumSuggestedReceiveBuffers_ID: u32 = 7;
+pub const MSNdis_ReceiveQueueParameters_MSIXTableEntry_ID: u32 = 8;
+pub const MSNdis_ReceiveQueueParameters_LookaheadSize_ID: u32 = 9;
+pub const MSNdis_ReceiveQueueParameters_VmName_ID: u32 = 10;
+pub const MSNdis_ReceiveQueueParameters_QueueName_ID: u32 = 11;
+pub const MSNdis_ReceiveQueueInfo_Header_ID: u32 = 1;
+pub const MSNdis_ReceiveQueueInfo_Flags_ID: u32 = 2;
+pub const MSNdis_ReceiveQueueInfo_QueueType_ID: u32 = 3;
+pub const MSNdis_ReceiveQueueInfo_QueueId_ID: u32 = 4;
+pub const MSNdis_ReceiveQueueInfo_QueueGroupId_ID: u32 = 5;
+pub const MSNdis_ReceiveQueueInfo_QueueState_ID: u32 = 6;
+pub const MSNdis_ReceiveQueueInfo_ProcessorAffinity_ID: u32 = 7;
+pub const MSNdis_ReceiveQueueInfo_NumSuggestedReceiveBuffers_ID: u32 = 8;
+pub const MSNdis_ReceiveQueueInfo_MSIXTableEntry_ID: u32 = 9;
+pub const MSNdis_ReceiveQueueInfo_LookaheadSize_ID: u32 = 10;
+pub const MSNdis_ReceiveQueueInfo_VmName_ID: u32 = 11;
+pub const MSNdis_ReceiveQueueInfo_QueueName_ID: u32 = 12;
+pub const MSNdis_ReceiveQueueInfoArray_Header_ID: u32 = 1;
+pub const MSNdis_ReceiveQueueInfoArray_FirstElementOffset_ID: u32 = 2;
+pub const MSNdis_ReceiveQueueInfoArray_NumElements_ID: u32 = 3;
+pub const MSNdis_ReceiveQueueInfoArray_ElementSize_ID: u32 = 4;
+pub const MSNdis_ReceiveQueueInfoArray_Queue_ID: u32 = 5;
+pub const WmiQueryLinkState: u32 = 1;
+pub const WmiQueryLinkState_IN_Header_ID: u32 = 1;
+pub const WmiQueryLinkState_OUT_LinkState_ID: u32 = 2;
+pub const WmiQueryInterruptModeration: u32 = 1;
+pub const WmiQueryInterruptModeration_IN_Header_ID: u32 = 1;
+pub const WmiQueryInterruptModeration_OUT_InterruptModeration_ID: u32 = 2;
+pub const WmiSetInterruptModeration: u32 = 1;
+pub const WmiSetInterruptModeration_IN_MethodHeader_ID: u32 = 1;
+pub const WmiSetInterruptModeration_IN_InterruptModeration_ID: u32 = 2;
+pub const WmiSetInterruptModeration_OUT_OutputInfo_ID: u32 = 3;
+pub const WmiSetLinkParameters: u32 = 1;
+pub const WmiSetLinkParameters_IN_MethodHeader_ID: u32 = 1;
+pub const WmiSetLinkParameters_IN_LinkParameters_ID: u32 = 2;
+pub const WmiSetLinkParameters_OUT_OutputInfo_ID: u32 = 3;
+pub const WmiQueryStatisticsInfo: u32 = 1;
+pub const WmiQueryStatisticsInfo_IN_Header_ID: u32 = 1;
+pub const WmiQueryStatisticsInfo_OUT_StatisticsInfo_ID: u32 = 2;
+pub const WmiQueryPortState: u32 = 1;
+pub const WmiQueryPortState_IN_Header_ID: u32 = 1;
+pub const WmiQueryPortState_OUT_PortState_ID: u32 = 2;
+pub const WmiEnumeratePorts: u32 = 1;
+pub const WmiEnumeratePorts_IN_Header_ID: u32 = 1;
+pub const WmiEnumeratePorts_OUT_Ports_ID: u32 = 2;
+pub const WmiSetPortParameters: u32 = 1;
+pub const WmiSetPortParameters_IN_MethodHeader_ID: u32 = 1;
+pub const WmiSetPortParameters_IN_PortParameters_ID: u32 = 2;
+pub const WmiSetPortParameters_OUT_OutputInfo_ID: u32 = 3;
+pub const WmiQueryPciDeviceCustomProperty: u32 = 1;
+pub const WmiQueryPciDeviceCustomProperty_IN_Header_ID: u32 = 1;
+pub const WmiQueryPciDeviceCustomProperty_OUT_PciDeviceProperty_ID: u32 = 2;
+pub const MSNdis_EnumerateAdapterEx_EnumerateAdapter_ID: u32 = 1;
+pub const WmiQueryCurrentOffloadConfig: u32 = 1;
+pub const WmiQueryCurrentOffloadConfig_IN_Header_ID: u32 = 1;
+pub const WmiQueryCurrentOffloadConfig_OUT_Offload_ID: u32 = 2;
+pub const WmiQueryHardwareOffloadConfig: u32 = 1;
+pub const WmiQueryHardwareOffloadConfig_IN_Header_ID: u32 = 1;
+pub const WmiQueryHardwareOffloadConfig_OUT_Offload_ID: u32 = 2;
+pub const WmiSetTcpOffloadParameters: u32 = 1;
+pub const WmiSetTcpOffloadParameters_IN_MethodHeader_ID: u32 = 1;
+pub const WmiSetTcpOffloadParameters_IN_TcpOffloadParameters_ID: u32 = 2;
+pub const WmiSetTcpOffloadParameters_OUT_OutputInfo_ID: u32 = 3;
+pub const WmiQueryTcpConnectionOffloadCurrentConfig: u32 = 1;
+pub const WmiQueryTcpConnectionOffloadCurrentConfig_IN_Header_ID: u32 = 1;
+pub const WmiQueryTcpConnectionOffloadCurrentConfig_OUT_Offload_ID: u32 = 2;
+pub const WmiQueryTcpConnectionOffloadHardwareConfig: u32 = 1;
+pub const WmiQueryTcpConnectionOffloadHardwareConfig_IN_Header_ID: u32 = 1;
+pub const WmiQueryTcpConnectionOffloadHardwareConfig_OUT_Offload_ID: u32 = 2;
+pub const WmiQueryReceiveScaleCapabilities: u32 = 1;
+pub const WmiQueryReceiveScaleCapabilities_IN_Header_ID: u32 = 1;
+pub const WmiQueryReceiveScaleCapabilities_OUT_RssCaps_ID: u32 = 2;
+pub const WmiQueryHDSplitCurrentConfig: u32 = 1;
+pub const WmiQueryHDSplitCurrentConfig_IN_Header_ID: u32 = 1;
+pub const WmiQueryHDSplitCurrentConfig_OUT_HdSplitCurrentConfig_ID: u32 = 2;
+pub const WmiSetHDSplitParameters: u32 = 1;
+pub const WmiSetHDSplitParameters_IN_MethodHeader_ID: u32 = 1;
+pub const WmiSetHDSplitParameters_IN_HDSplitParameters_ID: u32 = 2;
+pub const WmiSetHDSplitParameters_OUT_OutputInfo_ID: u32 = 3;
+pub const WmiQueryPhysicalMediumTypeEx: u32 = 1;
+pub const WmiQueryPhysicalMediumTypeEx_IN_Header_ID: u32 = 1;
+pub const WmiQueryPhysicalMediumTypeEx_OUT_NdisPhysicalMediumTypeEx_ID: u32 = 2;
+pub const WmiQueryReceiveFilterHardwareCapabilities: u32 = 1;
+pub const WmiQueryReceiveFilterHardwareCapabilities_IN_Header_ID: u32 = 1;
+pub const WmiQueryReceiveFilterHardwareCapabilities_OUT_ReceiveFilterHardwareCapabilities_ID: u32 = 2;
+pub const WmiQueryReceiveFilterGlobalParameters: u32 = 1;
+pub const WmiQueryReceiveFilterGlobalParameters_IN_Header_ID: u32 = 1;
+pub const WmiQueryReceiveFilterGlobalParameters_OUT_ReceiveFilterGlobalParameters_ID: u32 = 2;
+pub const WmiEnumReceiveFilters: u32 = 1;
+pub const WmiEnumReceiveFilters_IN_Header_ID: u32 = 1;
+pub const WmiEnumReceiveFilters_IN_ReceiveFilterInfoArray_ID: u32 = 2;
+pub const WmiEnumReceiveFilters_OUT_ReceiveFilterInfoArray_ID: u32 = 2;
+pub const WmiQueryReceiveFilterParameters: u32 = 1;
+pub const WmiQueryReceiveFilterParameters_IN_Header_ID: u32 = 1;
+pub const WmiQueryReceiveFilterParameters_IN_ReceiveFilterParameters_ID: u32 = 2;
+pub const WmiQueryReceiveFilterParameters_OUT_ReceiveFilterParameters_ID: u32 = 2;
+pub const WmiQueryReceiveFilterCurrentCapabilities: u32 = 1;
+pub const WmiQueryReceiveFilterCurrentCapabilities_IN_Header_ID: u32 = 1;
+pub const WmiQueryReceiveFilterCurrentCapabilities_OUT_ReceiveFilterCurrentCapabilities_ID: u32 = 2;
+pub const WmiQueryNICSwitchHardwareCapabilities: u32 = 1;
+pub const WmiQueryNICSwitchHardwareCapabilities_IN_Header_ID: u32 = 1;
+pub const WmiQueryNICSwitchHardwareCapabilities_OUT_NicSwitchHardwareCapabilities_ID: u32 = 2;
+pub const WmiQueryNICSwitchCurrentCapabilities: u32 = 1;
+pub const WmiQueryNICSwitchCurrentCapabilities_IN_Header_ID: u32 = 1;
+pub const WmiQueryNICSwitchCurrentCapabilities_OUT_NicSwitchCurrentCapabilities_ID: u32 = 2;
+pub const WmiQueryReceiveQueueParameters: u32 = 1;
+pub const WmiQueryReceiveQueueParameters_IN_Header_ID: u32 = 1;
+pub const WmiQueryReceiveQueueParameters_IN_ReceiveQueueParameters_ID: u32 = 2;
+pub const WmiQueryReceiveQueueParameters_OUT_ReceiveQueueParameters_ID: u32 = 2;
+pub const WmiEnumReceiveQueues: u32 = 1;
+pub const WmiEnumReceiveQueues_IN_Header_ID: u32 = 1;
+pub const WmiEnumReceiveQueues_IN_ReceiveQueueInfoArray_ID: u32 = 2;
+pub const WmiEnumReceiveQueues_OUT_ReceiveQueueInfoArray_ID: u32 = 2;
+pub const MSNdis_80211_BaseServiceSetIdentifier_Ndis80211MacAddress_ID: u32 = 1;
+pub const MSNdis_80211_ServiceSetIdentifier_Ndis80211SsId_ID: u32 = 1;
+pub const MSNdis_80211_NetworkType_Ndis80211NetworkType_ID: u32 = 1;
+pub const MSNdis_80211_NetworkTypesSupported_NumberOfItems_ID: u32 = 1;
+pub const MSNdis_80211_NetworkTypesSupported_Ndis80211NetworkTypes_ID: u32 = 2;
+pub const MSNdis_80211_NetworkTypeInUse_Ndis80211NetworkTypeInUse_ID: u32 = 1;
+pub const MSNdis_80211_PowerMode_Ndis80211PowerMode_ID: u32 = 1;
+pub const MSNdis_80211_TransmitPowerLevel_Ndis80211TransmitPowerLevel_ID: u32 = 1;
+pub const MSNdis_80211_ReceivedSignalStrength_Ndis80211ReceivedSignalStrength_ID: u32 = 1;
+pub const MSNdis_80211_ReceivedSignalStrengthEventTrigger_Ndis80211ReceivedSignalStrengthTrigger_ID: u32 = 1;
+pub const MSNdis_80211_NetworkInfrastructure_Ndis80211NetworkInfrastructure_ID: u32 = 1;
+pub const MSNdis_80211_ConfigurationFH_FHLength_ID: u32 = 1;
+pub const MSNdis_80211_ConfigurationFH_HopPattern_ID: u32 = 2;
+pub const MSNdis_80211_ConfigurationFH_HopSet_ID: u32 = 3;
+pub const MSNdis_80211_ConfigurationFH_DwellTime_ID: u32 = 4;
+pub const MSNdis_80211_ConfigurationInfo_ConfigLength_ID: u32 = 1;
+pub const MSNdis_80211_ConfigurationInfo_BeaconPeriod_ID: u32 = 2;
+pub const MSNdis_80211_ConfigurationInfo_ATIMWindow_ID: u32 = 3;
+pub const MSNdis_80211_ConfigurationInfo_DSConfig_ID: u32 = 4;
+pub const MSNdis_80211_ConfigurationInfo_FHConfig_ID: u32 = 5;
+pub const MSNdis_80211_WLanBssId_Ndis80211WLanBssIdLength_ID: u32 = 1;
+pub const MSNdis_80211_WLanBssId_Ndis80211MacAddress_ID: u32 = 2;
+pub const MSNdis_80211_WLanBssId_Reserved_ID: u32 = 3;
+pub const MSNdis_80211_WLanBssId_Ndis80211SsIdLength_ID: u32 = 4;
+pub const MSNdis_80211_WLanBssId_Ndis80211SsId_ID: u32 = 5;
+pub const MSNdis_80211_WLanBssId_Ndis80211Privacy_ID: u32 = 6;
+pub const MSNdis_80211_WLanBssId_Ndis80211Rssi_ID: u32 = 7;
+pub const MSNdis_80211_WLanBssId_Ndis80211NetworkTypeInUse_ID: u32 = 8;
+pub const MSNdis_80211_WLanBssId_Ndis80211Configuration_ID: u32 = 9;
+pub const MSNdis_80211_WLanBssId_Ndis80211InfrastructureMode_ID: u32 = 10;
+pub const MSNdis_80211_WLanBssId_Ndis80211SupportedRate_ID: u32 = 11;
+pub const MSNdis_80211_BSSIList_NumberOfItems_ID: u32 = 1;
+pub const MSNdis_80211_BSSIList_Ndis80211BSSIList_ID: u32 = 2;
+pub const MSNdis_80211_InfrastructureMode_Ndis80211InfrastructureMode_ID: u32 = 1;
+pub const MSNdis_80211_FragmentationThreshold_Ndis80211FragmentationThreshold_ID: u32 = 1;
+pub const MSNdis_80211_RTSThreshold_Ndis80211RTSThreshold_ID: u32 = 1;
+pub const MSNdis_80211_NumberOfAntennas_Ndis80211NumberOfAntennas_ID: u32 = 1;
+pub const MSNdis_80211_ReceiveAntennaSelected_Ndis80211ReceiveAntennaSelected_ID: u32 = 1;
+pub const MSNdis_80211_TransmitAntennaSelected_Ndis80211TransmitAntennaSelected_ID: u32 = 1;
+pub const MSNdis_80211_DataRates_Ndis80211DataRate_ID: u32 = 1;
+pub const MSNdis_80211_DesiredDataRates_Ndis80211DesiredRate_ID: u32 = 1;
+pub const MSNdis_80211_Configuration_Ndis80211Config_ID: u32 = 1;
+pub const MSNdis_80211_Statistics_StatisticsLength_ID: u32 = 1;
+pub const MSNdis_80211_Statistics_TransmittedFragmentCount_ID: u32 = 2;
+pub const MSNdis_80211_Statistics_MulticastTransmittedFrameCount_ID: u32 = 3;
+pub const MSNdis_80211_Statistics_FailedCount_ID: u32 = 4;
+pub const MSNdis_80211_Statistics_RetryCount_ID: u32 = 5;
+pub const MSNdis_80211_Statistics_MultipleRetryCount_ID: u32 = 6;
+pub const MSNdis_80211_Statistics_RTSSuccessCount_ID: u32 = 7;
+pub const MSNdis_80211_Statistics_RTSFailureCount_ID: u32 = 8;
+pub const MSNdis_80211_Statistics_ACKFailureCount_ID: u32 = 9;
+pub const MSNdis_80211_Statistics_FrameDuplicateCount_ID: u32 = 10;
+pub const MSNdis_80211_Statistics_ReceivedFragmentCount_ID: u32 = 11;
+pub const MSNdis_80211_Statistics_MulticastReceivedFrameCount_ID: u32 = 12;
+pub const MSNdis_80211_Statistics_FCSErrorCount_ID: u32 = 13;
+pub const MSNdis_80211_AddWEP_Length_ID: u32 = 1;
+pub const MSNdis_80211_AddWEP_KeyIndex_ID: u32 = 2;
+pub const MSNdis_80211_AddWEP_KeyLength_ID: u32 = 3;
+pub const MSNdis_80211_AddWEP_KeyMaterial_ID: u32 = 4;
+pub const MSNdis_80211_RemoveWEP_Ndis80211KeyIndex_ID: u32 = 1;
+pub const MSNdis_80211_Disassociate_UnusedParameter_ID: u32 = 1;
+pub const MSNdis_80211_BssIdListScan_UnusedParameter_ID: u32 = 1;
+pub const MSNdis_80211_AuthenticationMode_Ndis80211AuthenticationMode_ID: u32 = 1;
+pub const MSNdis_80211_PrivacyFilter_Ndis80211PrivacyFilter_ID: u32 = 1;
+pub const MSNdis_80211_WEPStatus_Ndis80211WEPStatus_ID: u32 = 1;
+pub const MSNdis_80211_ReloadDefaults_Ndis80211ReloadDefaults_ID: u32 = 1;
+pub const MSNdis_PMAdminConfigState_NdisPMAdminConfigState_ID: u32 = 1;
+pub const MSNdis_PMAdminConfigParam_Header_ID: u32 = 1;
+pub const MSNdis_PMAdminConfigParam_WakeOnPattern_ID: u32 = 2;
+pub const MSNdis_PMAdminConfigParam_WakeOnMagicPacket_ID: u32 = 3;
+pub const MSNdis_PMAdminConfigParam_DeviceSleepOnDisconnect_ID: u32 = 4;
+pub const MSNdis_PMAdminConfigParam_PMARPOffload_ID: u32 = 5;
+pub const MSNdis_PMAdminConfigParam_PMNDOffload_ID: u32 = 6;
+pub const MSNdis_PMAdminConfigParam_PMWiFiRekeyOffload_ID: u32 = 7;
+pub const MSNdis_PMAdminConfig_PMAdminConfigParam_ID: u32 = 1;
+pub const MSNdis_PMCapabilityState_NdisPMCapabilityState_ID: u32 = 1;
+pub const MSNdis_PMCapabilitiesParam_Header_ID: u32 = 1;
+pub const MSNdis_PMCapabilitiesParam_WakeOnPattern_ID: u32 = 2;
+pub const MSNdis_PMCapabilitiesParam_WakeOnMagicPacket_ID: u32 = 3;
+pub const MSNdis_PMCapabilitiesParam_DeviceSleepOnDisconnect_ID: u32 = 4;
+pub const MSNdis_PMCapabilitiesParam_PMARPOffload_ID: u32 = 5;
+pub const MSNdis_PMCapabilitiesParam_PMNDOffload_ID: u32 = 6;
+pub const MSNdis_PMCapabilitiesParam_PMWiFiRekeyOffload_ID: u32 = 7;
+pub const MSNdis_PMCapabilities_PMCapabilitiesParam_ID: u32 = 1;
+pub const MSNdis_StatusMediaSpecificIndication_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusMediaSpecificIndication_NdisStatusMediaSpecificIndication_ID: u32 = 2;
+pub const MSNdis_StatusLinkSpeedChange_NdisStatusLinkSpeedChange_ID: u32 = 1;
+pub const MSNdis_StatusProtocolBind_Transport_ID: u32 = 1;
+pub const MSNdis_StatusProtocolUnbind_Transport_ID: u32 = 1;
+pub const MSNdis_StatusDevicePowerOn_Device_ID: u32 = 1;
+pub const MSNdis_StatusDevicePowerOff_Device_ID: u32 = 1;
+pub const MSNdis_StatusDevicePowerOnEx_Device_ID: u32 = 1;
+pub const MSNdis_StatusDevicePowerOffEx_Device_ID: u32 = 1;
+pub const MSNdis_StatusTaskOffloadChange_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusTaskOffloadChange_TaskOffloadCapabilities_ID: u32 = 2;
+pub const MSNdis_StatusPacketFilterChange_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusPacketFilterChange_NdisPacketFilterStatusIndication_ID: u32 = 2;
+pub const MSNdis_StatusNetworkChange_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusNetworkChange_NdisNetworkChangeStatusIndication_ID: u32 = 2;
+pub const MSNdis_StatusOperationalStatus_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusOperationalStatus_NdisOperationalStatusStatusIndication_ID: u32 = 2;
+pub const MSNdis_StatusLinkState_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusLinkState_NdisLinkStateStatusIndication_ID: u32 = 2;
+pub const MSNdis_StatusPortState_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusPortState_NdisPortStateStatusIndication_ID: u32 = 2;
+pub const MSNdis_StatusExternalConnectivityChange_NdisMediaConnectStatus_ID: u32 = 1;
+pub const MSNdis_StatusMediaSpecificIndicationEx_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusMediaSpecificIndicationEx_NdisStatusMediaSpecificIndication_ID: u32 = 2;
+pub const MSNdis_StatusHDSplitCurrentConfig_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusHDSplitCurrentConfig_HDSplitCurrentConfig_ID: u32 = 2;
+pub const MSNdis_StatusDot11ScanConfirm_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11ScanConfirm_NdisStatusDot11ScanConfirmIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11MPDUMaxLengthChange_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11MPDUMaxLengthChange_NdisStatusDot11MPDUMaxLengthChangeIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11AssociationStart_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11AssociationStart_NdisStatusDot11AssociationStartIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11AssociationCompletion_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11AssociationCompletion_NdisStatusDot11AssociationCompletionIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11ConnectionStart_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11ConnectionStart_NdisStatusDot11ConnectionStartIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11ConnectionCompletion_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11ConnectionCompletion_NdisStatusDot11ConnectionCompletionIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11RoamingStart_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11RoamingStart_NdisStatusDot11RoamingStartIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11RoamingCompletion_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11RoamingCompletion_NdisStatusDot11RoamingCompletionIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11Disassociation_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11Disassociation_NdisStatusDot11DisassociationIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11TkipmicFailure_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11TkipmicFailure_NdisStatusDot11TkipmicFailureIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11PmkidCandidateList_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11PmkidCandidateList_NdisStatusDot11PmkidCandidateListIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11PhyStateChange_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11PhyStateChange_NdisStatusDot11PhyStateChangeIndication_ID: u32 = 2;
+pub const MSNdis_StatusDot11LinkQuality_NumberElements_ID: u32 = 1;
+pub const MSNdis_StatusDot11LinkQuality_NdisStatusDot11LinkQualityIndication_ID: u32 = 2;
+pub const KEYBOARD_PORT_WMI_STD_I8042: u32 = 0;
+pub const KEYBOARD_PORT_WMI_STD_SERIAL: u32 = 1;
+pub const KEYBOARD_PORT_WMI_STD_USB: u32 = 2;
+pub const KEYBOARD_PORT_WMI_STD_DATA_ConnectorType_ID: u32 = 1;
+pub const KEYBOARD_PORT_WMI_STD_DATA_DataQueueSize_ID: u32 = 2;
+pub const KEYBOARD_PORT_WMI_STD_DATA_ErrorCount_ID: u32 = 3;
+pub const KEYBOARD_PORT_WMI_STD_DATA_FunctionKeys_ID: u32 = 4;
+pub const KEYBOARD_PORT_WMI_STD_DATA_Indicators_ID: u32 = 5;
+pub const KEYBOARD_ID_EX_Type_ID: u32 = 1;
+pub const KEYBOARD_ID_EX_Subtype_ID: u32 = 2;
+pub const POINTER_PORT_WMI_STD_I8042: u32 = 0;
+pub const POINTER_PORT_WMI_STD_SERIAL: u32 = 1;
+pub const POINTER_PORT_WMI_STD_USB: u32 = 2;
+pub const POINTER_PORT_WMI_STD_DATA_ConnectorType_ID: u32 = 1;
+pub const POINTER_PORT_WMI_STD_DATA_DataQueueSize_ID: u32 = 2;
+pub const POINTER_PORT_WMI_STD_DATA_ErrorCount_ID: u32 = 3;
+pub const POINTER_PORT_WMI_STD_DATA_Buttons_ID: u32 = 4;
+pub const POINTER_PORT_WMI_STD_MOUSE: u32 = 0;
+pub const POINTER_PORT_WMI_STD_POINTER: u32 = 1;
+pub const POINTER_PORT_WMI_ABSOLUTE_POINTER: u32 = 2;
+pub const POINTER_PORT_WMI_TABLET: u32 = 3;
+pub const POINTER_PORT_WMI_TOUCH_SCRENE: u32 = 4;
+pub const POINTER_PORT_WMI_PEN: u32 = 5;
+pub const POINTER_PORT_WMI_TRACK_BALL: u32 = 6;
+pub const POINTER_PORT_WMI_OTHER: u32 = 256;
+pub const POINTER_PORT_WMI_STD_DATA_HardwareType_ID: u32 = 5;
+pub const MSMouse_ClassInformation_DeviceId_ID: u32 = 1;
+pub const MSKeyboard_ClassInformation_DeviceId_ID: u32 = 1;
+pub const AGP_STD_DATA_ApertureBase_ID: u32 = 1;
+pub const AGP_STD_DATA_ApertureLength_ID: u32 = 2;
+pub const AGP_STD_DATA_AgpStatus_ID: u32 = 3;
+pub const AGP_STD_DATA_AgpCommand_ID: u32 = 4;
+pub const MSAcpi_ThermalZoneTemperature_ThermalStamp_ID: u32 = 1;
+pub const MSAcpi_ThermalZoneTemperature_ThermalConstant1_ID: u32 = 2;
+pub const MSAcpi_ThermalZoneTemperature_ThermalConstant2_ID: u32 = 3;
+pub const MSAcpi_ThermalZoneTemperature_Reserved_ID: u32 = 4;
+pub const MSAcpi_ThermalZoneTemperature_SamplingPeriod_ID: u32 = 5;
+pub const MSAcpi_ThermalZoneTemperature_CurrentTemperature_ID: u32 = 6;
+pub const MSAcpi_ThermalZoneTemperature_PassiveTripPoint_ID: u32 = 7;
+pub const MSAcpi_ThermalZoneTemperature_CriticalTripPoint_ID: u32 = 8;
+pub const MSAcpi_ThermalZoneTemperature_ActiveTripPointCount_ID: u32 = 9;
+pub const MSAcpi_ThermalZoneTemperature_ActiveTripPoint_ID: u32 = 10;
+pub const WMI_DISK_GEOMETRY_Cylinders_ID: u32 = 1;
+pub const WMI_DISK_GEOMETRY_MediaType_ID: u32 = 2;
+pub const WMI_DISK_GEOMETRY_TracksPerCylinder_ID: u32 = 3;
+pub const WMI_DISK_GEOMETRY_SectorsPerTrack_ID: u32 = 4;
+pub const WMI_DISK_GEOMETRY_BytesPerSector_ID: u32 = 5;
+pub const WMI_DISK_PERFORMANCE_BytesRead_ID: u32 = 1;
+pub const WMI_DISK_PERFORMANCE_BytesWritten_ID: u32 = 2;
+pub const WMI_DISK_PERFORMANCE_ReadTime_ID: u32 = 3;
+pub const WMI_DISK_PERFORMANCE_WriteTime_ID: u32 = 4;
+pub const WMI_DISK_PERFORMANCE_IdleTime_ID: u32 = 5;
+pub const WMI_DISK_PERFORMANCE_ReadCount_ID: u32 = 6;
+pub const WMI_DISK_PERFORMANCE_WriteCount_ID: u32 = 7;
+pub const WMI_DISK_PERFORMANCE_QueueDepth_ID: u32 = 8;
+pub const WMI_DISK_PERFORMANCE_SplitCount_ID: u32 = 9;
+pub const WMI_DISK_PERFORMANCE_QueryTime_ID: u32 = 10;
+pub const WMI_DISK_PERFORMANCE_StorageDeviceNumber_ID: u32 = 11;
+pub const WMI_DISK_PERFORMANCE_StorageManagerName_ID: u32 = 12;
+pub const MSDiskDriver_Performance_PerfData_ID: u32 = 1;
+pub const MSDiskDriver_Performance_DeviceName_ID: u32 = 2;
+pub const STORAGE_FAILURE_PREDICT_STATUS_Reason_ID: u32 = 1;
+pub const STORAGE_FAILURE_PREDICT_STATUS_PredictFailure_ID: u32 = 2;
+pub const STORAGE_FAILURE_PREDICT_DATA_Length_ID: u32 = 1;
+pub const STORAGE_FAILURE_PREDICT_DATA_VendorSpecific_ID: u32 = 2;
+pub const ATAPI_FAILURE_PREDICT_DATA_Length_ID: u32 = 1;
+pub const ATAPI_FAILURE_PREDICT_DATA_VendorSpecific_ID: u32 = 2;
+pub const ATAPI_FAILURE_PREDICT_DATA_OfflineCollectionStatus_ID: u32 = 3;
+pub const ATAPI_FAILURE_PREDICT_DATA_SelfTestStatus_ID: u32 = 4;
+pub const ATAPI_FAILURE_PREDICT_DATA_TotalTime_ID: u32 = 5;
+pub const ATAPI_FAILURE_PREDICT_DATA_VendorSpecific2_ID: u32 = 6;
+pub const ATAPI_FAILURE_PREDICT_DATA_OfflineCollectCapability_ID: u32 = 7;
+pub const ATAPI_FAILURE_PREDICT_DATA_SmartCapability_ID: u32 = 8;
+pub const ATAPI_FAILURE_PREDICT_DATA_ErrorLogCapability_ID: u32 = 9;
+pub const ATAPI_FAILURE_PREDICT_DATA_VendorSpecific3_ID: u32 = 10;
+pub const ATAPI_FAILURE_PREDICT_DATA_ShortPollTimeInMinutes_ID: u32 = 11;
+pub const ATAPI_FAILURE_PREDICT_DATA_ExtendedPollTimeInMinutes_ID: u32 = 12;
+pub const ATAPI_FAILURE_PREDICT_DATA_Reserved_ID: u32 = 13;
+pub const ATAPI_FAILURE_PREDICT_DATA_VendorSpecific4_ID: u32 = 14;
+pub const ATAPI_FAILURE_PREDICT_DATA_Checksum_ID: u32 = 15;
+pub const STORAGE_FAILURE_PREDICT_THRESHOLDS_VendorSpecific_ID: u32 = 1;
+pub const STORAGE_FAILURE_PREDICT_EVENT_Length_ID: u32 = 1;
+pub const STORAGE_FAILURE_PREDICT_EVENT_VendorSpecific_ID: u32 = 2;
+pub const AllowPerformanceHit: u32 = 1;
+pub const ALLOW_PERFORMANCE_HIT_IN_Allow_ID: u32 = 1;
+pub const EnableDisableHardwareFailurePrediction: u32 = 2;
+pub const ENABLE_DISABLE_FP_IN_Enable_ID: u32 = 1;
+pub const EnableDisableFailurePredictionPolling: u32 = 3;
+pub const ENABLE_DISABLE_FP_POLLING_IN_Period_ID: u32 = 1;
+pub const ENABLE_DISABLE_FP_POLLING_IN_Enable_ID: u32 = 2;
+pub const GetFailurePredictionCapability: u32 = 4;
+pub const GET_FP_CAPABILITY_OUT_Capability_ID: u32 = 1;
+pub const EnableOfflineDiags: u32 = 5;
+pub const ENABLE_OFFLINE_DIAGS_OUT_Success_ID: u32 = 1;
+pub const ReadLogSectors: u32 = 6;
+pub const READ_LOG_SECTORS_IN_LogAddress_ID: u32 = 1;
+pub const READ_LOG_SECTORS_IN_SectorCount_ID: u32 = 2;
+pub const READ_LOG_SECTORS_OUT_Length_ID: u32 = 3;
+pub const READ_LOG_SECTORS_OUT_LogSectors_ID: u32 = 4;
+pub const WriteLogSectors: u32 = 7;
+pub const WRITE_LOG_SECTORS_IN_LogAddress_ID: u32 = 1;
+pub const WRITE_LOG_SECTORS_IN_SectorCount_ID: u32 = 2;
+pub const WRITE_LOG_SECTORS_IN_Length_ID: u32 = 3;
+pub const WRITE_LOG_SECTORS_IN_LogSectors_ID: u32 = 4;
+pub const WRITE_LOG_SECTORS_OUT_Success_ID: u32 = 5;
+pub const ExecuteSelfTest: u32 = 8;
+pub const EXECUTE_SELF_TEST_IN_Subcommand_ID: u32 = 1;
+pub const EXECUTE_SELF_TEST_OUT_ReturnCode_ID: u32 = 2;
+pub const STORAGE_SCSI_INFO_EXCEPTIONS_PageSavable_ID: u32 = 1;
+pub const STORAGE_SCSI_INFO_EXCEPTIONS_Flags_ID: u32 = 2;
+pub const STORAGE_SCSI_INFO_EXCEPTIONS_MRIE_ID: u32 = 3;
+pub const STORAGE_SCSI_INFO_EXCEPTIONS_Padding_ID: u32 = 4;
+pub const STORAGE_SCSI_INFO_EXCEPTIONS_IntervalTimer_ID: u32 = 5;
+pub const STORAGE_SCSI_INFO_EXCEPTIONS_ReportCount_ID: u32 = 6;
+pub const MSIde_PortDeviceInfo_Bus_ID: u32 = 1;
+pub const MSIde_PortDeviceInfo_Target_ID: u32 = 2;
+pub const MSIde_PortDeviceInfo_Lun_ID: u32 = 3;
+pub const MSSerial_PortName_PortName_ID: u32 = 1;
+pub const SERIAL_WMI_COMM_DATA_BaudRate_ID: u32 = 1;
+pub const SERIAL_WMI_COMM_DATA_BitsPerByte_ID: u32 = 2;
+pub const SERIAL_WMI_PARITY_NONE: u32 = 0;
+pub const SERIAL_WMI_PARITY_ODD: u32 = 1;
+pub const SERIAL_WMI_PARITY_EVEN: u32 = 2;
+pub const SERIAL_WMI_PARITY_SPACE: u32 = 3;
+pub const SERIAL_WMI_PARITY_MARK: u32 = 4;
+pub const SERIAL_WMI_COMM_DATA_Parity_ID: u32 = 3;
+pub const SERIAL_WMI_COMM_DATA_ParityCheckEnable_ID: u32 = 4;
+pub const SERIAL_WMI_STOP_1: u32 = 0;
+pub const SERIAL_WMI_STOP_1_5: u32 = 1;
+pub const SERIAL_WMI_STOP_2: u32 = 2;
+pub const SERIAL_WMI_COMM_DATA_StopBits_ID: u32 = 5;
+pub const SERIAL_WMI_COMM_DATA_XoffCharacter_ID: u32 = 6;
+pub const SERIAL_WMI_COMM_DATA_XoffXmitThreshold_ID: u32 = 7;
+pub const SERIAL_WMI_COMM_DATA_XonCharacter_ID: u32 = 8;
+pub const SERIAL_WMI_COMM_DATA_XonXmitThreshold_ID: u32 = 9;
+pub const SERIAL_WMI_COMM_DATA_MaximumBaudRate_ID: u32 = 10;
+pub const SERIAL_WMI_COMM_DATA_MaximumOutputBufferSize_ID: u32 = 11;
+pub const SERIAL_WMI_COMM_DATA_MaximumInputBufferSize_ID: u32 = 12;
+pub const SERIAL_WMI_COMM_DATA_Support16BitMode_ID: u32 = 13;
+pub const SERIAL_WMI_COMM_DATA_SupportDTRDSR_ID: u32 = 14;
+pub const SERIAL_WMI_COMM_DATA_SupportIntervalTimeouts_ID: u32 = 15;
+pub const SERIAL_WMI_COMM_DATA_SupportParityCheck_ID: u32 = 16;
+pub const SERIAL_WMI_COMM_DATA_SupportRTSCTS_ID: u32 = 17;
+pub const SERIAL_WMI_COMM_DATA_SupportXonXoff_ID: u32 = 18;
+pub const SERIAL_WMI_COMM_DATA_SettableBaudRate_ID: u32 = 19;
+pub const SERIAL_WMI_COMM_DATA_SettableDataBits_ID: u32 = 20;
+pub const SERIAL_WMI_COMM_DATA_SettableFlowControl_ID: u32 = 21;
+pub const SERIAL_WMI_COMM_DATA_SettableParity_ID: u32 = 22;
+pub const SERIAL_WMI_COMM_DATA_SettableParityCheck_ID: u32 = 23;
+pub const SERIAL_WMI_COMM_DATA_SettableStopBits_ID: u32 = 24;
+pub const SERIAL_WMI_COMM_DATA_IsBusy_ID: u32 = 25;
+pub const SERIAL_WMI_HW_DATA_IrqNumber_ID: u32 = 1;
+pub const SERIAL_WMI_HW_DATA_IrqVector_ID: u32 = 2;
+pub const SERIAL_WMI_HW_DATA_IrqLevel_ID: u32 = 3;
+pub const SERIAL_WMI_HW_DATA_IrqAffinityMask_ID: u32 = 4;
+pub const SERIAL_WMI_INTTYPE_LATCHED: u32 = 0;
+pub const SERIAL_WMI_INTTYPE_LEVEL: u32 = 1;
+pub const SERIAL_WMI_HW_DATA_InterruptType_ID: u32 = 5;
+pub const SERIAL_WMI_HW_DATA_BaseIOAddress_ID: u32 = 6;
+pub const SERIAL_WMI_PERF_DATA_ReceivedCount_ID: u32 = 1;
+pub const SERIAL_WMI_PERF_DATA_TransmittedCount_ID: u32 = 2;
+pub const SERIAL_WMI_PERF_DATA_FrameErrorCount_ID: u32 = 3;
+pub const SERIAL_WMI_PERF_DATA_SerialOverrunErrorCount_ID: u32 = 4;
+pub const SERIAL_WMI_PERF_DATA_BufferOverrunErrorCount_ID: u32 = 5;
+pub const SERIAL_WMI_PERF_DATA_ParityErrorCount_ID: u32 = 6;
+pub const SERIAL_WMI_COMMPROP_wPacketLength_ID: u32 = 1;
+pub const SERIAL_WMI_COMMPROP_wPacketVersion_ID: u32 = 2;
+pub const SERIAL_WMI_COMMPROP_dwServiceMask_ID: u32 = 3;
+pub const SERIAL_WMI_COMMPROP_dwReserved1_ID: u32 = 4;
+pub const SERIAL_WMI_COMMPROP_dwMaxTxQueue_ID: u32 = 5;
+pub const SERIAL_WMI_COMMPROP_dwMaxRxQueue_ID: u32 = 6;
+pub const SERIAL_WMI_COMMPROP_dwMaxBaud_ID: u32 = 7;
+pub const SERIAL_WMI_COMMPROP_dwProvSubType_ID: u32 = 8;
+pub const SERIAL_WMI_COMMPROP_dwProvCapabilities_ID: u32 = 9;
+pub const SERIAL_WMI_COMMPROP_dwSettableParams_ID: u32 = 10;
+pub const SERIAL_WMI_COMMPROP_dwSettableBaud_ID: u32 = 11;
+pub const SERIAL_WMI_COMMPROP_wSettableData_ID: u32 = 12;
+pub const SERIAL_WMI_COMMPROP_wSettableStopParity_ID: u32 = 13;
+pub const SERIAL_WMI_COMMPROP_dwCurrentTxQueue_ID: u32 = 14;
+pub const SERIAL_WMI_COMMPROP_dwCurrentRxQueue_ID: u32 = 15;
+pub const SERIAL_WMI_COMMPROP_dwProvSpec1_ID: u32 = 16;
+pub const SERIAL_WMI_COMMPROP_dwProvSpec2_ID: u32 = 17;
+pub const SERIAL_WMI_COMMPROP_dwProvCharSize_ID: u32 = 18;
+pub const SERIAL_WMI_COMMPROP_wcProvChar_ID: u32 = 19;
+pub const PARPORT_WMI_ALLOC_FREE_COUNTS_PortAllocates_ID: u32 = 1;
+pub const PARPORT_WMI_ALLOC_FREE_COUNTS_PortFrees_ID: u32 = 2;
+pub const PARALLEL_WMI_LOG_INFO_Flags1_ID: u32 = 1;
+pub const PARALLEL_WMI_LOG_INFO_Flags2_ID: u32 = 2;
+pub const PARALLEL_WMI_LOG_INFO_spare_ID: u32 = 3;
+pub const PARALLEL_WMI_LOG_INFO_SppWriteCount_ID: u32 = 4;
+pub const PARALLEL_WMI_LOG_INFO_NibbleReadCount_ID: u32 = 5;
+pub const PARALLEL_WMI_LOG_INFO_BoundedEcpWriteCount_ID: u32 = 6;
+pub const PARALLEL_WMI_LOG_INFO_BoundedEcpReadCount_ID: u32 = 7;
+pub const PARALLEL_WMI_LOG_INFO_HwEcpWriteCount_ID: u32 = 8;
+pub const PARALLEL_WMI_LOG_INFO_HwEcpReadCount_ID: u32 = 9;
+pub const PARALLEL_WMI_LOG_INFO_SwEcpWriteCount_ID: u32 = 10;
+pub const PARALLEL_WMI_LOG_INFO_SwEcpReadCount_ID: u32 = 11;
+pub const PARALLEL_WMI_LOG_INFO_HwEppWriteCount_ID: u32 = 12;
+pub const PARALLEL_WMI_LOG_INFO_HwEppReadCount_ID: u32 = 13;
+pub const PARALLEL_WMI_LOG_INFO_SwEppWriteCount_ID: u32 = 14;
+pub const PARALLEL_WMI_LOG_INFO_SwEppReadCount_ID: u32 = 15;
+pub const PARALLEL_WMI_LOG_INFO_ByteReadCount_ID: u32 = 16;
+pub const PARALLEL_WMI_LOG_INFO_ChannelNibbleReadCount_ID: u32 = 17;
+pub const REDBOOK_WMI_NUMBER_OF_BUFFERS_ID: u32 = 1;
+pub const REDBOOK_WMI_SECTORS_PER_READ_ID: u32 = 2;
+pub const REDBOOK_WMI_SECTORS_PER_READ_MASK_ID: u32 = 3;
+pub const REDBOOK_WMI_MAX_SECTORS_PER_READ_ID: u32 = 4;
+pub const REDBOOK_WMI_PLAY_ENABLED_ID: u32 = 5;
+pub const REDBOOK_WMI_CDDA_SUPPORTED_ID: u32 = 6;
+pub const REDBOOK_WMI_CDDA_ACCURATE_ID: u32 = 7;
+pub const REDBOOK_WMI_STD_DATA_Reserved1_ID: u32 = 8;
+pub const REDBOOK_WMI_PERF_TIME_READING_DELAY_ID: u32 = 1;
+pub const REDBOOK_WMI_PERF_TIME_READING_ID: u32 = 2;
+pub const REDBOOK_WMI_PERF_TIME_STREAMING_DELAY_ID: u32 = 3;
+pub const REDBOOK_WMI_PERF_TIME_STREAMING_ID: u32 = 4;
+pub const REDBOOK_WMI_PERF_DATA_PROCESSED_ID: u32 = 5;
+pub const REDBOOK_WMI_PERF_STREAM_PAUSED_COUNT_ID: u32 = 6;
+pub const RegisteredGuids_GuidType_ID: u32 = 1;
+pub const RegisteredGuids_LoggerId_ID: u32 = 2;
+pub const RegisteredGuids_EnableLevel_ID: u32 = 3;
+pub const RegisteredGuids_EnableFlags_ID: u32 = 4;
+pub const RegisteredGuids_IsEnabled_ID: u32 = 5;
+pub const CounterCorruptionStatus_ProfileSource_ID: u32 = 1;
+pub const CounterCorruptionStatus_LastKnownGoodTimestamp_ID: u32 = 2;
+pub const WMI_TAPE_DRIVE_PARAMETERS_MaximumBlockSize_ID: u32 = 1;
+pub const WMI_TAPE_DRIVE_PARAMETERS_MinimumBlockSize_ID: u32 = 2;
+pub const WMI_TAPE_DRIVE_PARAMETERS_DefaultBlockSize_ID: u32 = 3;
+pub const WMI_TAPE_DRIVE_PARAMETERS_MaximumPartitionCount_ID: u32 = 4;
+pub const WMI_TAPE_DRIVE_PARAMETERS_CompressionCapable_ID: u32 = 5;
+pub const WMI_TAPE_DRIVE_PARAMETERS_CompressionEnabled_ID: u32 = 6;
+pub const WMI_TAPE_DRIVE_PARAMETERS_ReportSetmarks_ID: u32 = 7;
+pub const WMI_TAPE_DRIVE_PARAMETERS_HardwareErrorCorrection_ID: u32 = 8;
+pub const WMI_TAPE_MEDIA_PARAMETERS_MaximumCapacity_ID: u32 = 1;
+pub const WMI_TAPE_MEDIA_PARAMETERS_AvailableCapacity_ID: u32 = 2;
+pub const WMI_TAPE_MEDIA_PARAMETERS_BlockSize_ID: u32 = 3;
+pub const WMI_TAPE_MEDIA_PARAMETERS_PartitionCount_ID: u32 = 4;
+pub const WMI_TAPE_MEDIA_PARAMETERS_MediaWriteProtected_ID: u32 = 5;
+pub const WMI_TAPE_SYMBOLIC_NAME_TapeSymbolicName_ID: u32 = 1;
+pub const WMI_TAPE_PROBLEM_WARNING_DriveProblemType_ID: u32 = 1;
+pub const WMI_TAPE_PROBLEM_WARNING_TapeData_ID: u32 = 2;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_ReadCorrectedWithoutDelay_ID: u32 = 1;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_ReadCorrectedWithDelay_ID: u32 = 2;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_ReadTotalErrors_ID: u32 = 3;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_ReadTotalCorrectedErrors_ID: u32 = 4;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_ReadTotalUncorrectedErrors_ID: u32 = 5;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_ReadCorrectionAlgorithmProcessed_ID: u32 = 6;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_WriteCorrectedWithoutDelay_ID: u32 = 7;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_WriteCorrectedWithDelay_ID: u32 = 8;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_WriteTotalErrors_ID: u32 = 9;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_WriteTotalCorrectedErrors_ID: u32 = 10;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_WriteTotalUncorrectedErrors_ID: u32 = 11;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_WriteCorrectionAlgorithmProcessed_ID: u32 = 12;
+pub const WMI_TAPE_PROBLEM_IO_ERROR_NonMediumErrors_ID: u32 = 13;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_ReadWarning_ID: u32 = 1;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_WriteWarning_ID: u32 = 2;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_HardError_ID: u32 = 3;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_ReadFailure_ID: u32 = 4;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_WriteFailure_ID: u32 = 5;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_UnsupportedFormat_ID: u32 = 6;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_TapeSnapped_ID: u32 = 7;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_DriveRequiresCleaning_ID: u32 = 8;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_TimetoCleanDrive_ID: u32 = 9;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_DriveHardwareError_ID: u32 = 10;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_ScsiInterfaceError_ID: u32 = 11;
+pub const WMI_TAPE_PROBLEM_DEVICE_ERROR_MediaLife_ID: u32 = 12;
+pub const WMI_CHANGER_PARAMETERS_NumberOfSlots_ID: u32 = 1;
+pub const WMI_CHANGER_PARAMETERS_NumberOfDrives_ID: u32 = 2;
+pub const WMI_CHANGER_PARAMETERS_NumberOfIEPorts_ID: u32 = 3;
+pub const WMI_CHANGER_PARAMETERS_NumberOfTransports_ID: u32 = 4;
+pub const WMI_CHANGER_PARAMETERS_NumberOfDoors_ID: u32 = 5;
+pub const WMI_CHANGER_PARAMETERS_NumberOfCleanerSlots_ID: u32 = 6;
+pub const WMI_CHANGER_PARAMETERS_MagazineSize_ID: u32 = 7;
+pub const WMI_CHANGER_PROBLEM_WARNING_ChangerProblemType_ID: u32 = 1;
+pub const WMI_CHANGER_PROBLEM_WARNING_ChangerData_ID: u32 = 2;
+pub const WMI_CHANGER_PROBLEM_DEVICE_ERROR_ChangerProblemType_ID: u32 = 1;
+pub const DEVICE_UI_FIRMWARE_REVISION_FirmwareRevision_ID: u32 = 1;
+pub const MSVerifierIrpLogEntry_Count_ID: u32 = 1;
+pub const MSVerifierIrpLogEntry_Major_ID: u32 = 2;
+pub const MSVerifierIrpLogEntry_Minor_ID: u32 = 3;
+pub const MSVerifierIrpLogEntry_Flags_ID: u32 = 4;
+pub const MSVerifierIrpLogEntry_Control_ID: u32 = 5;
+pub const MSVerifierIrpLogEntry_Arg1_ID: u32 = 6;
+pub const MSVerifierIrpLogEntry_Arg2_ID: u32 = 7;
+pub const MSVerifierIrpLogEntry_Arg3_ID: u32 = 8;
+pub const MSVerifierIrpLogEntry_Arg4_ID: u32 = 9;
+pub const MSVerifierIrpLogInformation_DeviceType_ID: u32 = 1;
+pub const MSVerifierIrpLogInformation_EntryCount_ID: u32 = 2;
+pub const MSVerifierIrpLogInformation_Entries_ID: u32 = 3;
+pub const WmiMonitorBrightness_CurrentBrightness_ID: u32 = 1;
+pub const WmiMonitorBrightness_Levels_ID: u32 = 2;
+pub const WmiMonitorBrightness_Level_ID: u32 = 3;
+pub const WmiSetBrightness: u32 = 1;
+pub const WmiSetBrightness_IN_Timeout_ID: u32 = 1;
+pub const WmiSetBrightness_IN_Brightness_ID: u32 = 2;
+pub const WmiRevertToPolicyBrightness: u32 = 2;
+pub const WmiSetALSBrightnessState: u32 = 3;
+pub const WmiSetALSBrightnessState_IN_State_ID: u32 = 1;
+pub const WmiSetALSBrightness: u32 = 4;
+pub const WmiSetALSBrightness_IN_Brightness_ID: u32 = 1;
+pub const WmiMonitorBrightnessEvent_Brightness_ID: u32 = 1;
+pub const WmiMonitorRawEEdidV1Block_Id_ID: u32 = 1;
+pub const WmiMonitorRawEEdidV1Block_Type_ID: u32 = 2;
+pub const WmiMonitorRawEEdidV1Block_Content_ID: u32 = 3;
+pub const WmiGetMonitorRawEEdidV1Block: u32 = 1;
+pub const WmiGetMonitorRawEEdidV1Block_IN_BlockId_ID: u32 = 1;
+pub const WmiGetMonitorRawEEdidV1Block_OUT_BlockType_ID: u32 = 2;
+pub const WmiGetMonitorRawEEdidV1Block_OUT_BlockContent_ID: u32 = 3;
+pub const WmiMonitorID_ProductCodeID_ID: u32 = 1;
+pub const WmiMonitorID_SerialNumberID_ID: u32 = 2;
+pub const WmiMonitorID_ManufacturerName_ID: u32 = 3;
+pub const WmiMonitorID_WeekOfManufacture_ID: u32 = 4;
+pub const WmiMonitorID_YearOfManufacture_ID: u32 = 5;
+pub const WmiMonitorID_UserFriendlyNameLength_ID: u32 = 6;
+pub const WmiMonitorID_UserFriendlyName_ID: u32 = 7;
+pub const WmiMonitorSupportedDisplayFeatures_StandbySupported_ID: u32 = 1;
+pub const WmiMonitorSupportedDisplayFeatures_SuspendSupported_ID: u32 = 2;
+pub const WmiMonitorSupportedDisplayFeatures_ActiveOffSupported_ID: u32 = 3;
+pub const WmiMonitorSupportedDisplayFeatures_DisplayType_ID: u32 = 4;
+pub const WmiMonitorSupportedDisplayFeatures_sRGBSupported_ID: u32 = 5;
+pub const WmiMonitorSupportedDisplayFeatures_HasPreferredTimingMode_ID: u32 = 6;
+pub const WmiMonitorSupportedDisplayFeatures_GTFSupported_ID: u32 = 7;
+pub const WmiMonitorBasicDisplayParams_VideoInputType_ID: u32 = 1;
+pub const WmiMonitorBasicDisplayParams_MaxHorizontalImageSize_ID: u32 = 2;
+pub const WmiMonitorBasicDisplayParams_MaxVerticalImageSize_ID: u32 = 3;
+pub const WmiMonitorBasicDisplayParams_DisplayTransferCharacteristic_ID: u32 = 4;
+pub const WmiMonitorBasicDisplayParams_SupportedDisplayFeatures_ID: u32 = 5;
+pub const WmiMonitorConnectionParams_VideoOutputTechnology_ID: u32 = 1;
+pub const WmiMonitorAnalogVideoInputParams_SignalLevelStandard_ID: u32 = 1;
+pub const WmiMonitorAnalogVideoInputParams_SetupExpected_ID: u32 = 2;
+pub const WmiMonitorAnalogVideoInputParams_SeparateSyncsSupported_ID: u32 = 3;
+pub const WmiMonitorAnalogVideoInputParams_CompositeSyncSupported_ID: u32 = 4;
+pub const WmiMonitorAnalogVideoInputParams_SyncOnGreenVideoSupported_ID: u32 = 5;
+pub const WmiMonitorAnalogVideoInputParams_SerrationOfVsyncRequired_ID: u32 = 6;
+pub const WmiMonitorDigitalVideoInputParams_IsDFP1xCompatible_ID: u32 = 1;
+pub const WmiMonitorColorXYZinCIE_X_ID: u32 = 1;
+pub const WmiMonitorColorXYZinCIE_Y_ID: u32 = 2;
+pub const WmiMonitorColorCharacteristics_Red_ID: u32 = 1;
+pub const WmiMonitorColorCharacteristics_Blue_ID: u32 = 2;
+pub const WmiMonitorColorCharacteristics_Green_ID: u32 = 3;
+pub const WmiMonitorColorCharacteristics_DefaultWhite_ID: u32 = 4;
+pub const VideoModeDescriptor_PixelClockRate_ID: u32 = 1;
+pub const VideoModeDescriptor_VerticalRefreshRateNumerator_ID: u32 = 2;
+pub const VideoModeDescriptor_VerticalRefreshRateDenominator_ID: u32 = 3;
+pub const VideoModeDescriptor_HorizontalRefreshRateNumerator_ID: u32 = 4;
+pub const VideoModeDescriptor_HorizontalRefreshRateDenominator_ID: u32 = 5;
+pub const VideoModeDescriptor_HorizontalActivePixels_ID: u32 = 6;
+pub const VideoModeDescriptor_VerticalActivePixels_ID: u32 = 7;
+pub const VideoModeDescriptor_HorizontalBlankingPixels_ID: u32 = 8;
+pub const VideoModeDescriptor_VerticalBlankingPixels_ID: u32 = 9;
+pub const VideoModeDescriptor_HorizontalSyncOffset_ID: u32 = 10;
+pub const VideoModeDescriptor_VerticalSyncOffset_ID: u32 = 11;
+pub const VideoModeDescriptor_HorizontalSyncPulseWidth_ID: u32 = 12;
+pub const VideoModeDescriptor_VerticalSyncPulseWidth_ID: u32 = 13;
+pub const VideoModeDescriptor_HorizontalImageSize_ID: u32 = 14;
+pub const VideoModeDescriptor_VerticalImageSize_ID: u32 = 15;
+pub const VideoModeDescriptor_HorizontalBorder_ID: u32 = 16;
+pub const VideoModeDescriptor_VerticalBorder_ID: u32 = 17;
+pub const VideoModeDescriptor_IsInterlaced_ID: u32 = 18;
+pub const VideoModeDescriptor_StereoModeType_ID: u32 = 19;
+pub const VideoModeDescriptor_SyncSignalType_ID: u32 = 20;
+pub const VideoModeDescriptor_IsSerrationRequired_ID: u32 = 21;
+pub const VideoModeDescriptor_IsSyncOnRGB_ID: u32 = 22;
+pub const VideoModeDescriptor_CompositePolarityType_ID: u32 = 23;
+pub const VideoModeDescriptor_VerticalPolarityType_ID: u32 = 24;
+pub const VideoModeDescriptor_HorizontalPolarityType_ID: u32 = 25;
+pub const VideoModeDescriptor_VideoStandardType_ID: u32 = 26;
+pub const VideoModeDescriptor_Origin_ID: u32 = 27;
+pub const VideoModeDescriptor_TimingType_ID: u32 = 28;
+pub const WmiMonitorListedSupportedSourceModes_NumOfMonitorSourceModes_ID: u32 = 1;
+pub const WmiMonitorListedSupportedSourceModes_PreferredMonitorSourceModeIndex_ID: u32 = 2;
+pub const WmiMonitorListedSupportedSourceModes_MonitorSourceModes_ID: u32 = 3;
+pub const FrequencyRangeDescriptor_Origin_ID: u32 = 1;
+pub const FrequencyRangeDescriptor_MinVSyncNumerator_ID: u32 = 2;
+pub const FrequencyRangeDescriptor_MinVSyncDenominator_ID: u32 = 3;
+pub const FrequencyRangeDescriptor_MaxVSyncNumerator_ID: u32 = 4;
+pub const FrequencyRangeDescriptor_MaxVSyncDenominator_ID: u32 = 5;
+pub const FrequencyRangeDescriptor_MinHSyncNumerator_ID: u32 = 6;
+pub const FrequencyRangeDescriptor_MinHSyncDenominator_ID: u32 = 7;
+pub const FrequencyRangeDescriptor_MaxHSyncNumerator_ID: u32 = 8;
+pub const FrequencyRangeDescriptor_MaxHSyncDenominator_ID: u32 = 9;
+pub const FrequencyRangeDescriptor_ConstraintType_ID: u32 = 10;
+pub const FrequencyRangeDescriptor_ActiveWidth_ID: u32 = 11;
+pub const FrequencyRangeDescriptor_ActiveHeight_ID: u32 = 12;
+pub const FrequencyRangeDescriptor_MaxPixelRate_ID: u32 = 13;
+pub const WmiMonitorListedFrequencyRanges_NumOfMonitorFreqRanges_ID: u32 = 1;
+pub const WmiMonitorListedFrequencyRanges_MonitorFreqRanges_ID: u32 = 2;
+pub const KernelPerfState_Frequency_ID: u32 = 1;
+pub const KernelPerfState_Power_ID: u32 = 2;
+pub const KernelPerfState_PercentFrequency_ID: u32 = 3;
+pub const KernelPerfState_IncreaseLevel_ID: u32 = 4;
+pub const KernelPerfState_DecreaseLevel_ID: u32 = 5;
+pub const KernelPerfState_Type_ID: u32 = 6;
+pub const KernelPerfState_IncreaseTime_ID: u32 = 7;
+pub const KernelPerfState_DecreaseTime_ID: u32 = 8;
+pub const KernelPerfState_Control_ID: u32 = 9;
+pub const KernelPerfState_Status_ID: u32 = 10;
+pub const KernelPerfState_HitCount_ID: u32 = 11;
+pub const KernelPerfState_Reserved1_ID: u32 = 12;
+pub const KernelPerfState_Reserved2_ID: u32 = 13;
+pub const KernelPerfState_Reserved3_ID: u32 = 14;
+pub const KernelPerfStates_Count_ID: u32 = 1;
+pub const KernelPerfStates_MaxFrequency_ID: u32 = 2;
+pub const KernelPerfStates_CurrentState_ID: u32 = 3;
+pub const KernelPerfStates_MaxPerfState_ID: u32 = 4;
+pub const KernelPerfStates_MinPerfState_ID: u32 = 5;
+pub const KernelPerfStates_LowestPerfState_ID: u32 = 6;
+pub const KernelPerfStates_ThermalConstraint_ID: u32 = 7;
+pub const KernelPerfStates_BusyAdjThreshold_ID: u32 = 8;
+pub const KernelPerfStates_PolicyType_ID: u32 = 9;
+pub const KernelPerfStates_Type_ID: u32 = 10;
+pub const KernelPerfStates_Reserved_ID: u32 = 11;
+pub const KernelPerfStates_TimerInterval_ID: u32 = 12;
+pub const KernelPerfStates_TargetProcessors_ID: u32 = 13;
+pub const KernelPerfStates_PStateHandler_ID: u32 = 14;
+pub const KernelPerfStates_PStateContext_ID: u32 = 15;
+pub const KernelPerfStates_TStateHandler_ID: u32 = 16;
+pub const KernelPerfStates_TStateContext_ID: u32 = 17;
+pub const KernelPerfStates_FeedbackHandler_ID: u32 = 18;
+pub const KernelPerfStates_Reserved1_ID: u32 = 19;
+pub const KernelPerfStates_Reserved2_ID: u32 = 20;
+pub const KernelPerfStates_State_ID: u32 = 21;
+pub const KernelIdleState_Latency_ID: u32 = 1;
+pub const KernelIdleState_Power_ID: u32 = 2;
+pub const KernelIdleState_TimeCheck_ID: u32 = 3;
+pub const KernelIdleState_PromotePercent_ID: u32 = 4;
+pub const KernelIdleState_DemotePercent_ID: u32 = 5;
+pub const KernelIdleState_StateType_ID: u32 = 6;
+pub const KernelIdleState_Reserved_ID: u32 = 7;
+pub const KernelIdleState_StateFlags_ID: u32 = 8;
+pub const KernelIdleState_Context_ID: u32 = 9;
+pub const KernelIdleState_IdleHandler_ID: u32 = 10;
+pub const KernelIdleState_Reserved1_ID: u32 = 11;
+pub const KernelIdleStates_Type_ID: u32 = 1;
+pub const KernelIdleStates_Count_ID: u32 = 2;
+pub const KernelIdleStates_TargetState_ID: u32 = 3;
+pub const KernelIdleStates_OldState_ID: u32 = 4;
+pub const KernelIdleStates_TargetProcessors_ID: u32 = 5;
+pub const KernelIdleStates_State_ID: u32 = 6;
+pub const KernelPerfStateChange_State_ID: u32 = 1;
+pub const KernelPerfStateChange_Status_ID: u32 = 2;
+pub const KernelPerfStateChange_Latency_ID: u32 = 3;
+pub const KernelPerfStateChange_Speed_ID: u32 = 4;
+pub const KernelPerfStateChange_Processor_ID: u32 = 5;
+pub const KernelPerfStateDomainChange_State_ID: u32 = 1;
+pub const KernelPerfStateDomainChange_Latency_ID: u32 = 2;
+pub const KernelPerfStateDomainChange_Speed_ID: u32 = 3;
+pub const KernelPerfStateDomainChange_Processors_ID: u32 = 4;
+pub const KernelIdleStateChange_NewState_ID: u32 = 1;
+pub const KernelIdleStateChange_OldState_ID: u32 = 2;
+pub const KernelIdleStateChange_Processors_ID: u32 = 3;
+pub const KernelThermalConstraintChange_ThermalConstraint_ID: u32 = 1;
+pub const KernelThermalConstraintChange_Processors_ID: u32 = 2;
+pub const IdleStateAccounting_IdleTransitions_ID: u32 = 1;
+pub const IdleStateAccounting_FailedTransitions_ID: u32 = 2;
+pub const IdleStateAccounting_InvalidBucketIndex_ID: u32 = 3;
+pub const IdleStateAccounting_TotalTime_ID: u32 = 4;
+pub const IdleStateAccounting_IdleTimeBuckets_ID: u32 = 5;
+pub const IdleAccounting_StateCount_ID: u32 = 1;
+pub const IdleAccounting_TotalTransitions_ID: u32 = 2;
+pub const IdleAccounting_ResetCount_ID: u32 = 3;
+pub const IdleAccounting_StartTime_ID: u32 = 4;
+pub const IdleAccounting_State_ID: u32 = 5;
+pub const IdleStateBucketEx_TotalTimeUs_ID: u32 = 1;
+pub const IdleStateBucketEx_MinTimeUs_ID: u32 = 2;
+pub const IdleStateBucketEx_MaxTimeUs_ID: u32 = 3;
+pub const IdleStateBucketEx_Count_ID: u32 = 4;
+pub const IdleStateAccountingEx_TotalTime_ID: u32 = 1;
+pub const IdleStateAccountingEx_IdleTransitions_ID: u32 = 2;
+pub const IdleStateAccountingEx_FailedTransitions_ID: u32 = 3;
+pub const IdleStateAccountingEx_InvalidBucketIndex_ID: u32 = 4;
+pub const IdleStateAccountingEx_MinTimeUs_ID: u32 = 5;
+pub const IdleStateAccountingEx_MaxTimeUs_ID: u32 = 6;
+pub const IdleStateAccountingEx_IdleTimeBuckets_ID: u32 = 7;
+pub const IdleAccountingEx_StateCount_ID: u32 = 1;
+pub const IdleAccountingEx_TotalTransitions_ID: u32 = 2;
+pub const IdleAccountingEx_ResetCount_ID: u32 = 3;
+pub const IdleAccountingEx_StartTime_ID: u32 = 4;
+pub const IdleAccountingEx_State_ID: u32 = 5;
+pub const KernelThermalPolicyChange_CoolingMode_ID: u32 = 1;
+pub const KernelThermalPolicyChange_Processors_ID: u32 = 2;
+pub const ProcessorPerformance_frequency_ID: u32 = 1;
+pub const ProcessorPerformance_power_ID: u32 = 2;
+pub const ProcessorPerformance_percentage_ID: u32 = 3;
+pub const KBDMOU_COULD_NOT_SEND_COMMAND: u32 = 0;
+pub const KBDMOU_COULD_NOT_SEND_PARAM: u32 = 1;
+pub const KBDMOU_NO_RESPONSE: u32 = 2;
+pub const KBDMOU_INCORRECT_RESPONSE: u32 = 4;
+pub const I8042_ERROR_VALUE_BASE: u32 = 1000;
+pub const INPORT_ERROR_VALUE_BASE: u32 = 2000;
+pub const SERIAL_MOUSE_ERROR_VALUE_BASE: u32 = 3000;
+pub const I8042_POWER_SYS_BUTTON: u32 = 1;
+pub const I8042_SLEEP_SYS_BUTTON: u32 = 2;
+pub const I8042_WAKE_SYS_BUTTON: u32 = 4;
+pub const I8042_SYS_BUTTONS: u32 = 7;
 pub const WDF_DRIVER_GLOBALS_NAME_LEN: u32 = 32;
 pub const WDF_FIRST_VERSION_SUPPORTING_CLIENT_VERSION_HIGHER_THAN_FRAMEWORK: u32 = 25;
 pub const WDF_ALWAYS_AVAILABLE_FUNCTION_COUNT: u32 = 453;
@@ -6808,6 +8308,1110 @@ extern "C" {
 }
 extern "C" {
     pub static DEVPKEY_DeviceInterface_HID_WakeScreenOnInputCapable: DEVPROPKEY;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_KEYBOARD: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_MOUSE: GUID;
+}
+extern "C" {
+    pub static MSWmi_MofData_GUID: GUID;
+}
+extern "C" {
+    pub static MSWmi_ProviderInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSWmi_PnPDeviceId_GUID: GUID;
+}
+extern "C" {
+    pub static MSWmi_PnPInstanceNames_GUID: GUID;
+}
+extern "C" {
+    pub static MSWmi_Guid_GUID: GUID;
+}
+extern "C" {
+    pub static MSWmi_GuidRegistrationInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSAcpiInfo_GUID: GUID;
+}
+extern "C" {
+    pub static WHEAErrorInjectionMethods_GUID: GUID;
+}
+extern "C" {
+    pub static WHEAErrorSourceMethods_GUID: GUID;
+}
+extern "C" {
+    pub static WHEAPolicyManagementMethods_GUID: GUID;
+}
+extern "C" {
+    pub static WHEAPluginCtlMethods_GUID: GUID;
+}
+extern "C" {
+    pub static WHEAPageOfflineMethods_GUID: GUID;
+}
+extern "C" {
+    pub static MSSmBios_RawSMBiosTables_GUID: GUID;
+}
+extern "C" {
+    pub static MSSmBios_SMBiosEventlog_GUID: GUID;
+}
+extern "C" {
+    pub static MSSmBios_SysidUUID_GUID: GUID;
+}
+extern "C" {
+    pub static MSSmBios_SysidUUIDList_GUID: GUID;
+}
+extern "C" {
+    pub static MSSmBios_Sysid1394_GUID: GUID;
+}
+extern "C" {
+    pub static MSSmBios_Sysid1394List_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_SwitchToCMCPolling_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_SwitchToCPEPolling_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_Header_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_BusError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_TLBError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_MemoryHierarchyError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_CPUError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_MemoryError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_PCIBusError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_PCIComponentError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_SystemEventError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_SMBIOSError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_PlatformSpecificError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_InvalidError_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAEvent_MemoryPageRemoved_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAInfo_Entry_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAInfo_RawMCAData_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAInfo_RawCMCEvent_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAInfo_RawMCAEvent_GUID: GUID;
+}
+extern "C" {
+    pub static MSMCAInfo_RawCorrectedPlatformEvent_GUID: GUID;
+}
+extern "C" {
+    pub static MSPower_DeviceEnable_GUID: GUID;
+}
+extern "C" {
+    pub static MSPower_DeviceWakeEnable_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NetworkAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NetworkShortAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NetworkLinkSpeed_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EnumerateAdapter_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NotifyAdapterRemoval_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NotifyAdapterArrival_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NdisEnumerateVc_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NotifyVcRemoval_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NotifyVcArrival_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NotifyFilterRemoval_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NotifyFilterArrival_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_DeviceWakeOnMagicPacketOnly_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_RSSEnabled_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NetworkDirectState_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NetworkDirectVersion_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NetworkDirectAdapterInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NetworkDirectAdapterCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NetworkDirectCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_HardwareStatus_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_MediaSupported_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_MediaInUse_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_MaximumLookahead_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_MaximumFrameSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_LinkSpeed_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TransmitBufferSpace_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveBufferSpace_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TransmitBlockSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveBlockSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_VendorID_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_VendorDescription_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CurrentPacketFilter_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CurrentLookahead_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_DriverVersion_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_MaximumTotalSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_MacOptions_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_MediaConnectStatus_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_MaximumSendPackets_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_VendorDriverVersion_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_VlanIdentifier_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PhysicalMediumType_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TransmitsOk_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceivesOk_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TransmitsError_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveError_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveNoBuffer_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoHardwareStatus_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoMediaSupported_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoMediaInUse_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoLinkSpeed_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoVendorId_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoVendorDescription_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoDriverVersion_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoMacOptions_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoMediaConnectStatus_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoVendorDriverVersion_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoMinimumLinkSpeed_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoTransmitPdusOk_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoReceivePdusOk_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoTransmitPduErrors_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoReceivePduErrors_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CoReceivePdusNoBuffer_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmSupportedVcRates_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmSupportedServiceCategory_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmSupportedAalTypes_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmHardwareCurrentAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmMaxActiveVcs_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmMaxActiveVciBits_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmMaxActiveVpiBits_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmMaxAal0PacketSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmMaxAal1PacketSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmMaxAal34PacketSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmMaxAal5PacketSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmReceiveCellsOk_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmTransmitCellsOk_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_AtmReceiveCellsDropped_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EthernetPermanentAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EthernetCurrentAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EthernetMulticastList_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EthernetMaximumMulticastListSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EthernetMacOptions_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EthernetReceiveErrorAlignment_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EthernetOneTransmitCollision_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EthernetMoreTransmitCollisions_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TokenRingPermanentAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TokenRingCurrentAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TokenRingCurrentFunctional_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TokenRingCurrentGroup_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TokenRingLastOpenStatus_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TokenRingCurrentRingStatus_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TokenRingCurrentRingState_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TokenRingLineErrors_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TokenRingLostFrames_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiLongPermanentAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiLongCurrentAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiLongMulticastList_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiLongMaximumListSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiShortPermanentAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiShortCurrentAddress_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiShortMulticastList_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiShortMaximumListSize_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiAttachmentType_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiUpstreamNodeLong_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiDownstreamNodeLong_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiFrameErrors_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiFramesLost_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiRingManagmentState_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiLctFailures_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiLemRejects_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_FddiLConnectionState_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ObjectHeader_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiMethodHeader_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiSetHeader_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiOutputInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiEnumAdapter_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_LinkStateData_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_LinkParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_InterruptModerationParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatisticsInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PortStateData_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PortAuthParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PortChar_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PortArray_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PciDeviceProperty_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiTcpLargeSendOffloadV1_IPv4_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiTcpLargeSendOffloadV1_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiTcpIpChecksumOffload_IPv4TransmitReceive_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiTcpIpChecksumOffload_IPv6TransmitReceive_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiTcpIpChecksumOffload_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiIPSecOffloadV1_Supported_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiIPSecOffloadV1_IPv4AH_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiIPSecOffloadV1_IPv4ESP_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiIPSecOffloadV1_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiTcpLargeSendOffloadV2_IPv4_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiTcpLargeSendOffloadV2_IPv6_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiTcpLargeSendOffloadV2_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiOffload_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TcpOffloadParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiTcpConnectionOffload_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiHDSplitCurrentConfig_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_HDSplitParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_WmiReceiveScaleCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveFilterCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveFilterGlobalParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_CountedString_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveFilterInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveFilterInfoArray_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveFilterFieldParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveFilterParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_NicSwitchCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_GroupAffinity_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveQueueParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveQueueInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveQueueInfoArray_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_LinkState_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryInterruptModeration_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_SetInterruptModeration_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_SetLinkParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryStatisticsInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryPortState_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EnumeratePorts_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_SetPortParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryPciDeviceCustomProperty_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EnumerateAdapterEx_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TcpOffloadCurrentConfig_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TcpOffloadHardwareConfig_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_SetTcpOffloadParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TcpConnectionOffloadCurrentConfig_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_TcpConnectionOffloadHardwareConfig_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_ReceiveScaleCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_HDSplitCurrentConfig_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_SetHDSplitParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryPhysicalMediumTypeEx_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryReceiveFilterHardwareCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryReceiveFilterGlobalParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EnumerateReceiveFilters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryReceiveFilterParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryReceiveFilterCurrentCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryNicSwitchHardwareCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryNicSwitchCurrentCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_QueryReceiveQueueParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_EnumerateReceiveQueues_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_BaseServiceSetIdentifier_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_ServiceSetIdentifier_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_NetworkType_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_NetworkTypesSupported_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_NetworkTypeInUse_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_PowerMode_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_TransmitPowerLevel_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_ReceivedSignalStrength_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_ReceivedSignalStrengthEventTrigger_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_NetworkInfrastructure_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_ConfigurationFH_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_ConfigurationInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_WLanBssId_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_BSSIList_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_InfrastructureMode_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_FragmentationThreshold_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_RTSThreshold_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_NumberOfAntennas_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_ReceiveAntennaSelected_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_TransmitAntennaSelected_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_DataRates_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_DesiredDataRates_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_Configuration_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_Statistics_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_AddWEP_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_RemoveWEP_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_Disassociate_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_BssIdListScan_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_AuthenticationMode_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_PrivacyFilter_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_WEPStatus_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_80211_ReloadDefaults_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PMAdminConfigState_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PMAdminConfigParam_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PMAdminConfig_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PMCapabilityState_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PMCapabilitiesParam_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_PMCapabilities_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusResetStart_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusResetEnd_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusMediaConnect_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusMediaDisconnect_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusMediaSpecificIndication_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusLinkSpeedChange_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusProtocolBind_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusProtocolUnbind_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDevicePowerOn_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDevicePowerOff_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDevicePowerOnEx_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDevicePowerOffEx_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusTaskOffloadChange_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusPacketFilterChange_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusNetworkChange_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusOperationalStatus_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusLinkState_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusPortState_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusExternalConnectivityChange_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusMediaSpecificIndicationEx_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusHDSplitCurrentConfig_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11ScanConfirm_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11MPDUMaxLengthChange_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11AssociationStart_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11AssociationCompletion_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11ConnectionStart_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11ConnectionCompletion_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11RoamingStart_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11RoamingCompletion_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11Disassociation_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11TkipmicFailure_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11PmkidCandidateList_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11PhyStateChange_GUID: GUID;
+}
+extern "C" {
+    pub static MSNdis_StatusDot11LinkQuality_GUID: GUID;
+}
+extern "C" {
+    pub static MSKeyboard_PortInformation_GUID: GUID;
+}
+extern "C" {
+    pub static MSKeyboard_ExtendedID_GUID: GUID;
+}
+extern "C" {
+    pub static MSMouse_PortInformation_GUID: GUID;
+}
+extern "C" {
+    pub static MSMouse_ClassInformation_GUID: GUID;
+}
+extern "C" {
+    pub static MSKeyboard_ClassInformation_GUID: GUID;
+}
+extern "C" {
+    pub static MSAgp_Information_GUID: GUID;
+}
+extern "C" {
+    pub static MSAcpi_ThermalZoneTemperature_GUID: GUID;
+}
+extern "C" {
+    pub static MSDiskDriver_Geometry_GUID: GUID;
+}
+extern "C" {
+    pub static MSDiskDriver_PerformanceData_GUID: GUID;
+}
+extern "C" {
+    pub static MSDiskDriver_Performance_GUID: GUID;
+}
+extern "C" {
+    pub static MSStorageDriver_FailurePredictStatus_GUID: GUID;
+}
+extern "C" {
+    pub static MSStorageDriver_FailurePredictData_GUID: GUID;
+}
+extern "C" {
+    pub static MSStorageDriver_ATAPISmartData_GUID: GUID;
+}
+extern "C" {
+    pub static MSStorageDriver_FailurePredictThresholds_GUID: GUID;
+}
+extern "C" {
+    pub static MSStorageDriver_FailurePredictEvent_GUID: GUID;
+}
+extern "C" {
+    pub static MSStorageDriver_FailurePredictFunction_GUID: GUID;
+}
+extern "C" {
+    pub static MSStorageDriver_ScsiInfoExceptions_GUID: GUID;
+}
+extern "C" {
+    pub static MSIde_PortDeviceInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSSerial_PortName_GUID: GUID;
+}
+extern "C" {
+    pub static MSSerial_CommInfo_GUID: GUID;
+}
+extern "C" {
+    pub static MSSerial_HardwareConfiguration_GUID: GUID;
+}
+extern "C" {
+    pub static MSSerial_PerformanceInformation_GUID: GUID;
+}
+extern "C" {
+    pub static MSSerial_CommProperties_GUID: GUID;
+}
+extern "C" {
+    pub static MSParallel_AllocFreeCounts_GUID: GUID;
+}
+extern "C" {
+    pub static MSParallel_DeviceBytesTransferred_GUID: GUID;
+}
+extern "C" {
+    pub static MSRedbook_DriverInformationGuid: GUID;
+}
+extern "C" {
+    pub static MSRedbook_PerformanceGuid: GUID;
+}
+extern "C" {
+    pub static RegisteredGuids_GUID: GUID;
+}
+extern "C" {
+    pub static CounterCorruptionStatus_GUID: GUID;
+}
+extern "C" {
+    pub static MSTapeDriveParam_GUID: GUID;
+}
+extern "C" {
+    pub static MSTapeMediaCapacity_GUID: GUID;
+}
+extern "C" {
+    pub static MSTapeSymbolicName_GUID: GUID;
+}
+extern "C" {
+    pub static MSTapeDriveProblemEvent_GUID: GUID;
+}
+extern "C" {
+    pub static MSTapeProblemIoError_GUID: GUID;
+}
+extern "C" {
+    pub static MSTapeProblemDeviceError_GUID: GUID;
+}
+extern "C" {
+    pub static MSChangerParameters_GUID: GUID;
+}
+extern "C" {
+    pub static MSChangerProblemEvent_GUID: GUID;
+}
+extern "C" {
+    pub static MSChangerProblemDeviceError_GUID: GUID;
+}
+extern "C" {
+    pub static MSDeviceUI_FirmwareRevision_GUID: GUID;
+}
+extern "C" {
+    pub static MSVerifierIrpLogEntry_GUID: GUID;
+}
+extern "C" {
+    pub static MSVerifierIrpLogInformation_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorBrightness_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorBrightnessMethods_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorBrightnessEvent_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorRawEEdidV1Block_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorDescriptorMethods_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorID_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorSupportedDisplayFeatures_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorBasicDisplayParams_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorConnectionParams_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorAnalogVideoInputParams_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorDigitalVideoInputParams_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorColorXYZinCIE_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorColorCharacteristics_GUID: GUID;
+}
+extern "C" {
+    pub static VideoModeDescriptor_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorListedSupportedSourceModes_GUID: GUID;
+}
+extern "C" {
+    pub static FrequencyRangeDescriptor_GUID: GUID;
+}
+extern "C" {
+    pub static WmiMonitorListedFrequencyRanges_GUID: GUID;
+}
+extern "C" {
+    pub static KernelPerfState_GUID: GUID;
+}
+extern "C" {
+    pub static KernelPerfStates_GUID: GUID;
+}
+extern "C" {
+    pub static KernelIdleState_GUID: GUID;
+}
+extern "C" {
+    pub static KernelIdleStates_GUID: GUID;
+}
+extern "C" {
+    pub static KernelPerfStateChange_GUID: GUID;
+}
+extern "C" {
+    pub static KernelPerfStateDomainChange_GUID: GUID;
+}
+extern "C" {
+    pub static KernelIdleStateChange_GUID: GUID;
+}
+extern "C" {
+    pub static KernelThermalConstraintChange_GUID: GUID;
+}
+extern "C" {
+    pub static IdleStateAccounting_GUID: GUID;
+}
+extern "C" {
+    pub static IdleAccounting_GUID: GUID;
+}
+extern "C" {
+    pub static IdleStateBucketEx_GUID: GUID;
+}
+extern "C" {
+    pub static IdleStateAccountingEx_GUID: GUID;
+}
+extern "C" {
+    pub static IdleAccountingEx_GUID: GUID;
+}
+extern "C" {
+    pub static KernelThermalPolicyChange_GUID: GUID;
+}
+extern "C" {
+    pub static ProcessorPerformance_GUID: GUID;
 }
 extern "C" {
     pub static mut WdfFunctions_01033: *const WDFFUNC;

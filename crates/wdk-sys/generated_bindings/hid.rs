@@ -444,3 +444,28 @@ extern "C" {
         BufferLength: ULONG,
     ) -> BOOLEAN;
 }
+extern "C" {
+    #[must_use]
+    pub fn VhfCreate(VhfConfig: PVHF_CONFIG, VhfHandle: *mut VHFHANDLE) -> NTSTATUS;
+}
+extern "C" {
+    #[must_use]
+    pub fn VhfStart(VhfHandle: VHFHANDLE) -> NTSTATUS;
+}
+extern "C" {
+    pub fn VhfDelete(VhfHandle: VHFHANDLE, Wait: BOOLEAN);
+}
+extern "C" {
+    #[must_use]
+    pub fn VhfReadReportSubmit(
+        VhfHandle: VHFHANDLE,
+        HidTransferPacket: PHID_XFER_PACKET,
+    ) -> NTSTATUS;
+}
+extern "C" {
+    #[must_use]
+    pub fn VhfAsyncOperationComplete(
+        VhfOperationHandle: VHFOPERATIONHANDLE,
+        CompletionStatus: NTSTATUS,
+    ) -> NTSTATUS;
+}
