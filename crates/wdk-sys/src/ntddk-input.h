@@ -7,6 +7,7 @@
 // FIXME: seperate into seperate cargo features
 #ifdef _KERNEL_MODE
 #include "ntintsafe.h"
+#include "pepfx.h"
 #endif
 
 // FIXME: Why is there no definition for this struct? Maybe blocklist this struct in bindgen. 

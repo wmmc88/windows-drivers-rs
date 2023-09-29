@@ -14221,3 +14221,26 @@ extern "C" {
         NewTokenHandle: PHANDLE,
     ) -> NTSTATUS;
 }
+extern "C" {
+    #[must_use]
+    pub fn PoFxRegisterPlugin(
+        PepInformation: PPEP_INFORMATION,
+        KernelInformation: PPEP_KERNEL_INFORMATION,
+    ) -> NTSTATUS;
+}
+extern "C" {
+    #[must_use]
+    pub fn PoFxRegisterPluginEx(
+        PepInformation: PPEP_INFORMATION,
+        Flags: ULONGLONG,
+        KernelInformation: PPEP_KERNEL_INFORMATION,
+    ) -> NTSTATUS;
+}
+extern "C" {
+    #[must_use]
+    pub fn PoFxRegisterCoreDevice(
+        Id: PCUNICODE_STRING,
+        Device: PPO_FX_CORE_DEVICE,
+        Handle: *mut POHANDLE,
+    ) -> NTSTATUS;
+}
