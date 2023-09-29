@@ -1,5 +1,5 @@
-mod spinlock;
+mod spin_lock;
 mod timer;
 
-pub use spinlock::*;
+pub use spin_lock::*;
 pub use timer::*;
