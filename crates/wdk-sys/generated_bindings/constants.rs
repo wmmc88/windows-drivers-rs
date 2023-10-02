@@ -5394,6 +5394,166 @@ pub const PEP_ACPI_ADDRESS_TYPE_IO_ENTIRE_RANGE: u32 = 3;
 pub const PEP_ACPI_REQUEST_COMMON_CONVERT_TO_BIOS_RESOURCES: u32 = 1;
 pub const PEP_ACPI_REQUEST_COMMON_FLAGS_NONE: u32 = 0;
 pub const PEP_ACPI_REQUEST_COMMON_FLAGS_NO_END_TAG: u32 = 1;
+pub const IOCTL_STORAGE_BASE: u32 = 45;
+pub const STORAGE_DEVICE_FLAGS_RANDOM_DEVICEGUID_REASON_CONFLICT: u32 = 1;
+pub const STORAGE_DEVICE_FLAGS_RANDOM_DEVICEGUID_REASON_NOHWID: u32 = 2;
+pub const STORAGE_DEVICE_FLAGS_PAGE_83_DEVICEGUID: u32 = 4;
+pub const RECOVERED_WRITES_VALID: u32 = 1;
+pub const UNRECOVERED_WRITES_VALID: u32 = 2;
+pub const RECOVERED_READS_VALID: u32 = 4;
+pub const UNRECOVERED_READS_VALID: u32 = 8;
+pub const WRITE_COMPRESSION_INFO_VALID: u32 = 16;
+pub const READ_COMPRESSION_INFO_VALID: u32 = 32;
+pub const TAPE_RETURN_STATISTICS: u32 = 0;
+pub const TAPE_RETURN_ENV_INFO: u32 = 1;
+pub const TAPE_RESET_STATISTICS: u32 = 2;
+pub const MEDIA_ERASEABLE: u32 = 1;
+pub const MEDIA_WRITE_ONCE: u32 = 2;
+pub const MEDIA_READ_ONLY: u32 = 4;
+pub const MEDIA_READ_WRITE: u32 = 8;
+pub const MEDIA_WRITE_PROTECTED: u32 = 256;
+pub const MEDIA_CURRENTLY_MOUNTED: u32 = 2147483648;
+pub const STORAGE_FAILURE_PREDICTION_CONFIG_V1: u32 = 1;
+pub const SRB_TYPE_SCSI_REQUEST_BLOCK: u32 = 0;
+pub const SRB_TYPE_STORAGE_REQUEST_BLOCK: u32 = 1;
+pub const STORAGE_ADDRESS_TYPE_BTL8: u32 = 0;
+pub const STORAGE_RPMB_DESCRIPTOR_VERSION_1: u32 = 1;
+pub const STORAGE_RPMB_MINIMUM_RELIABLE_WRITE_SIZE: u32 = 512;
+pub const STORAGE_CRYPTO_CAPABILITY_VERSION_1: u32 = 1;
+pub const STORAGE_CRYPTO_DESCRIPTOR_VERSION_1: u32 = 1;
+pub const STORAGE_TIER_NAME_LENGTH: u32 = 256;
+pub const STORAGE_TIER_DESCRIPTION_LENGTH: u32 = 512;
+pub const STORAGE_TIER_FLAG_NO_SEEK_PENALTY: u32 = 131072;
+pub const STORAGE_TIER_FLAG_WRITE_BACK_CACHE: u32 = 2097152;
+pub const STORAGE_TIER_FLAG_READ_CACHE: u32 = 4194304;
+pub const STORAGE_TIER_FLAG_PARITY: u32 = 8388608;
+pub const STORAGE_TIER_FLAG_SMR: u32 = 16777216;
+pub const STORAGE_TEMPERATURE_VALUE_NOT_REPORTED: u32 = 32768;
+pub const STORAGE_TEMPERATURE_THRESHOLD_FLAG_ADAPTER_REQUEST: u32 = 1;
+pub const STORAGE_COMPONENT_ROLE_CACHE: u32 = 1;
+pub const STORAGE_COMPONENT_ROLE_TIERING: u32 = 2;
+pub const STORAGE_COMPONENT_ROLE_DATA: u32 = 4;
+pub const STORAGE_ATTRIBUTE_BYTE_ADDRESSABLE_IO: u32 = 1;
+pub const STORAGE_ATTRIBUTE_BLOCK_IO: u32 = 2;
+pub const STORAGE_ATTRIBUTE_DYNAMIC_PERSISTENCE: u32 = 4;
+pub const STORAGE_ATTRIBUTE_VOLATILE: u32 = 8;
+pub const STORAGE_ATTRIBUTE_ASYNC_EVENT_NOTIFICATION: u32 = 16;
+pub const STORAGE_ATTRIBUTE_PERF_SIZE_INDEPENDENT: u32 = 32;
+pub const STORAGE_DEVICE_MAX_OPERATIONAL_STATUS: u32 = 16;
+pub const STORAGE_ADAPTER_SERIAL_NUMBER_V1_MAX_LENGTH: u32 = 128;
+pub const STORAGE_DEVICE_NUMA_NODE_UNKNOWN: u32 = 4294967295;
+pub const DeviceDsmActionFlag_NonDestructive: u32 = 2147483648;
+pub const DeviceDsmAction_None: u32 = 0;
+pub const DeviceDsmAction_Trim: u32 = 1;
+pub const DeviceDsmAction_Notification: u32 = 2147483650;
+pub const DeviceDsmAction_OffloadRead: u32 = 2147483651;
+pub const DeviceDsmAction_OffloadWrite: u32 = 4;
+pub const DeviceDsmAction_Allocation: u32 = 2147483653;
+pub const DeviceDsmAction_Repair: u32 = 2147483654;
+pub const DeviceDsmAction_Scrub: u32 = 2147483655;
+pub const DeviceDsmAction_DrtQuery: u32 = 2147483656;
+pub const DeviceDsmAction_DrtClear: u32 = 2147483657;
+pub const DeviceDsmAction_DrtDisable: u32 = 2147483658;
+pub const DeviceDsmAction_TieringQuery: u32 = 2147483659;
+pub const DeviceDsmAction_Map: u32 = 2147483660;
+pub const DeviceDsmAction_RegenerateParity: u32 = 2147483661;
+pub const DeviceDsmAction_NvCache_Change_Priority: u32 = 2147483662;
+pub const DeviceDsmAction_NvCache_Evict: u32 = 2147483663;
+pub const DeviceDsmAction_TopologyIdQuery: u32 = 2147483664;
+pub const DeviceDsmAction_GetPhysicalAddresses: u32 = 2147483665;
+pub const DeviceDsmAction_ScopeRegen: u32 = 2147483666;
+pub const DeviceDsmAction_ReportZones: u32 = 2147483667;
+pub const DeviceDsmAction_OpenZone: u32 = 2147483668;
+pub const DeviceDsmAction_FinishZone: u32 = 2147483669;
+pub const DeviceDsmAction_CloseZone: u32 = 2147483670;
+pub const DeviceDsmAction_ResetWritePointer: u32 = 23;
+pub const DeviceDsmAction_GetRangeErrorInfo: u32 = 2147483672;
+pub const DeviceDsmAction_WriteZeroes: u32 = 25;
+pub const DeviceDsmAction_LostQuery: u32 = 2147483674;
+pub const DeviceDsmAction_GetFreeSpace: u32 = 2147483675;
+pub const DeviceDsmAction_ConversionQuery: u32 = 2147483676;
+pub const DeviceDsmAction_VdtSet: u32 = 29;
+pub const DEVICE_DSM_FLAG_ENTIRE_DATA_SET_RANGE: u32 = 1;
+pub const DEVICE_DSM_FLAG_TRIM_NOT_FS_ALLOCATED: u32 = 2147483648;
+pub const DEVICE_DSM_FLAG_TRIM_BYPASS_RZAT: u32 = 1073741824;
+pub const DEVICE_DSM_NOTIFY_FLAG_BEGIN: u32 = 1;
+pub const DEVICE_DSM_NOTIFY_FLAG_END: u32 = 2;
+pub const STORAGE_OFFLOAD_MAX_TOKEN_LENGTH: u32 = 512;
+pub const STORAGE_OFFLOAD_TOKEN_ID_LENGTH: u32 = 504;
+pub const STORAGE_OFFLOAD_TOKEN_TYPE_ZERO_DATA: u32 = 4294901761;
+pub const STORAGE_OFFLOAD_READ_RANGE_TRUNCATED: u32 = 1;
+pub const STORAGE_OFFLOAD_WRITE_RANGE_TRUNCATED: u32 = 1;
+pub const STORAGE_OFFLOAD_TOKEN_INVALID: u32 = 2;
+pub const DEVICE_DSM_FLAG_ALLOCATION_CONSOLIDATEABLE_ONLY: u32 = 1073741824;
+pub const DEVICE_DSM_PARAMETERS_V1: u32 = 1;
+pub const DEVICE_DATA_SET_LBP_STATE_PARAMETERS_VERSION_V1: u32 = 1;
+pub const DEVICE_DSM_FLAG_REPAIR_INPUT_TOPOLOGY_ID_PRESENT: u32 = 1073741824;
+pub const DEVICE_DSM_FLAG_REPAIR_OUTPUT_PARITY_EXTENT: u32 = 536870912;
+pub const DEVICE_DSM_FLAG_SCRUB_SKIP_IN_SYNC: u32 = 268435456;
+pub const DEVICE_DSM_FLAG_SCRUB_OUTPUT_PARITY_EXTENT: u32 = 536870912;
+pub const DEVICE_DSM_FLAG_PHYSICAL_ADDRESSES_OMIT_TOTAL_RANGES: u32 = 268435456;
+pub const DEVICE_DSM_PHYSICAL_ADDRESSES_OUTPUT_V1: u32 = 1;
+pub const DEVICE_DSM_PHYSICAL_ADDRESSES_OUTPUT_VERSION_V1: u32 = 1;
+pub const DEVICE_STORAGE_NO_ERRORS: u32 = 1;
+pub const DEVICE_DSM_RANGE_ERROR_OUTPUT_V1: u32 = 1;
+pub const DEVICE_DSM_RANGE_ERROR_INFO_VERSION_V1: u32 = 1;
+pub const IOCTL_STORAGE_BC_VERSION: u32 = 1;
+pub const STORAGE_PRIORITY_HINT_SUPPORTED: u32 = 1;
+pub const STORAGE_DIAGNOSTIC_FLAG_ADAPTER_REQUEST: u32 = 1;
+pub const ERROR_HISTORY_DIRECTORY_ENTRY_DEFAULT_COUNT: u32 = 8;
+pub const DEVICEDUMP_STRUCTURE_VERSION_V1: u32 = 1;
+pub const DEVICEDUMP_MAX_IDSTRING: u32 = 32;
+pub const MAX_FW_BUCKET_ID_LENGTH: u32 = 132;
+pub const STORAGE_CRASH_TELEMETRY_REGKEY: &[u8; 81] = b"\\Registry\\Machine\\System\\CurrentControlSet\\Control\\CrashControl\\StorageTelemetry\0";
+pub const STORAGE_DEVICE_TELEMETRY_REGKEY: &[u8; 76] = b"\\Registry\\Machine\\System\\CurrentControlSet\\Control\\Storage\\StorageTelemetry\0";
+pub const DDUMP_FLAG_DATA_READ_FROM_DEVICE: u32 = 1;
+pub const FW_ISSUEID_NO_ISSUE: u32 = 0;
+pub const FW_ISSUEID_UNKNOWN: u32 = 4294967295;
+pub const TC_PUBLIC_DEVICEDUMP_CONTENT_SMART: u32 = 1;
+pub const TC_PUBLIC_DEVICEDUMP_CONTENT_GPLOG: u32 = 2;
+pub const TC_PUBLIC_DEVICEDUMP_CONTENT_GPLOG_MAX: u32 = 16;
+pub const TC_DEVICEDUMP_SUBSECTION_DESC_LENGTH: u32 = 16;
+pub const TC_PUBLIC_DATA_TYPE_ATAGP: &[u8; 14] = b"ATAGPLogPages\0";
+pub const TC_PUBLIC_DATA_TYPE_ATASMART: &[u8; 14] = b"ATASMARTPages\0";
+pub const CDB_SIZE: u32 = 16;
+pub const TELEMETRY_COMMAND_SIZE: u32 = 16;
+pub const DEVICEDUMP_CAP_PRIVATE_SECTION: u32 = 1;
+pub const DEVICEDUMP_CAP_RESTRICTED_SECTION: u32 = 2;
+pub const STORAGE_IDLE_POWERUP_REASON_VERSION_V1: u32 = 1;
+pub const STORAGE_DEVICE_POWER_CAP_VERSION_V1: u32 = 1;
+pub const STORAGE_EVENT_NOTIFICATION_VERSION_V1: u32 = 1;
+pub const STORAGE_EVENT_MEDIA_STATUS: u32 = 1;
+pub const STORAGE_EVENT_DEVICE_STATUS: u32 = 2;
+pub const STORAGE_EVENT_DEVICE_OPERATION: u32 = 4;
+pub const STORAGE_EVENT_ALL: u32 = 7;
+pub const READ_COPY_NUMBER_KEY: u32 = 1380142592;
+pub const READ_COPY_NUMBER_BYPASS_CACHE_FLAG: u32 = 256;
+pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_CONTROLLER: u32 = 1;
+pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_LAST_SEGMENT: u32 = 2;
+pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_FIRST_SEGMENT: u32 = 4;
+pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_REPLACE_EXISTING_IMAGE: u32 = 1073741824;
+pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_SWITCH_TO_EXISTING_FIRMWARE: u32 = 2147483648;
+pub const STORAGE_HW_FIRMWARE_INVALID_SLOT: u32 = 255;
+pub const STORAGE_HW_FIRMWARE_REVISION_LENGTH: u32 = 16;
+pub const STORAGE_PROTOCOL_STRUCTURE_VERSION: u32 = 1;
+pub const STORAGE_PROTOCOL_COMMAND_FLAG_ADAPTER_REQUEST: u32 = 2147483648;
+pub const STORAGE_PROTOCOL_STATUS_PENDING: u32 = 0;
+pub const STORAGE_PROTOCOL_STATUS_SUCCESS: u32 = 1;
+pub const STORAGE_PROTOCOL_STATUS_ERROR: u32 = 2;
+pub const STORAGE_PROTOCOL_STATUS_INVALID_REQUEST: u32 = 3;
+pub const STORAGE_PROTOCOL_STATUS_NO_DEVICE: u32 = 4;
+pub const STORAGE_PROTOCOL_STATUS_BUSY: u32 = 5;
+pub const STORAGE_PROTOCOL_STATUS_DATA_OVERRUN: u32 = 6;
+pub const STORAGE_PROTOCOL_STATUS_INSUFFICIENT_RESOURCES: u32 = 7;
+pub const STORAGE_PROTOCOL_STATUS_THROTTLED_REQUEST: u32 = 8;
+pub const STORAGE_PROTOCOL_STATUS_NOT_SUPPORTED: u32 = 255;
+pub const STORAGE_PROTOCOL_COMMAND_LENGTH_NVME: u32 = 64;
+pub const STORAGE_PROTOCOL_SPECIFIC_NVME_ADMIN_COMMAND: u32 = 1;
+pub const STORAGE_PROTOCOL_SPECIFIC_NVME_NVM_COMMAND: u32 = 2;
+pub const STORATTRIBUTE_NONE: u32 = 0;
+pub const STORATTRIBUTE_MANAGEMENT_STATE: u32 = 1;
+pub const STORAGE_SUPPORTED_FEATURES_BYPASS_IO: u32 = 1;
+pub const STORAGE_SUPPORTED_FEATURES_MASK: u32 = 1;
 pub const HID_REVISION: u32 = 1;
 pub const HID_HID_DESCRIPTOR_TYPE: u32 = 33;
 pub const HID_REPORT_DESCRIPTOR_TYPE: u32 = 34;
@@ -8573,6 +8733,84 @@ extern "C" {
 }
 extern "C" {
     pub static GUID_PPM_PERF_CONSTRAINT_CHANGE: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_DISK: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_CDROM: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_PARTITION: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_TAPE: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_WRITEONCEDISK: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_VOLUME: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_MEDIUMCHANGER: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_FLOPPY: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_CDCHANGER: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_STORAGEPORT: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_VMLUN: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_SES: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_ZNSDISK: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_SERVICE_VOLUME: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_HIDDEN_VOLUME: GUID;
+}
+extern "C" {
+    pub static GUID_DEVINTERFACE_UNIFIED_ACCESS_RPMB: GUID;
+}
+extern "C" {
+    pub static GUID_DEVICEDUMP_STORAGE_DEVICE: GUID;
+}
+extern "C" {
+    pub static GUID_DEVICEDUMP_DRIVER_STORAGE_PORT: GUID;
+}
+extern "C" {
+    pub static DEVPKEY_Storage_Portable: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_Storage_Removable_Media: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_Storage_System_Critical: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_Storage_Disk_Number: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_Storage_Partition_Number: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_Storage_Mbr_Type: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_Storage_Gpt_Type: DEVPROPKEY;
+}
+extern "C" {
+    pub static DEVPKEY_Storage_Gpt_Name: DEVPROPKEY;
 }
 extern "C" {
     pub static GUID_DEVINTERFACE_HID: GUID;

@@ -9,6 +9,9 @@
 #include "ntintsafe.h"
 #include "ntstrsafe.h"
 #include "pepfx.h"
+
+// FIXME: add additional storage apis: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/_storage/
+#include "ntddstor.h"
 #endif
 
 // FIXME: Why is there no definition for this struct? Maybe blocklist this struct in bindgen. 
