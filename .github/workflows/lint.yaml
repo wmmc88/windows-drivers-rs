@@ -56,6 +56,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           filter_mode: nofilter
           fail_on_error: true
+          level: info
 
       - name: Run Cargo Clippy (--features nightly)
         if: matrix.rust_toolchain == 'nightly'
@@ -67,6 +68,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           filter_mode: nofilter
           fail_on_error: true
+          level: info
 
   udeps:
     name: Detect Unused Cargo Dependencies
