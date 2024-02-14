@@ -4,6 +4,13 @@ on:
   merge_group:
   schedule: # Trigger a job on default branch at 4AM PST everyday
     - cron: "0 11 * * *"
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: "Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)"
+        required: false
+        default: false
 
 name: Test
 
@@ -62,3 +69,10 @@ jobs:
       - name: Run Cargo Test (--features nightly)
         if: matrix.rust_toolchain == 'nightly'
         run: cargo +${{ matrix.rust_toolchain }} test --locked --profile ${{ matrix.cargo_profile }} --target ${{ matrix.target_triple }} --workspace --exclude wdk-sys --features nightly
+
+      # Enable tmate debugging of manually-triggered workflows if the input option was provided
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+        with:
+          limit-access-to-actor: true
