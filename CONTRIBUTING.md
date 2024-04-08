@@ -87,7 +87,7 @@ That's it! Thank you for your contribution!
 
 The following tools should be installed as a part of the `windows-drivers-rs` developer workflow:
 
-* `cargo-expand`: `cargo install --locked cargo-expand`
+* `cargo-expand`: `cargo install --locked cargo-expand --version 1.0.80`
 * `cargo-audit`: `cargo install --locked cargo-audit`
 * `cargo-udeps`: `cargo install --locked cargo-udeps`
 * `taplo-cli`: `cargo install --locked taplo-cli`
@@ -123,8 +123,8 @@ To maintain the quality of code, tests and tools are required to pass before con
 
 **_Functional Correctness:_**
 
-* `cargo test --locked --workspace --exclude sample-*`
-  * To test `nightly` features: `cargo +nightly test --locked --workspace --exclude sample-* --features nightly`
+* `cargo test --locked`
+  * To test `nightly` features: `cargo +nightly test --locked --features nightly`
 
 **_Static Analysis and Linting:_**
 
