@@ -22,7 +22,7 @@ This project was built with support of WDM, KMDF, and UMDF drivers in mind, as w
 ### Build Requirements
 
 * Binding generation via `bindgen` requires `libclang`. The easiest way to acquire this is via `winget`
-  * `winget -i install LLVM.LLVM`
+  * `winget install -i LLVM.LLVM`
     * Ensure you select the GUI option to add LLVM to the PATH 
 * To execute post-build tasks (ie. `inf2cat`, `infverif`, etc.), `cargo make` is used
   * `cargo install --locked cargo-make --no-default-features --features tls-native`
@@ -168,7 +168,7 @@ When executing the default task, just `cargo make` make also works since the `de
 
 ### Argument Forwarding
 
-`windows-drivers-rs` extends `cargo make` to forward specific arguements to the underlying `cargo` commands. In order to specify arguments to forward, they must be provided **after explicitly specifying the `cargo-make` task name** (ie. omitting the name for the `default` task is not supported).
+`windows-drivers-rs` extends `cargo make` to forward specific arguments to the underlying `cargo` commands. In order to specify arguments to forward, they must be provided **after explicitly specifying the `cargo-make` task name** (ie. omitting the name for the `default` task is not supported).
 
 #### Examples
 
