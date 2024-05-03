@@ -1,16 +1,12 @@
 // Copyright (c) Microsoft Corporation
 // License: MIT OR Apache-2.0
 
+//! # Sample KMDF Driver
+//!
+//! This is a sample KMDF driver that demonstrates how to use the crates in
+//! windows-driver-rs to create a skeleton of a kmdf driver.
+
 #![no_std]
-#![cfg_attr(feature = "nightly", feature(hint_must_use))]
-#![deny(unsafe_op_in_unsafe_fn)]
-#![deny(clippy::all)]
-#![deny(clippy::pedantic)]
-#![deny(clippy::nursery)]
-#![deny(clippy::cargo)]
-#![deny(clippy::undocumented_unsafe_blocks)]
-#![deny(clippy::unnecessary_safety_doc)]
-#![deny(clippy::multiple_unsafe_ops_per_block)]
 
 extern crate alloc;
 
@@ -96,7 +92,6 @@ pub unsafe extern "system" fn driver_entry(
     //         4. `driver_config` is a valid pointer to a valid `WDF_DRIVER_CONFIG`
     //         5. `driver_handle_output` is expected to be null
     unsafe {
-        #![allow(clippy::multiple_unsafe_ops_per_block)]
         wdf_driver_create_ntstatus = call_unsafe_wdf_function_binding!(
             WdfDriverCreate,
             driver as wdk_sys::PDRIVER_OBJECT,
@@ -167,7 +162,6 @@ extern "C" fn evt_driver_device_add(
     //          null
     //       3. `device_handle_output` is expected to be null
     unsafe {
-        #![allow(clippy::multiple_unsafe_ops_per_block)]
         ntstatus = wdk_macros::call_unsafe_wdf_function_binding!(
             WdfDeviceCreate,
             &mut device_init,

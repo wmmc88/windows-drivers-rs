@@ -2,9 +2,6 @@ use wdk_sys::{macros, NTSTATUS, WDFTIMER, WDF_OBJECT_ATTRIBUTES, WDF_TIMER_CONFI
 
 use crate::nt_success;
 
-// private module + public re-export avoids the module name repetition: https://github.com/rust-lang/rust-clippy/issues/8524
-#[allow(clippy::module_name_repetitions)]
-
 /// WDF Timer.
 pub struct Timer {
     wdf_timer: WDFTIMER,
@@ -28,7 +25,6 @@ impl Timer {
         // accessible outside of this module, and this module guarantees that it is
         // always in a valid state.
         unsafe {
-            #![allow(clippy::multiple_unsafe_ops_per_block)]
             nt_status = macros::call_unsafe_wdf_function_binding!(
                 WdfTimerCreate,
                 timer_config,
@@ -52,12 +48,12 @@ impl Timer {
     }
 
     /// Start the [`Timer`]'s clock
+    #[must_use]
     pub fn start(&self, due_time: i64) -> bool {
         let result;
         // SAFETY: `wdf_timer` is a private member of `Timer`, originally created by
         // WDF, and this module guarantees that it is always in a valid state.
         unsafe {
-            #![allow(clippy::multiple_unsafe_ops_per_block)]
             result =
                 macros::call_unsafe_wdf_function_binding!(WdfTimerStart, self.wdf_timer, due_time);
         }
@@ -65,12 +61,12 @@ impl Timer {
     }
 
     /// Stop the [`Timer`]'s clock
+    #[must_use]
     pub fn stop(&self, wait: bool) -> bool {
         let result;
         // SAFETY: `wdf_timer` is a private member of `Timer`, originally created by
         // WDF, and this module guarantees that it is always in a valid state.
         unsafe {
-            #![allow(clippy::multiple_unsafe_ops_per_block)]
             result = macros::call_unsafe_wdf_function_binding!(
                 WdfTimerStop,
                 self.wdf_timer,

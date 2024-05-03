@@ -2,9 +2,6 @@ use wdk_sys::{macros, NTSTATUS, WDFSPINLOCK, WDF_OBJECT_ATTRIBUTES};
 
 use crate::nt_success;
 
-// private module + public re-export avoids the module name repetition: https://github.com/rust-lang/rust-clippy/issues/8524
-#[allow(clippy::module_name_repetitions)]
-
 /// WDF Spin Lock.
 ///
 /// Use framework spin locks to synchronize access to driver data from code that
@@ -37,7 +34,6 @@ impl SpinLock {
         // accessible outside of this module, and this module guarantees that it is
         // always in a valid state.
         unsafe {
-            #![allow(clippy::multiple_unsafe_ops_per_block)]
             nt_status = macros::call_unsafe_wdf_function_binding!(
                 WdfSpinLockCreate,
                 attributes,
@@ -62,11 +58,7 @@ impl SpinLock {
         // SAFETY: `wdf_spin_lock` is a private member of `SpinLock`, originally created
         // by WDF, and this module guarantees that it is always in a valid state.
         unsafe {
-            #![allow(clippy::multiple_unsafe_ops_per_block)]
-            let [()] = [macros::call_unsafe_wdf_function_binding!(
-                WdfSpinLockAcquire,
-                self.wdf_spin_lock
-            )];
+            macros::call_unsafe_wdf_function_binding!(WdfSpinLockAcquire, self.wdf_spin_lock);
         }
     }
 
@@ -75,11 +67,7 @@ impl SpinLock {
         // SAFETY: `wdf_spin_lock` is a private member of `SpinLock`, originally created
         // by WDF, and this module guarantees that it is always in a valid state.
         unsafe {
-            #![allow(clippy::multiple_unsafe_ops_per_block)]
-            let [()] = [macros::call_unsafe_wdf_function_binding!(
-                WdfSpinLockRelease,
-                self.wdf_spin_lock
-            )];
+            macros::call_unsafe_wdf_function_binding!(WdfSpinLockRelease, self.wdf_spin_lock);
         }
     }
 }
