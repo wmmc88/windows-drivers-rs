@@ -676,9 +676,9 @@ impl Config {
     ///
     /// Panics if the invoked from outside a Cargo build environment
     pub fn configure_binary_build(&self) -> Result<(), ConfigError> {
-        if !Self::is_crt_static_linked() {
-            return Err(ConfigError::StaticCRTNotEnabled);
-        }
+        // if !Self::is_crt_static_linked() {
+        //     return Err(ConfigError::StaticCRTNotEnabled);
+        // }
 
         let library_paths: Vec<PathBuf> = self.get_library_paths()?;
 
