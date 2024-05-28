@@ -10,6 +10,60 @@
 #include "ntifs.h"
 #include "ntddk.h"
 
+// HID
+// FIXME: enable all of these
+// Headers list from https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/_hid/
+#include "hidclass.h"
+//#include "hidpddi.h"
+//#include "hidpi.h"
+#include "hidport.h"
+#include "hidsdi.h"
+//#include "HidSpiCx/1.0/hidspicx.h"
+#include "kbdmou.h"
+#include "ntdd8042.h"
+#include "vhf.h"
+
+// USB
+#include "usbspec.h"
+
+#include "usb.h"
+#include "usbbusif.h"
+#include "usbioctl.h"
+#include "usbdlib.h"
+
+#include "usbfnbase.h"
+#include "usbfnattach.h"
+#include "usbfnioctl.h"
+
+#include "wdf.h" // TODO: how to deal with both WDF dependency in non-wdf settings
+#include "wdfusb.h"
+
+#ifdef _KERNEL_MODE
+// FIXME: gate these each as separate features
+#include "ntintsafe.h"
+#include "ntstrsafe.h"
+#include "pepfx.h"
+
+// FIXME: add additional storage apis: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/_storage/
+#include "ntddstor.h"
+
+// UDE
+#include "ude/1.0/UdeCx.h"
+#endif
+
+// TODO: gate properly and spb version
+#include "spb.h"
+#include "spb/1.1/spbcx.h"
+#include "reshub.h"
+#include "pwmutil.h"
+
+// PARALLEL PORTS
+#include "gpio.h"
+#include "gpioclx.h"
+#include "ntddpar.h"
+#include "ntddser.h"
+#include "parallel.h"
+
 // FIXME: Why is there no definition for this struct? Maybe blocklist this struct in bindgen. 
 typedef union _KGDTENTRY64
 {
@@ -70,3 +124,6 @@ typedef union _KIDTENTRY64
 #include <wdf.h>
 
 #endif // defined(KMDF_VERSION_MAJOR) || defined(UMDF_VERSION_MAJOR)
+
+// Tracelogging
+#include "TraceLoggingProvider.h"

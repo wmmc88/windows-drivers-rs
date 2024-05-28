@@ -24,6 +24,12 @@ pub mod wdf;
 #[cfg(any(driver_type = "KMDF", driver_type = "UMDF"))]
 pub use wdf::WDF_FUNCTION_TABLE;
 
+// FIXME: Gate this properly
+pub mod hid;
+pub mod parallel_ports;
+pub mod spb;
+pub mod usb;
+
 #[cfg(driver_type = "UMDF")]
 pub mod windows;
 

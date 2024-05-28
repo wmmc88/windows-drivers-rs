@@ -545,7 +545,7 @@ impl Config {
                 DriverConfig::WDM => {
                     vec![
                         // This is normally defined by msvc via /kernel flag
-                        "_KERNEL_MODE".to_string(),
+                        ("_KERNEL_MODE", None)
                     ]
                 }
                 DriverConfig::KMDF(kmdf_config) => {

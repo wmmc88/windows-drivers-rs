@@ -234,6 +234,95 @@ fn generate_wdf(out_path: &Path, config: &Config) -> Result<(), ConfigError> {
         .write_to_file(out_path.join("wdf.rs"))?)
 }
 
+fn generate_hid(out_path: &Path, config: &Config) -> Result<(), ConfigError> {
+    let mut builder = bindgen::Builder::wdk_default(vec!["src/input.h"], config)?
+        .with_codegen_config((CodegenConfig::TYPES | CodegenConfig::VARS).complement());
+
+    // Only allowlist files in the hid-specific files declared for hid to
+    // avoid duplicate definitions
+    for header_file in [
+        "hidclass.h",
+        "hidpddi.h",
+        "hidpi.h",
+        "hidport.h",
+        "hidsdi.h",
+        "hidspicx.h",
+        "kbdmou.h",
+        "ntdd8042.h",
+        "vhf.h",
+    ] {
+        builder = builder.allowlist_file(format!(".*{header_file}.*"));
+    }
+
+    Ok(builder
+        .generate()
+        .expect("Bindings should succeed to generate")
+        .write_to_file(out_path.join("hid.rs"))?)
+}
+
+fn generate_parallel_ports(out_path: &Path, config: &Config) -> Result<(), ConfigError> {
+    let mut builder = bindgen::Builder::wdk_default(vec!["src/input.h"], config)?
+        .with_codegen_config((CodegenConfig::TYPES | CodegenConfig::VARS).complement());
+
+    // Only allowlist files in the parallel ports-specific files declared for
+    // parallel ports to avoid duplicate definitions
+    for header_file in [
+        "gpio.h",
+        "gpioclx.h",
+        "ntddpar.h",
+        "ntddser.h",
+        "parallel.h",
+    ] {
+        builder = builder.allowlist_file(format!(".*{header_file}.*"));
+    }
+
+    Ok(builder
+        .generate()
+        .expect("Bindings should succeed to generate")
+        .write_to_file(out_path.join("parallel_ports.rs"))?)
+}
+
+fn generate_spb(out_path: &Path, config: &Config) -> Result<(), ConfigError> {
+    let mut builder = bindgen::Builder::wdk_default(vec!["src/input.h"], config)?
+        .with_codegen_config((CodegenConfig::TYPES | CodegenConfig::VARS).complement());
+
+    // Only allowlist files in the usb-specific files declared for spb to
+    // avoid duplicate definitions
+    for header_file in ["spb.h", "spbcx.h", "reshub.h", "pwmutil.h"] {
+        builder = builder.allowlist_file(format!(".*{header_file}.*"));
+    }
+
+    Ok(builder
+        .generate()
+        .expect("Bindings should succeed to generate")
+        .write_to_file(out_path.join("spb.rs"))?)
+}
+
+fn generate_usb(out_path: &Path, config: &Config) -> Result<(), ConfigError> {
+    let mut builder = bindgen::Builder::wdk_default(vec!["src/input.h"], config)?
+        .with_codegen_config((CodegenConfig::TYPES | CodegenConfig::VARS).complement());
+
+    // Only allowlist files in the usb-specific files declared for usb to
+    // avoid duplicate definitions
+    for header_file in [
+        "usb.h",
+        "usbbusif.h",
+        "usbdlib.h",
+        "usbfnattach.h",
+        "usbfnbase.h",
+        "usbfnioctl.h",
+        "usbioctl.h",
+        "usbspec.h",
+    ] {
+        builder = builder.allowlist_file(format!(".*{header_file}.*"));
+    }
+
+    Ok(builder
+        .generate()
+        .expect("Bindings should succeed to generate")
+        .write_to_file(out_path.join("usb.rs"))?)
+}
+
 fn generate_wdf_function_table(out_path: &Path, config: &Config) -> std::io::Result<()> {
     const MINIMUM_MINOR_VERSION_TO_GENERATE_WDF_FUNCTION_COUNT: u8 = 25;
 
@@ -371,6 +460,14 @@ fn main() -> anyhow::Result<()> {
         if let DriverConfig::KMDF(_) | DriverConfig::UMDF(_) = &config.driver_config {
             generate_wdf(&out_path, &config)?;
         }
+
+        // FIXME: These should be properly gated by feature flags and have the correct
+        // configuration considerations
+        generate_hid(&out_path, &config)?;
+        generate_spb(&out_path, &config)?;
+        generate_parallel_ports(&out_path, &config)?;
+        generate_usb(&out_path, &config)?;
+
         Ok::<(), ConfigError>(())
     })?;
 
