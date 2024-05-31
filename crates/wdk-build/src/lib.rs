@@ -21,11 +21,7 @@ pub mod cargo_make;
 use std::{env, path::PathBuf};
 
 pub use bindgen::BuilderExt;
-pub use metadata::{
-    find_top_level_cargo_manifest,
-    TryFromCargoMetadata,
-    WDKMetadata,
-};
+pub use metadata::{find_top_level_cargo_manifest, TryFromCargoMetadata, WDKMetadata};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use utils::PathExt;
@@ -545,7 +541,7 @@ impl Config {
                 DriverConfig::WDM => {
                     vec![
                         // This is normally defined by msvc via /kernel flag
-                        ("_KERNEL_MODE", None)
+                        ("_KERNEL_MODE", None),
                     ]
                 }
                 DriverConfig::KMDF(kmdf_config) => {
@@ -700,6 +696,11 @@ impl Config {
                 println!("cargo::rustc-link-lib=static=hal");
                 println!("cargo::rustc-link-lib=static=wmilib");
 
+                // Emit ARM64-specific libraries to link to
+                if self.cpu_architecture == CPUArchitecture::ARM64 {
+                    println!("cargo::rustc-link-lib=static=arm64rt");
+                }
+
                 // Linker arguments derived from WindowsDriver.KernelMode.props in Ni(22H2) WDK
                 println!("cargo::rustc-cdylib-link-arg=/DRIVER");
                 println!("cargo::rustc-cdylib-link-arg=/NODEFAULTLIB");
@@ -718,6 +719,11 @@ impl Config {
                 println!("cargo::rustc-link-lib=static=wmilib");
                 println!("cargo::rustc-link-lib=static=WdfLdr");
                 println!("cargo::rustc-link-lib=static=WdfDriverEntry");
+
+                // Emit ARM64-specific libraries to link to
+                if self.cpu_architecture == CPUArchitecture::ARM64 {
+                    println!("cargo::rustc-link-lib=static=arm64rt");
+                }
 
                 // Linker arguments derived from WindowsDriver.KernelMode.props in Ni(22H2) WDK
                 println!("cargo::rustc-cdylib-link-arg=/DRIVER");
