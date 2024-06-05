@@ -8,9 +8,13 @@
 //! provide a CLI very close to cargo's own, but only exposes the arguments
 //! supported by `rust-driver-makefile.toml`.
 
-use std::path::{Path, PathBuf};
+use std::{
+    env,
+    panic::UnwindSafe,
+    path::{Path, PathBuf},
+};
 
-use cargo_metadata::MetadataCommand;
+use cargo_metadata::{camino::Utf8Path, MetadataCommand};
 use clap::{Args, Parser};
 
 use crate::{
@@ -19,7 +23,18 @@ use crate::{
     ConfigError,
 };
 
+/// The filename of the main makefile for Rust Windows drivers.
+pub const RUST_DRIVER_MAKEFILE_NAME: &str = "rust-driver-makefile.toml";
+/// The filename of the samples makefile for Rust Windows drivers.
+pub const RUST_DRIVER_SAMPLE_MAKEFILE_NAME: &str = "rust-driver-sample-makefile.toml";
+
 const PATH_ENV_VAR: &str = "Path";
+/// The environment variable that [`setup_wdk_version`] stores the WDK version
+/// in.
+pub const WDK_VERSION_ENV_VAR: &str = "WDK_BUILD_DETECTED_VERSION";
+/// The first WDK version with the new `InfVerif` behavior.
+const MINIMUM_SAMPLES_FLAG_WDK_VERSION: i32 = 25798;
+const WDK_INF_ADDITIONAL_FLAGS_ENV_VAR: &str = "WDK_BUILD_ADDITIONAL_INFVERIF_FLAGS";
 
 /// The name of the environment variable that cargo-make uses during `cargo
 /// build` and `cargo test` commands
@@ -27,19 +42,21 @@ const CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR: &str = "CARGO_MAKE_CARGO_BUILD_
 
 const CARGO_MAKE_PROFILE_ENV_VAR: &str = "CARGO_MAKE_PROFILE";
 const CARGO_MAKE_CARGO_PROFILE_ENV_VAR: &str = "CARGO_MAKE_CARGO_PROFILE";
+const CARGO_MAKE_CRATE_TARGET_TRIPLE_ENV_VAR: &str = "CARGO_MAKE_CRATE_TARGET_TRIPLE";
 const CARGO_MAKE_CRATE_CUSTOM_TRIPLE_TARGET_DIRECTORY_ENV_VAR: &str =
     "CARGO_MAKE_CRATE_CUSTOM_TRIPLE_TARGET_DIRECTORY";
 const CARGO_MAKE_RUST_DEFAULT_TOOLCHAIN_ENV_VAR: &str = "CARGO_MAKE_RUST_DEFAULT_TOOLCHAIN";
 const CARGO_MAKE_CRATE_FS_NAME_ENV_VAR: &str = "CARGO_MAKE_CRATE_FS_NAME";
 const CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY_ENV_VAR: &str =
     "CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY";
+const CARGO_MAKE_CURRENT_TASK_NAME_ENV_VAR: &str = "CARGO_MAKE_CURRENT_TASK_NAME";
 const WDK_BUILD_OUTPUT_DIRECTORY_ENV_VAR: &str = "WDK_BUILD_OUTPUT_DIRECTORY";
 
 /// `clap` uses an exit code of 2 for usage errors: <https://github.com/clap-rs/clap/blob/14fd853fb9c5b94e371170bbd0ca2bf28ef3abff/clap_builder/src/util/mod.rs#L30C18-L30C28>
 const CLAP_USAGE_EXIT_CODE: i32 = 2;
 
-trait ParseCargoArg {
-    fn parse_cargo_arg(&self);
+trait ParseCargoArgs {
+    fn parse_cargo_args(&self);
 }
 
 #[derive(Parser, Debug)]
@@ -124,39 +141,67 @@ struct ManifestOptions {
     offline: bool,
 }
 
-impl ParseCargoArg for BaseOptions {
-    fn parse_cargo_arg(&self) {
-        if self.quiet && self.verbose > 0 {
+impl ParseCargoArgs for CommandLineInterface {
+    fn parse_cargo_args(&self) {
+        let Self {
+            base,
+            workspace,
+            features,
+            compilation_options,
+            manifest_options,
+        } = self;
+
+        base.parse_cargo_args();
+        workspace.parse_cargo_args();
+        features.parse_cargo_args();
+        compilation_options.parse_cargo_args();
+        manifest_options.parse_cargo_args();
+    }
+}
+
+impl ParseCargoArgs for BaseOptions {
+    fn parse_cargo_args(&self) {
+        let Self { quiet, verbose } = self;
+
+        if *quiet && *verbose > 0 {
             eprintln!("Cannot specify both --quiet and --verbose");
             std::process::exit(CLAP_USAGE_EXIT_CODE);
         }
 
-        if self.quiet {
+        if *quiet {
             append_to_space_delimited_env_var(CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR, "--quiet");
         }
 
-        if self.verbose > 0 {
+        if *verbose > 0 {
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
-                format!("-{}", "v".repeat(self.verbose.into())).as_str(),
+                format!("-{}", "v".repeat((*verbose).into())).as_str(),
             );
         }
     }
 }
 
-impl ParseCargoArg for clap_cargo::Workspace {
-    fn parse_cargo_arg(&self) {
-        if !self.package.is_empty() {
+impl ParseCargoArgs for clap_cargo::Workspace {
+    fn parse_cargo_args(&self) {
+        let Self {
+            package,
+            workspace,
+            all,
+            exclude,
+            ..
+        } = self;
+
+        if !package.is_empty() {
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
-                self.package
+                package
                     .iter()
                     .fold(
                         String::with_capacity({
                             const MINIMUM_PACKAGE_SPEC_LENGTH: usize = 1;
                             const MINIMUM_PACKAGE_ARG_LENGTH: usize =
                                 "--package ".len() + MINIMUM_PACKAGE_SPEC_LENGTH + " ".len();
-                            self.package.len() * MINIMUM_PACKAGE_ARG_LENGTH
+                            package.len() * MINIMUM_PACKAGE_ARG_LENGTH
                         }),
                         |mut package_args, package_spec| {
                             package_args.push_str("--package ");
@@ -169,29 +214,29 @@ impl ParseCargoArg for clap_cargo::Workspace {
             );
         }
 
-        if self.workspace {
+        if *workspace {
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
                 "--workspace",
             );
         }
 
-        if !self.exclude.is_empty() {
-            if !self.workspace {
+        if !exclude.is_empty() {
+            if !*workspace {
                 eprintln!("--exclude can only be used together with --workspace");
                 std::process::exit(CLAP_USAGE_EXIT_CODE);
             }
 
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
-                self.exclude
+                exclude
                     .iter()
                     .fold(
                         String::with_capacity({
                             const MINIMUM_PACKAGE_SPEC_LENGTH: usize = 1;
                             const MINIMUM_EXCLUDE_ARG_LENGTH: usize =
                                 "--exclude ".len() + MINIMUM_PACKAGE_SPEC_LENGTH + " ".len();
-                            self.package.len() * MINIMUM_EXCLUDE_ARG_LENGTH
+                            package.len() * MINIMUM_EXCLUDE_ARG_LENGTH
                         }),
                         |mut exclude_args, package_spec| {
                             exclude_args.push_str("--exclude ");
@@ -204,39 +249,45 @@ impl ParseCargoArg for clap_cargo::Workspace {
             );
         }
 
-        if self.all {
+        if *all {
             append_to_space_delimited_env_var(CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR, "--all");
         }
     }
 }
 
-impl ParseCargoArg for clap_cargo::Features {
-    fn parse_cargo_arg(&self) {
-        if self.all_features {
+impl ParseCargoArgs for clap_cargo::Features {
+    fn parse_cargo_args(&self) {
+        let Self {
+            all_features,
+            no_default_features,
+            features,
+            ..
+        } = self;
+        if *all_features {
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
                 "--all-features",
             );
         }
 
-        if self.no_default_features {
+        if *no_default_features {
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
                 "--no-default-features",
             );
         }
 
-        if !self.features.is_empty() {
+        if !features.is_empty() {
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
-                self.features
+                features
                     .iter()
                     .fold(
                         String::with_capacity({
                             const MINIMUM_FEATURE_NAME_LENGTH: usize = 1;
                             const MINIMUM_FEATURE_ARG_LENGTH: usize =
                                 "--features ".len() + MINIMUM_FEATURE_NAME_LENGTH + " ".len();
-                            self.features.len() * MINIMUM_FEATURE_ARG_LENGTH
+                            features.len() * MINIMUM_FEATURE_ARG_LENGTH
                         }),
                         |mut feature_args: String, feature| {
                             feature_args.push_str("--features ");
@@ -251,19 +302,26 @@ impl ParseCargoArg for clap_cargo::Features {
     }
 }
 
-impl ParseCargoArg for CompilationOptions {
-    fn parse_cargo_arg(&self) {
-        if self.release && self.profile.is_some() {
+impl ParseCargoArgs for CompilationOptions {
+    fn parse_cargo_args(&self) {
+        let Self {
+            release,
+            profile,
+            jobs,
+            target,
+            timings,
+        } = self;
+        if *release && profile.is_some() {
             eprintln!("the `--release` flag should not be specified with the `--profile` flag");
             std::process::exit(CLAP_USAGE_EXIT_CODE);
         }
-        let cargo_make_cargo_profile = match std::env::var(CARGO_MAKE_PROFILE_ENV_VAR)
-            .unwrap_or_else(|_| panic!("{CARGO_MAKE_PROFILE_ENV_VAR} should be set by cargo-make."))
+        let cargo_make_cargo_profile = match env::var(CARGO_MAKE_PROFILE_ENV_VAR)
+            .unwrap_or_else(|_| panic!("{CARGO_MAKE_PROFILE_ENV_VAR} should be set by cargo-make"))
             .as_str()
         {
             "release" => {
                 // cargo-make release profile sets the `--profile release` flag
-                if let Some(profile) = &self.profile {
+                if let Some(profile) = &profile {
                     if profile != "release" {
                         eprintln!(
                             "Specifying `--profile release` for cargo-make conflicts with the \
@@ -281,48 +339,49 @@ impl ParseCargoArg for CompilationOptions {
             }
             _ => {
                 // All other cargo-make profiles do not set a specific cargo profile. Cargo
-                // profiles set by --release, --profile <PROFILE>, or -p <PROFILE> (after the
-                // cargo-make task name) are forwarded to cargo commands
-                if self.release {
+                // profiles set by --release, --profile <PROFILE>, or -p <PROFILE> (after
+                // the cargo-make task name) are forwarded to cargo
+                // commands
+                if *release {
                     append_to_space_delimited_env_var(
                         CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
                         "--release",
                     );
                     "release".to_string()
-                } else if let Some(profile) = &self.profile {
+                } else if let Some(profile) = &profile {
                     append_to_space_delimited_env_var(
                         CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
                         format!("--profile {profile}").as_str(),
                     );
                     profile.into()
                 } else {
-                    std::env::var(CARGO_MAKE_CARGO_PROFILE_ENV_VAR).unwrap_or_else(|_| {
-                        panic!("{CARGO_MAKE_CARGO_PROFILE_ENV_VAR} should be set by cargo-make.")
+                    env::var(CARGO_MAKE_CARGO_PROFILE_ENV_VAR).unwrap_or_else(|_| {
+                        panic!("{CARGO_MAKE_CARGO_PROFILE_ENV_VAR} should be set by cargo-make")
                     })
                 }
             }
         };
 
-        println!("{CARGO_MAKE_CARGO_PROFILE_ENV_VAR}={cargo_make_cargo_profile}");
+        env::set_var(CARGO_MAKE_CARGO_PROFILE_ENV_VAR, &cargo_make_cargo_profile);
 
-        if let Some(jobs) = &self.jobs {
+        if let Some(jobs) = &jobs {
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
                 format!("--jobs {jobs}").as_str(),
             );
         }
 
-        if let Some(target) = &self.target {
-            println!("CARGO_MAKE_CRATE_TARGET_TRIPLE={target}");
+        if let Some(target) = &target {
+            env::set_var(CARGO_MAKE_CRATE_TARGET_TRIPLE_ENV_VAR, target);
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
                 format!("--target {target}").as_str(),
             );
         }
 
-        configure_wdf_build_output_dir(&self.target, &cargo_make_cargo_profile);
+        configure_wdf_build_output_dir(target, &cargo_make_cargo_profile);
 
-        if let Some(timings_option) = &self.timings {
+        if let Some(timings_option) = &timings {
             timings_option.as_ref().map_or_else(
                 || {
                     append_to_space_delimited_env_var(
@@ -341,23 +400,29 @@ impl ParseCargoArg for CompilationOptions {
     }
 }
 
-impl ParseCargoArg for ManifestOptions {
-    fn parse_cargo_arg(&self) {
-        if self.frozen {
+impl ParseCargoArgs for ManifestOptions {
+    fn parse_cargo_args(&self) {
+        let Self {
+            frozen,
+            locked,
+            offline,
+        } = self;
+
+        if *frozen {
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
                 "--frozen",
             );
         }
 
-        if self.locked {
+        if *locked {
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
                 "--locked",
             );
         }
 
-        if self.offline {
+        if *offline {
             append_to_space_delimited_env_var(
                 CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
                 "--offline",
@@ -367,17 +432,20 @@ impl ParseCargoArg for ManifestOptions {
 }
 
 /// Parses the command line arguments, validates that they are supported by
-/// `rust-driver-makefile.toml`, and forwards them to `cargo-make` by printing
-/// them to stdout.
+/// `rust-driver-makefile.toml`, and then returns a list of environment variable
+/// names that were updated. These environment variable names should be passed
+/// to [`forward_printed_env_vars_to_cargo_make`] to forward values to
+/// cargo-make.
 ///
 /// # Panics
 ///
 /// This function will panic if there's an internal error (i.e. bug) in its
 /// argument processing.
-pub fn validate_and_forward_args() {
+#[must_use]
+pub fn validate_command_line_args() -> impl IntoIterator<Item = String> {
     const TOOLCHAIN_ARG_POSITION: usize = 1;
 
-    let mut env_args = std::env::args_os().collect::<Vec<_>>();
+    let mut env_args = env::args_os().collect::<Vec<_>>();
 
     // +<toolchain> is a special argument that can't currently be handled by clap parsing: https://github.com/clap-rs/clap/issues/2468
     let toolchain_arg = if env_args
@@ -396,25 +464,22 @@ pub fn validate_and_forward_args() {
         None
     };
 
-    let command_line_interface: CommandLineInterface =
-        CommandLineInterface::parse_from(env_args.iter());
-    // This print signifies the start of the forwarding and signals to the
-    // `rust-env-update` plugin that it should forward args. This is also used to
-    // signal that the auto-generated help from `clap` was not executed.
-    println!("FORWARDING ARGS TO CARGO-MAKE:");
-
     if let Some(toolchain) = toolchain_arg {
-        println!("{CARGO_MAKE_RUST_DEFAULT_TOOLCHAIN_ENV_VAR}={toolchain}");
+        env::set_var(CARGO_MAKE_RUST_DEFAULT_TOOLCHAIN_ENV_VAR, toolchain);
     }
 
-    command_line_interface.base.parse_cargo_arg();
-    command_line_interface.workspace.parse_cargo_arg();
-    command_line_interface.features.parse_cargo_arg();
-    command_line_interface.compilation_options.parse_cargo_arg();
-    command_line_interface.manifest_options.parse_cargo_arg();
+    CommandLineInterface::parse_from(env_args.iter()).parse_cargo_args();
 
-    forward_env_var_to_cargo_make(CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR);
-    forward_env_var_to_cargo_make(WDK_BUILD_OUTPUT_DIRECTORY_ENV_VAR);
+    [
+        CARGO_MAKE_CARGO_BUILD_TEST_FLAGS_ENV_VAR,
+        CARGO_MAKE_CARGO_PROFILE_ENV_VAR,
+        CARGO_MAKE_CRATE_TARGET_TRIPLE_ENV_VAR,
+        CARGO_MAKE_RUST_DEFAULT_TOOLCHAIN_ENV_VAR,
+        WDK_BUILD_OUTPUT_DIRECTORY_ENV_VAR,
+    ]
+    .into_iter()
+    .filter(|env_var_name| env::var_os(env_var_name).is_some())
+    .map(std::string::ToString::to_string)
 }
 
 /// Prepends the path variable with the necessary paths to access WDK tools
@@ -427,15 +492,15 @@ pub fn validate_and_forward_args() {
 /// # Panics
 ///
 /// This function will panic if the CPU architecture cannot be determined from
-/// `std::env::consts::ARCH` or if the PATH variable contains non-UTF8
+/// [`env::consts::ARCH`] or if the PATH variable contains non-UTF8
 /// characters.
-pub fn setup_path() -> Result<(), ConfigError> {
+pub fn setup_path() -> Result<impl IntoIterator<Item = String>, ConfigError> {
     let Some(wdk_content_root) = detect_wdk_content_root() else {
         return Err(ConfigError::WDKContentRootDetectionError);
     };
     let version = get_latest_windows_sdk_version(&wdk_content_root.join("Lib"))?;
-    let host_arch = CPUArchitecture::try_from_cargo_str(std::env::consts::ARCH)
-        .expect("The rust standard library should always set std::env::consts::ARCH");
+    let host_arch = CPUArchitecture::try_from_cargo_str(env::consts::ARCH)
+        .expect("The rust standard library should always set env::consts::ARCH");
 
     let wdk_bin_root = wdk_content_root
         .join(format!("bin/{version}"))
@@ -488,8 +553,102 @@ pub fn setup_path() -> Result<(), ConfigError> {
             .expect("arch_specific_wdk_tool_root should only contain valid UTF8"),
     );
 
-    forward_env_var_to_cargo_make(PATH_ENV_VAR);
-    Ok(())
+    Ok([PATH_ENV_VAR].map(std::string::ToString::to_string))
+}
+
+/// Forwards the specified environment variables in this process to the parent
+/// cargo-make. This is facilitated by printing to `stdout`, and having the
+/// `rust-env-update` plugin parse the printed output.
+pub fn forward_printed_env_vars_to_cargo_make(env_vars: impl IntoIterator<Item = impl AsRef<str>>) {
+    // This print signifies the start of the forwarding and signals to the
+    // `rust-env-update` plugin that it should forward args
+    println!("FORWARDING ARGS TO CARGO-MAKE:");
+
+    for env_var_name in env_vars {
+        let env_var_name = env_var_name.as_ref();
+
+        // Since this executes in a child process to cargo-make, we need to forward the
+        // values we want to change to duckscript, in order to get it to modify the
+        // parent process (ie. cargo-make)
+        println!(
+            "{env_var_name}={}",
+            env::var(env_var_name).unwrap_or_else(|_| panic!(
+                "{env_var_name} should be the name of an environment variable that is set and \
+                 contains a valid UTF-8 value"
+            ))
+        );
+    }
+
+    // This print signifies the end of the forwarding and signals to the
+    // `rust-env-update` plugin that it should stop forwarding args
+    println!("END OF FORWARDING ARGS TO CARGO-MAKE");
+}
+
+/// Adds the WDK version to the environment in the full string form of
+/// 10.xxx.yyy.zzz, where x, y, and z are numerical values.
+///
+/// # Errors
+///
+/// This function returns a [`ConfigError::WDKContentRootDetectionError`] if the
+/// WDK content root directory could not be found, or if the WDK version is
+/// ill-formed.
+pub fn setup_wdk_version() -> Result<impl IntoIterator<Item = String>, ConfigError> {
+    let Some(wdk_content_root) = detect_wdk_content_root() else {
+        return Err(ConfigError::WDKContentRootDetectionError);
+    };
+    let detected_sdk_version = get_latest_windows_sdk_version(&wdk_content_root.join("Lib"))?;
+
+    if let Ok(existing_version) = std::env::var(WDK_VERSION_ENV_VAR) {
+        if detected_sdk_version == existing_version {
+            // Skip updating.  This can happen in certain recursive
+            // cargo-make cases.
+            return Ok([WDK_VERSION_ENV_VAR].map(std::string::ToString::to_string));
+        }
+        // We have a bad version string set somehow.  Return an error.
+        return Err(ConfigError::WDKContentRootDetectionError);
+    }
+
+    if !crate::utils::validate_wdk_version_format(&detected_sdk_version) {
+        return Err(ConfigError::WDKVersionStringFormatError {
+            version: detected_sdk_version,
+        });
+    }
+
+    env::set_var(WDK_VERSION_ENV_VAR, detected_sdk_version);
+    Ok([WDK_VERSION_ENV_VAR].map(std::string::ToString::to_string))
+}
+
+/// Sets the `WDK_INFVERIF_SAMPLE_FLAG` environment variable to contain the
+/// appropriate flag for building samples.
+///
+/// # Errors
+///
+/// This function returns a [`ConfigError::WDKContentRootDetectionError`] if
+/// an invalid WDK version is provided.
+///
+/// # Panics
+///
+/// This function will panic if the function for validating a WDK version string
+/// is ever changed to no longer validate that each part of the version string
+/// is an i32.
+pub fn setup_infverif_for_samples<S: AsRef<str> + ToString + ?Sized>(
+    version: &S,
+) -> Result<impl IntoIterator<Item = String>, ConfigError> {
+    let validated_version_string = crate::utils::get_wdk_version_number(version)?;
+
+    // Safe to unwrap as we called .parse::<i32>().is_ok() in our call to
+    // validate_wdk_version_format above.
+    let version = validated_version_string
+        .parse::<i32>()
+        .expect("Unable to parse the build number of the WDK version string as an int!");
+    let sample_flag = if version > MINIMUM_SAMPLES_FLAG_WDK_VERSION {
+        "/samples" // Note: Not currently implemented, so in samples TOML we currently skip infverif
+    } else {
+        "/msft"
+    };
+    append_to_space_delimited_env_var(WDK_INF_ADDITIONAL_FLAGS_ENV_VAR, sample_flag);
+
+    Ok([WDK_INF_ADDITIONAL_FLAGS_ENV_VAR].map(std::string::ToString::to_string))
 }
 
 /// Returns the path to the WDK build output directory for the current
@@ -502,7 +661,7 @@ pub fn setup_path() -> Result<(), ConfigError> {
 #[must_use]
 pub fn get_wdk_build_output_directory() -> PathBuf {
     PathBuf::from(
-        std::env::var("WDK_BUILD_OUTPUT_DIRECTORY")
+        env::var("WDK_BUILD_OUTPUT_DIRECTORY")
             .expect("WDK_BUILD_OUTPUT_DIRECTORY should have been set by the wdk-build-init task"),
     )
 }
@@ -515,7 +674,7 @@ pub fn get_wdk_build_output_directory() -> PathBuf {
 /// variable is not set
 #[must_use]
 pub fn get_current_package_name() -> String {
-    std::env::var(CARGO_MAKE_CRATE_FS_NAME_ENV_VAR).unwrap_or_else(|_| {
+    env::var(CARGO_MAKE_CRATE_FS_NAME_ENV_VAR).unwrap_or_else(|_| {
         panic!(
             "{} should be set by cargo-make",
             &CARGO_MAKE_CRATE_FS_NAME_ENV_VAR
@@ -537,7 +696,7 @@ pub fn get_current_package_name() -> String {
 pub fn copy_to_driver_package_folder<P: AsRef<Path>>(path_to_copy: P) -> Result<(), ConfigError> {
     let path_to_copy = path_to_copy.as_ref();
 
-    let package_folder_path =
+    let package_folder_path: PathBuf =
         get_wdk_build_output_directory().join(format!("{}_package", get_current_package_name()));
     if !package_folder_path.exists() {
         std::fs::create_dir(&package_folder_path)?;
@@ -553,9 +712,9 @@ pub fn copy_to_driver_package_folder<P: AsRef<Path>>(path_to_copy: P) -> Result<
     Ok(())
 }
 
-/// Symlinks `rust-driver-toolchain.toml` to the `target` folder where it can be
+/// Symlinks `rust-driver-makefile.toml` to the `target` folder where it can be
 /// extended from a `Makefile.toml`. This is necessary so that paths in the
-/// `rust-driver-toolchain.toml` can to be relative to
+/// `rust-driver-makefile.toml` can to be relative to
 /// `CARGO_MAKE_CURRENT_TASK_INITIAL_MAKEFILE_DIRECTORY`
 ///
 /// # Errors
@@ -566,13 +725,61 @@ pub fn copy_to_driver_package_folder<P: AsRef<Path>>(path_to_copy: P) -> Result<
 /// - [`ConfigError::MultipleWDKBuildCratesDetected`] if there are multiple
 ///   versions of the WDK build crate detected
 /// - [`ConfigError::IoError`] if there is an error creating or updating the
-///   symlink to `rust-driver-toolchain.toml`
+///   symlink to `rust-driver-makefile.toml`
 ///
 /// # Panics
 ///
 /// This function will panic if the `CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY`
 /// environment variable is not set
 pub fn load_rust_driver_makefile() -> Result<(), ConfigError> {
+    load_wdk_build_makefile(RUST_DRIVER_MAKEFILE_NAME)
+}
+
+/// Symlinks `rust-driver-sample-makefile.toml` to the `target` folder where it
+/// can be extended from a `Makefile.toml`. This is necessary so that paths in
+/// the `rust-driver-sample-makefile.toml` can to be relative to
+/// `CARGO_MAKE_CURRENT_TASK_INITIAL_MAKEFILE_DIRECTORY`
+///
+/// # Errors
+///
+/// This function returns:
+/// - [`ConfigError::CargoMetadataError`] if there is an error executing or
+///   parsing `cargo_metadata`
+/// - [`ConfigError::MultipleWDKBuildCratesDetected`] if there are multiple
+///   versions of the WDK build crate detected
+/// - [`ConfigError::IoError`] if there is an error creating or updating the
+///   symlink to `rust-driver-sample-makefile.toml`
+///
+/// # Panics
+///
+/// This function will panic if the `CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY`
+/// environment variable is not set
+pub fn load_rust_driver_sample_makefile() -> Result<(), ConfigError> {
+    load_wdk_build_makefile(RUST_DRIVER_SAMPLE_MAKEFILE_NAME)
+}
+
+/// Symlinks a [`wdk_build`] `cargo-make` makefile to the `target` folder where
+/// it can be extended from a downstream `Makefile.toml`. This is necessary so
+/// that paths in the [`wdk_build`] makefile can be relative to
+/// `CARGO_MAKE_CURRENT_TASK_INITIAL_MAKEFILE_DIRECTORY`
+///
+/// # Errors
+///
+/// This function returns:
+/// - [`ConfigError::CargoMetadataError`] if there is an error executing or
+///   parsing `cargo_metadata`
+/// - [`ConfigError::MultipleWDKBuildCratesDetected`] if there are multiple
+///   versions of the WDK build crate detected
+/// - [`ConfigError::IoError`] if there is an error creating or updating the
+///   symlink to the makefile.
+///
+/// # Panics
+///
+/// This function will panic if the `CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY`
+/// environment variable is not set
+fn load_wdk_build_makefile<S: AsRef<str> + AsRef<Utf8Path> + AsRef<Path>>(
+    makefile_name: S,
+) -> Result<(), ConfigError> {
     let cargo_metadata = MetadataCommand::new().exec()?;
 
     let wdk_build_package_matches = cargo_metadata
@@ -593,15 +800,16 @@ pub fn load_rust_driver_makefile() -> Result<(), ConfigError> {
         .manifest_path
         .parent()
         .expect("The parsed manifest_path should have a valid parent directory")
-        .join("rust-driver-makefile.toml");
+        .join(&makefile_name);
 
     let cargo_make_workspace_working_directory =
-        std::env::var(CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY_ENV_VAR).unwrap_or_else(|_| {
-            panic!("{CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY_ENV_VAR} should be set by cargo-make.")
+        env::var(CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY_ENV_VAR).unwrap_or_else(|_| {
+            panic!("{CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY_ENV_VAR} should be set by cargo-make")
         });
 
-    let destination_path =
-        Path::new(&cargo_make_workspace_working_directory).join("target/rust-driver-makefile.toml");
+    let destination_path = Path::new(&cargo_make_workspace_working_directory)
+        .join("target")
+        .join(&makefile_name);
 
     // Only create a new symlink if the existing one is not already pointing to the
     // correct file
@@ -624,16 +832,44 @@ pub fn load_rust_driver_makefile() -> Result<(), ConfigError> {
     Ok(())
 }
 
+/// Execute a `FnOnce` closure, and handle its contents in a way compatible with
+/// `cargo-make`'s `condition_script`:
+/// 1. If the closure panics, the panic is caught and it returns an `Ok(())`.
+///    This ensures that panics encountered in `condition_script_closure` will
+///    not default to skipping the task.
+/// 2. If the closure executes without panicking, forward the result to
+///    `cargo-make`. `Ok` types will result in the task being run, and `Err`
+///    types will print the `Err` contents and then skip the task.
+///
+/// If you want your task to be skipped, return an `Err` from
+/// `condition_script_closure`. If you want the task to execute, return an
+/// `Ok(())` from `condition_script_closure`
+pub fn condition_script<F, E>(condition_script_closure: F) -> anyhow::Result<(), E>
+where
+    F: FnOnce() -> anyhow::Result<(), E> + UnwindSafe,
+{
+    std::panic::catch_unwind(condition_script_closure).unwrap_or_else(|_| {
+        // Note: Any panic messages has already been printed by this point
+
+        let cargo_make_task_name = env::var(CARGO_MAKE_CURRENT_TASK_NAME_ENV_VAR)
+            .expect("CARGO_MAKE_CURRENT_TASK_NAME should be set by cargo-make");
+
+        eprintln!(
+            "`condition_script` for {cargo_make_task_name} task panicked while executing. \
+             Defaulting to running {cargo_make_task_name} task."
+        );
+        Ok(())
+    })
+}
+
 fn configure_wdf_build_output_dir(target_arg: &Option<String>, cargo_make_cargo_profile: &str) {
-    let cargo_make_crate_custom_triple_target_directory = std::env::var(
-        CARGO_MAKE_CRATE_CUSTOM_TRIPLE_TARGET_DIRECTORY_ENV_VAR,
-    )
-    .unwrap_or_else(|_| {
-        panic!(
-            "{CARGO_MAKE_CRATE_CUSTOM_TRIPLE_TARGET_DIRECTORY_ENV_VAR} should be set by \
-             cargo-make."
-        )
-    });
+    let cargo_make_crate_custom_triple_target_directory =
+        env::var(CARGO_MAKE_CRATE_CUSTOM_TRIPLE_TARGET_DIRECTORY_ENV_VAR).unwrap_or_else(|_| {
+            panic!(
+                "{CARGO_MAKE_CRATE_CUSTOM_TRIPLE_TARGET_DIRECTORY_ENV_VAR} should be set by \
+                 cargo-make."
+            )
+        });
 
     let wdk_build_output_directory = {
         let mut output_dir = cargo_make_crate_custom_triple_target_directory;
@@ -657,7 +893,7 @@ fn configure_wdf_build_output_dir(target_arg: &Option<String>, cargo_make_cargo_
 
         output_dir
     };
-    std::env::set_var(
+    env::set_var(
         WDK_BUILD_OUTPUT_DIRECTORY_ENV_VAR,
         wdk_build_output_directory,
     );
@@ -671,10 +907,10 @@ where
     let env_var_name: &str = env_var_name.as_ref();
     let string_to_append: &str = string_to_append.as_ref();
 
-    let mut env_var_value: String = std::env::var(env_var_name).unwrap_or_default();
+    let mut env_var_value: String = env::var(env_var_name).unwrap_or_default();
     env_var_value.push(' ');
     env_var_value.push_str(string_to_append);
-    std::env::set_var(env_var_name, env_var_value.trim());
+    env::set_var(env_var_name, env_var_value.trim());
 }
 
 fn prepend_to_semicolon_delimited_env_var<S, T>(env_var_name: S, string_to_prepend: T)
@@ -687,22 +923,34 @@ where
 
     let mut env_var_value = string_to_prepend.to_string();
     env_var_value.push(';');
-    env_var_value.push_str(std::env::var(env_var_name).unwrap_or_default().as_str());
-    std::env::set_var(env_var_name, env_var_value);
+    env_var_value.push_str(env::var(env_var_name).unwrap_or_default().as_str());
+    env::set_var(env_var_name, env_var_value);
 }
 
-fn forward_env_var_to_cargo_make<S: AsRef<str>>(env_var_name: S) {
-    let env_var_name = env_var_name.as_ref();
+#[cfg(test)]
+mod tests {
+    use crate::ConfigError;
 
-    // Since this executes in a child process to cargo-make, we need to forward the
-    // values we want to change to duckscript, in order to get it to modify the
-    // parent process (ie. cargo-make)
-    if let Some(env_var_value) = std::env::var_os(env_var_name) {
-        println!(
-            "{env_var_name}={}",
-            env_var_value
-                .to_str()
-                .expect("env var value should be valid UTF-8")
-        );
+    const WDK_TEST_OLD_INF_VERSION: &str = "10.0.22061.0";
+    const WDK_TEST_NEW_INF_VERSION: &str = "10.0.26100.0";
+
+    #[test]
+    fn check_env_passing() -> Result<(), ConfigError> {
+        crate::cargo_make::setup_infverif_for_samples(WDK_TEST_OLD_INF_VERSION)?;
+        let env_string = std::env::var_os(crate::cargo_make::WDK_INF_ADDITIONAL_FLAGS_ENV_VAR)
+            .map_or_else(
+                || panic!("Couldn't get OS string"),
+                |os_env_string| os_env_string.to_string_lossy().into_owned(),
+            );
+        assert_eq!(env_string.split(' ').last(), Some("/msft"));
+
+        crate::cargo_make::setup_infverif_for_samples(WDK_TEST_NEW_INF_VERSION)?;
+        let env_string = std::env::var_os(crate::cargo_make::WDK_INF_ADDITIONAL_FLAGS_ENV_VAR)
+            .map_or_else(
+                || panic!("Couldn't get OS string"),
+                |os_env_string| os_env_string.to_string_lossy().into_owned(),
+            );
+        assert_eq!(env_string.split(' ').last(), Some("/samples"));
+        Ok(())
     }
 }

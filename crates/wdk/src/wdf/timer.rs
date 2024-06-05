@@ -1,4 +1,10 @@
-use wdk_sys::{macros, NTSTATUS, WDFTIMER, WDF_OBJECT_ATTRIBUTES, WDF_TIMER_CONFIG};
+use wdk_sys::{
+    call_unsafe_wdf_function_binding,
+    NTSTATUS,
+    WDFTIMER,
+    WDF_OBJECT_ATTRIBUTES,
+    WDF_TIMER_CONFIG,
+};
 
 use crate::nt_success;
 
@@ -25,7 +31,7 @@ impl Timer {
         // accessible outside of this module, and this module guarantees that it is
         // always in a valid state.
         unsafe {
-            nt_status = macros::call_unsafe_wdf_function_binding!(
+            nt_status = call_unsafe_wdf_function_binding!(
                 WdfTimerCreate,
                 timer_config,
                 attributes,
@@ -54,8 +60,7 @@ impl Timer {
         // SAFETY: `wdf_timer` is a private member of `Timer`, originally created by
         // WDF, and this module guarantees that it is always in a valid state.
         unsafe {
-            result =
-                macros::call_unsafe_wdf_function_binding!(WdfTimerStart, self.wdf_timer, due_time);
+            result = call_unsafe_wdf_function_binding!(WdfTimerStart, self.wdf_timer, due_time);
         }
         result != 0
     }
@@ -67,11 +72,8 @@ impl Timer {
         // SAFETY: `wdf_timer` is a private member of `Timer`, originally created by
         // WDF, and this module guarantees that it is always in a valid state.
         unsafe {
-            result = macros::call_unsafe_wdf_function_binding!(
-                WdfTimerStop,
-                self.wdf_timer,
-                u8::from(wait)
-            );
+            result =
+                call_unsafe_wdf_function_binding!(WdfTimerStop, self.wdf_timer, u8::from(wait));
         }
         result != 0
     }

@@ -7,11 +7,23 @@
 
 #![no_std]
 
-#[cfg(feature = "alloc")]
+#[cfg(any(driver_type = "WDM", driver_type = "KMDF", driver_type = "UMDF"))]
+pub use wdk_sys::NT_SUCCESS as nt_success;
+
+#[cfg(any(
+    all(feature = "alloc", any(driver_type = "WDM", driver_type = "KMDF")),
+    driver_type = "UMDF",
+))]
 mod print;
-#[cfg(feature = "alloc")]
+#[cfg(any(
+    all(feature = "alloc", any(driver_type = "WDM", driver_type = "KMDF")),
+    driver_type = "UMDF",
+))]
 pub use print::_print;
-pub use wdk_sys::{NT_SUCCESS as nt_success, PAGED_CODE as paged_code};
+#[cfg(any(driver_type = "WDM", driver_type = "KMDF"))]
+pub use wdk_sys::PAGED_CODE as paged_code;
+
+#[cfg(any(driver_type = "KMDF", driver_type = "UMDF"))]
 pub mod wdf;
 
 /// Trigger a breakpoint in debugger via architecture-specific inline assembly.
