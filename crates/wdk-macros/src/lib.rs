@@ -282,16 +282,18 @@ impl IntermediateOutputASTFragments {
 
         quote! {
             {
-                use wdk_sys::*;
+                mod generated_function {
+                    use wdk_sys::*;
 
-                #conditional_must_use_attribute
-                #[inline(always)]
-                #[allow(non_snake_case)]
-                #inline_wdf_fn_signature {
-                    #(#inline_wdf_fn_body_statments)*
+                    #conditional_must_use_attribute
+                    #[inline(always)]
+                    #[allow(non_snake_case)]
+                    pub #inline_wdf_fn_signature {
+                        #(#inline_wdf_fn_body_statments)*
+                    }
                 }
 
-                #inline_wdf_fn_invocation
+                generated_function::#inline_wdf_fn_invocation
             }
         }
     }
