@@ -16,19 +16,19 @@ use std::{
 use anyhow::Context;
 use bindgen::CodegenConfig;
 use lazy_static::lazy_static;
-use tracing::{info, info_span, Span};
+use tracing::{Span, info, info_span};
 use tracing_subscriber::{
-    filter::{LevelFilter, ParseError},
     EnvFilter,
+    filter::{LevelFilter, ParseError},
 };
 use wdk_build::{
-    configure_wdk_library_build_and_then,
     BuilderExt,
     Config,
     ConfigError,
     DriverConfig,
     KmdfConfig,
     UmdfConfig,
+    configure_wdk_library_build_and_then,
 };
 
 const NUM_WDF_FUNCTIONS_PLACEHOLDER: &str =
@@ -220,14 +220,18 @@ fn generate_types(out_path: &Path, config: &Config) -> Result<(), ConfigError> {
         .write_to_file(out_path.join("types.rs"))?)
 }
 
-fn generate_ntddk(out_path: &Path, config: Config) -> Result<(), ConfigError> {
-    Ok(
-        bindgen::Builder::wdk_default(vec!["src/ntddk-input.h"], config)?
-            .with_codegen_config((CodegenConfig::TYPES | CodegenConfig::VARS).complement())
-            .generate()
-            .expect("Bindings should succeed to generate")
-            .write_to_file(out_path.join("ntddk.rs"))?,
-    )
+fn generate_base(out_path: &Path, config: &Config) -> Result<(), ConfigError> {
+    let outfile_name = match &config.driver_config {
+        DriverConfig::Wdm | DriverConfig::Kmdf(_) => "ntddk.rs",
+        DriverConfig::Umdf(_) => "windows.rs",
+    };
+    info!("Generating bindings to WDK: {outfile_name}.rs");
+
+    Ok(bindgen::Builder::wdk_default(vec!["src/input.h"], config)?
+        .with_codegen_config((CodegenConfig::TYPES | CodegenConfig::VARS).complement())
+        .generate()
+        .expect("Bindings should succeed to generate")
+        .write_to_file(out_path.join(outfile_name))?)
 }
 
 fn generate_hid(out_path: &Path, config: Config) -> Result<(), ConfigError> {
