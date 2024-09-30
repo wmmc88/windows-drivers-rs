@@ -70,6 +70,9 @@ jobs:
           toolchain: ${{ matrix.rust_toolchain }}
           targets: ${{ matrix.target_triple }}
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Run Cargo Build
         run: cargo +${{ matrix.rust_toolchain }} build --locked --profile ${{ matrix.cargo_profile }} --target ${{ matrix.target_triple }} --workspace
 
