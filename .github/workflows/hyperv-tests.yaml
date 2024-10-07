@@ -41,8 +41,16 @@ jobs:
 
       - name: TODO
         run: |
-          Get-VMSwitch * | Format-Table Name
+          $vm_name = "windows-drivers-rs-virtual-machine"
 
+          Get-VMSwitch
+          $vm_switch = $(Get-VMSwitch)[0]
+          
+          New-VM -Name $vm_name -Switch $vm_switch -Generation 2
+          Start-VM -Name $vm_name
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       # - name: Install Winget
       #   uses: ./.github/actions/winget-install
