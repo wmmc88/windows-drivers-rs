@@ -39,15 +39,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: TODO
-        run: |
-          $vm_name = "windows-drivers-rs-virtual-machine"
+      # - name: TODO
+      #   run: |
+      #     $vm_name = "windows-drivers-rs-virtual-machine"
 
-          Get-VMSwitch
-          $vm_switch = $(Get-VMSwitch)[0]
+      #     Get-VMSwitch
+      #     $vm_switch = $(Get-VMSwitch)[0]
           
-          New-VM -Name $vm_name -Switch $vm_switch -Generation 2
-          Start-VM -Name $vm_name
+      #     New-VM -Name $vm_name -Switch $vm_switch -Generation 2
+      #     Start-VM -Name $vm_name
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
