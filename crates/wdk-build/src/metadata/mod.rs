@@ -20,8 +20,7 @@ mod map;
 
 use std::collections::HashSet;
 
-use camino::Utf8PathBuf;
-use cargo_metadata::Metadata;
+use cargo_metadata::{camino::Utf8PathBuf, Metadata};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 

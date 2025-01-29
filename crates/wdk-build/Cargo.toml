@@ -9,13 +9,16 @@ license.workspace = true
 keywords = ["wdk", "windows", "build-dependencies"]
 categories = ["development-tools::build-utils", "development-tools::ffi"]
 
+[[bin]]
+name = "wdk-bindings-diff"
+required-features = ["tools"]
+
 [build-dependencies]
 rustversion.workspace = true
 
 [dependencies]
 anyhow.workspace = true
 bindgen.workspace = true
-camino.workspace = true
 cargo_metadata.workspace = true
 cfg-if.workspace = true
 clap = { workspace = true, features = ["derive"] }
@@ -31,8 +34,20 @@ windows = { workspace = true, features = [
   "Win32_System_Registry",
 ] }
 
+# Tools-only Binary Dependencies
+console = { workspace = true, optional = true }
+git2 = { workspace = true, optional = true }
+ignore = { workspace = true, optional = true }
+similar = { workspace = true, features = ["inline", "unicode"], optional = true }
+tempfile = { workspace = true, optional = true }
+tracing-subscriber = { workspace = true, optional = true }
+
 [dev-dependencies]
 windows = { workspace = true, features = ["Win32_UI_Shell"] }
+
+[features]
+default = []
+tools = ["console", "git2", "ignore", "similar", "tempfile", "tracing-subscriber"]
 
 [lints.rust.unexpected_cfgs]
 level = "warn"

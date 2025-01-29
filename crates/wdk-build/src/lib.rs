@@ -13,21 +13,20 @@
 #![cfg_attr(nightly_toolchain, feature(assert_matches))]
 
 pub use bindgen::BuilderExt;
-use metadata::TryFromCargoMetadataError;
+pub use utils::PathExt;
 
 pub mod cargo_make;
 pub mod metadata;
 
-mod utils;
-
 mod bindgen;
+mod utils;
 
 use std::{env, path::PathBuf, sync::LazyLock};
 
 use cargo_metadata::MetadataCommand;
+use metadata::TryFromCargoMetadataError;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use utils::PathExt;
 
 /// Configuration parameters for a build dependent on the WDK
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
