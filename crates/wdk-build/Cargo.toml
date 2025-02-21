@@ -21,7 +21,7 @@ anyhow.workspace = true
 bindgen.workspace = true
 cargo_metadata.workspace = true
 cfg-if.workspace = true
-clap = { workspace = true, features = ["derive"] }
+clap = { workspace = true, features = ["derive", "wrap_help"] }
 clap-cargo.workspace = true
 paste.workspace = true
 rustversion.workspace = true
@@ -36,9 +36,16 @@ windows = { workspace = true, features = [
 
 # Tools-only Binary Dependencies
 console = { workspace = true, optional = true }
+clap-verbosity-flag = { workspace = true, optional = true, features = [
+  "tracing",
+] }
+colorchoice-clap = { workspace = true, optional = true }
 git2 = { workspace = true, optional = true }
 ignore = { workspace = true, optional = true }
-similar = { workspace = true, features = ["inline", "unicode"], optional = true }
+similar = { workspace = true, optional = true, features = [
+  "inline",
+  "unicode",
+] }
 tempfile = { workspace = true, optional = true }
 tracing-subscriber = { workspace = true, optional = true }
 
@@ -47,7 +54,16 @@ windows = { workspace = true, features = ["Win32_UI_Shell"] }
 
 [features]
 default = []
-tools = ["console", "git2", "ignore", "similar", "tempfile", "tracing-subscriber"]
+tools = [
+  "colorchoice-clap",
+  "console",
+  "git2",
+  "ignore",
+  "similar",
+  "tempfile",
+  "tracing-subscriber",
+  "clap-verbosity-flag",
+]
 
 [lints.rust.unexpected_cfgs]
 level = "warn"

@@ -1,13 +1,24 @@
 // Copyright (c) Microsoft Corporation
 // License: MIT OR Apache-2.0
 
+mod cli;
+
 use std::{
-    collections::HashSet, env, fmt, io::{Read, Write}, path::{Path, PathBuf}, process::{Command, Stdio}, sync::LazyLock
+    collections::HashSet,
+    env,
+    fmt,
+    io::{LineWriter, Read, Write},
+    path::{Path, PathBuf},
+    process::{Command, Stdio},
+    sync::LazyLock,
 };
 
 use anyhow::{anyhow, bail, Result};
 use cargo_metadata::{camino::Utf8PathBuf, Message, MetadataCommand};
+use clap::Parser;
+use cli::{CommandLineInterface, DiffBase};
 use console::Style;
+use git2::build::CheckoutBuilder;
 use ignore::WalkBuilder;
 use similar::{Algorithm, ChangeTag};
 use tempfile::TempDir;
@@ -24,8 +35,6 @@ static REPO_ROOT: LazyLock<PathBuf> = LazyLock::new(|| {
 });
 
 // TODO OPTIONS:
-// base
-// other
 // features
 // ouptut dir
 // repo url?? default to system got
@@ -36,13 +45,20 @@ static REPO_ROOT: LazyLock<PathBuf> = LazyLock::new(|| {
 // - LLVM Version
 
 fn main() -> Result<()> {
+    let cli_args = CommandLineInterface::parse();
+
+    // set console color setting based on cli arg
+    cli_args.color.write_global();
+
+    // initialize tracing based on cli arg
     tracing_subscriber::fmt()
         .pretty()
+        .with_max_level(cli_args.verbose.tracing_level_filter())
         .with_span_events(FmtSpan::FULL)
         .init();
 
-    // set output directory in target if executed within repo, otherwise use current
-    // working directory
+    // TODO: set output directory to inside target dir if executed within cargo
+    // workspace, otherwise use current working directory
     let diff_output_dir = {
         let cwd = std::env::current_dir()?.canonicalize()?;
         let temp_dir_base_path = if cwd.starts_with(REPO_ROOT.as_path()) {
@@ -54,57 +70,76 @@ fn main() -> Result<()> {
     };
 
     // create comparison subdirectories
-    let base_dir = diff_output_dir.path().join("base"); // TODO: name by commit hash?
-    std::fs::create_dir(&base_dir)?;
-    let other_dir = diff_output_dir.path().join("other");
+    let diff_base_dir = diff_output_dir.path().join(match cli_args.diff_base {
+        cli::DiffBase::LatestMain => "diff-base_latest-main".to_string(),
+        cli::DiffBase::GitRev(git_rev) => format!("diff-base_{git_rev}"),
+    });
+    std::fs::create_dir(&diff_base_dir)?;
+    let diff_target_dir = diff_output_dir.path().join(match cli_args.diff_target {
+        cli::DiffTarget::Local => "diff-target_local".to_string(),
+        cli::DiffTarget::GitRev(git_rev) => format!("diff-target_{git_rev}"),
+    });
 
-    // TODO: only do this if `base` is main
-    // clone latest main branch of windows-drivers-rs into latest-main
-    let _ = git2::Repository::clone(
-        "https://github.com/microsoft/windows-drivers-rs.git",
-        &base_dir,
+    // setup diff base
+    let base_repo = git2::Repository::clone(
+        "https://github.com/microsoft/windows-drivers-rs.git", // TODO: repo url
+        &diff_base_dir,
     )?;
+    if let DiffBase::GitRev(object_id) = cli_args.diff_base {
+        let annotated_commit = base_repo.find_annotated_commit(object_id)?;
+        base_repo.set_head_detached_from_annotated(annotated_commit)?;
+        base_repo.checkout_head(Some(&mut CheckoutBuilder::new().force()))?;
+    }
 
-    // TODO: only do this if `other` is local
+    // setup diff target
+    match cli_args.diff_target {
+        cli::DiffTarget::Local => {
+            // copy all non-gitignored files to `other_dir`
+            for dir_entry in WalkBuilder::new(REPO_ROOT.as_path())
+                .hidden(true)
+                .follow_links(true)
+                .require_git(false) // Apply gitignore, regardless if in a git repo
+                .git_global(false) // Ignore global git ignores to prevent it from modfiying behavior
+                .git_exclude(false) // Prevent local-only ignores from modifying behavior
+                .build()
+            {
+                let dir_entry = dir_entry?;
+                let dir_entry_path: &Path = dir_entry.path();
+                let repo_root_relative_path: &Path =
+                    dir_entry_path.strip_prefix(REPO_ROOT.as_path())?;
 
-    // copy all non-gitignored files to `other_dir`
-    for dir_entry in WalkBuilder::new(REPO_ROOT.as_path())
-        .hidden(true)
-        .follow_links(true)
-        .require_git(false) // Apply gitignore, regardless if in a git repo
-        .git_global(false) // Ignore global git ignores to prevent it from modfiying behavior
-        .git_exclude(false) // Prevent local-only ignores from modifying behavior
-        .build()
-    {
-        let dir_entry = dir_entry?;
-        let dir_entry_path: &Path = dir_entry.path();
-        let repo_root_relative_path: &Path = dir_entry_path.strip_prefix(REPO_ROOT.as_path())?;
-
-        if dir_entry
-            .file_type()
-            .is_some_and(|file_type| file_type.is_file())
-        {
-            let target_path = other_dir.join(repo_root_relative_path);
-            std::fs::create_dir_all(
-                target_path
-                    .parent()
-                    .expect("parent of target path should exist"),
+                if dir_entry
+                    .file_type()
+                    .is_some_and(|file_type| file_type.is_file())
+                {
+                    let target_path = diff_target_dir.join(repo_root_relative_path);
+                    std::fs::create_dir_all(
+                        target_path
+                            .parent()
+                            .expect("parent of target path should exist"),
+                    )?;
+                    std::fs::copy(dir_entry_path, target_path)?;
+                }
+            }
+        }
+        cli::DiffTarget::GitRev(object_id) => {
+            let target_repo = git2::Repository::clone(
+                "https://github.com/microsoft/windows-drivers-rs.git", // TODO: repo url
+                &diff_target_dir,
             )?;
-            std::fs::copy(dir_entry_path, target_path)?;
+            let annotated_commit = target_repo.find_annotated_commit(object_id)?;
+            target_repo.set_head_detached_from_annotated(annotated_commit)?;
+            target_repo.checkout_head(Some(&mut CheckoutBuilder::new().force()))?;
         }
     }
 
-    // temporarily do not delete output dir... maybe should
-    // always keep output dir on error?
-    diff_output_dir.into_path();
-
     // inject WDK config into workspace
-    inject_wdk_configuration(&base_dir)?;
-    inject_wdk_configuration(&other_dir)?;
+    inject_wdk_configuration(&diff_base_dir)?;
+    inject_wdk_configuration(&diff_target_dir)?;
 
     // extract OUT_DIR from both repo copies
-    let base_wdk_sys_out_dir = extract_out_dir(&base_dir)?;
-    let other_wdk_sys_out_dir = extract_out_dir(&other_dir)?;
+    let base_wdk_sys_out_dir = extract_out_dir(&diff_base_dir)?;
+    let other_wdk_sys_out_dir = extract_out_dir(&diff_target_dir)?;
 
     // collect all .rs files in OUT_DIR of other into hashset of paths
     let mut other_generated_rs_filepaths = WalkBuilder::new(&other_wdk_sys_out_dir)
@@ -112,7 +147,7 @@ fn main() -> Result<()> {
         .build()
         // filter for only .rs files (errors are forwarded)
         .filter_map(|dir_entry| match dir_entry {
-            Err(err) => return Some(Err(err)),
+            Err(err) => Some(Err(err)),
             Ok(dir_entry) => {
                 if dir_entry
                     .file_type()
@@ -121,12 +156,14 @@ fn main() -> Result<()> {
                 {
                     return Some(Ok(dir_entry.path().to_owned()));
                 }
-                return None;
+                None
             }
         })
         .collect::<std::result::Result<Vec<_>, _>>()?
         .into_iter()
         .collect::<HashSet<_>>();
+
+    let mut writer = LineWriter::new(std::io::stdout());
 
     // iterate all files in base_dir
     for base_generated_rs_filepath in WalkBuilder::new(&base_wdk_sys_out_dir)
@@ -156,13 +193,20 @@ fn main() -> Result<()> {
             other_generated_rs_filepaths
                 .take(&other_generated_rs_filepath)
                 .as_deref(),
+            &mut writer,
         )?;
     }
 
     // file is missing in base. Diff blank with other
     for path in other_generated_rs_filepaths {
-        generate_diff(None, Some(&path))?;
+        generate_diff(None, Some(&path), &mut writer)?;
     }
+
+    writer.flush()?;
+
+    // temporarily do not delete output dir... maybe should
+    // TODO: always keep output dir on error?
+    // diff_output_dir.into_path();
 
     Ok(())
 }
@@ -228,7 +272,7 @@ fn extract_out_dir(repo_root: &Path) -> anyhow::Result<Utf8PathBuf> {
         "wdk-sys".as_ref(),
     ];
     let mut command = Command::new(cargo)
-        .args(&args)
+        .args(args)
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()?;
@@ -262,14 +306,17 @@ fn extract_out_dir(repo_root: &Path) -> anyhow::Result<Utf8PathBuf> {
     bail!("failed to extract OUT_DIR from wdk-sys build");
 }
 
-#[tracing::instrument(level = "trace")]
-fn generate_diff(base_path: Option<&Path>, other_path: Option<&Path>) -> anyhow::Result<()> {
+fn generate_diff<T: Write>(
+    base_path: Option<&Path>,
+    other_path: Option<&Path>,
+    mut writer: T,
+) -> anyhow::Result<()> {
     let base_file_contents = base_path
-        .map(|path| std::fs::read_to_string(path))
+        .map(std::fs::read_to_string)
         .transpose()?
         .unwrap_or_default();
     let other_file_contents = other_path
-        .map(|path| std::fs::read_to_string(path))
+        .map(std::fs::read_to_string)
         .transpose()?
         .unwrap_or_default();
 
@@ -278,17 +325,24 @@ fn generate_diff(base_path: Option<&Path>, other_path: Option<&Path>) -> anyhow:
         .diff_lines(&base_file_contents, &other_file_contents);
 
     // TODO: handle empty path as what the path WOULD have beenisntead of empty
-    println!(
+    writeln!(
+        writer,
         "--- {}",
         base_path
             .map(|path| path.display().to_string())
             .unwrap_or_default()
-    );
-    println!("+++ {}", base_path.map(|path| path.display().to_string()).unwrap_or_default());
+    )?;
+    writeln!(
+        writer,
+        "+++ {}",
+        base_path
+            .map(|path| path.display().to_string())
+            .unwrap_or_default()
+    )?;
 
     for (change_cluster_index, change_cluster) in diff.grouped_ops(3).into_iter().enumerate() {
         if change_cluster_index > 0 {
-            println!("{:-^width$}", "", width = 80);
+            writeln!(writer, "{:-^width$}", "", width = 80)?;
         }
         for diff_change in change_cluster {
             for inline_change in diff.iter_inline_changes(&diff_change) {
@@ -311,27 +365,26 @@ fn generate_diff(base_path: Option<&Path>, other_path: Option<&Path>) -> anyhow:
                 }
 
                 // Prints line numbers + | + diff change type
-                print!(
+                write!(
+                    writer,
                     "{}{} |{}",
                     console::style(Line(inline_change.old_index())).dim(),
                     console::style(Line(inline_change.new_index())).dim(),
                     style.apply_to(sign).bold(),
-                );
+                )?;
                 for (emphasized, value) in inline_change.iter_strings_lossy() {
                     if emphasized {
-                        print!("{}", style.apply_to(value).underlined().on_black());
+                        write!(writer, "{}", style.apply_to(value).underlined().on_black())?;
                     } else {
-                        print!("{}", style.apply_to(value));
+                        write!(writer, "{}", style.apply_to(value))?;
                     }
                 }
                 if inline_change.missing_newline() {
-                    println!();
+                    writeln!(writer)?;
                 }
             }
         }
     }
 
-    // TODO: this function should return a writer or string, and then caller should
-    // handler formatting etc
     Ok(())
 }
