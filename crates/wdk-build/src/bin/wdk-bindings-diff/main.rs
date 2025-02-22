@@ -70,12 +70,12 @@ fn main() -> Result<()> {
     };
 
     // create comparison subdirectories
-    let diff_base_dir = diff_output_dir.path().join(match cli_args.diff_base {
+    let diff_base_dir = diff_output_dir.path().join(match &cli_args.diff_base {
         cli::DiffBase::LatestMain => "diff-base_latest-main".to_string(),
         cli::DiffBase::GitRev(git_rev) => format!("diff-base_{git_rev}"),
     });
     std::fs::create_dir(&diff_base_dir)?;
-    let diff_target_dir = diff_output_dir.path().join(match cli_args.diff_target {
+    let diff_target_dir = diff_output_dir.path().join(match &cli_args.diff_target {
         cli::DiffTarget::Local => "diff-target_local".to_string(),
         cli::DiffTarget::GitRev(git_rev) => format!("diff-target_{git_rev}"),
     });
@@ -85,9 +85,9 @@ fn main() -> Result<()> {
         "https://github.com/microsoft/windows-drivers-rs.git", // TODO: repo url
         &diff_base_dir,
     )?;
-    if let DiffBase::GitRev(object_id) = cli_args.diff_base {
-        let annotated_commit = base_repo.find_annotated_commit(object_id)?;
-        base_repo.set_head_detached_from_annotated(annotated_commit)?;
+    if let DiffBase::GitRev(git_hash) = cli_args.diff_base {
+        let git_rev_oid = base_repo.find_object_by_prefix(&git_hash, None)?.id();
+        base_repo.set_head_detached(git_rev_oid)?;
         base_repo.checkout_head(Some(&mut CheckoutBuilder::new().force()))?;
     }
 
@@ -122,13 +122,13 @@ fn main() -> Result<()> {
                 }
             }
         }
-        cli::DiffTarget::GitRev(object_id) => {
+        cli::DiffTarget::GitRev(git_hash) => {
             let target_repo = git2::Repository::clone(
                 "https://github.com/microsoft/windows-drivers-rs.git", // TODO: repo url
                 &diff_target_dir,
             )?;
-            let annotated_commit = target_repo.find_annotated_commit(object_id)?;
-            target_repo.set_head_detached_from_annotated(annotated_commit)?;
+            let git_rev_oid = target_repo.find_object_by_prefix(&git_hash, None)?.id();
+            target_repo.set_head_detached(git_rev_oid)?;
             target_repo.checkout_head(Some(&mut CheckoutBuilder::new().force()))?;
         }
     }

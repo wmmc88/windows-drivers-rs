@@ -45,13 +45,13 @@ pub struct CommandLineInterface {
 #[derive(Clone, Debug)]
 pub enum DiffBase {
     LatestMain,
-    GitRev(git2::Oid),
+    GitRev(String),
 }
 
 #[derive(Clone, Debug)]
 pub enum DiffTarget {
     Local,
-    GitRev(git2::Oid),
+    GitRev(String),
 }
 
 const DIFF_BASE_LATEST_MAIN_DISPLAY_STRING: &str = "latest-main";
@@ -61,7 +61,7 @@ impl Display for DiffBase {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::LatestMain => write!(f, "{DIFF_BASE_LATEST_MAIN_DISPLAY_STRING}"),
-            Self::GitRev(object_id) => write!(f, "Git Rev: {object_id}"),
+            Self::GitRev(git_hash) => write!(f, "Git Rev: {git_hash}"),
         }
     }
 }
@@ -76,7 +76,7 @@ impl ValueParserFactory for DiffBase {
             if s.eq_ignore_ascii_case(DIFF_BASE_LATEST_MAIN_DISPLAY_STRING) {
                 Ok(Self::LatestMain)
             } else {
-                Ok(Self::GitRev(git2::Oid::from_str(&s)?))
+                Ok(Self::GitRev(s))
             }
         })
     }
@@ -86,7 +86,7 @@ impl Display for DiffTarget {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Local => write!(f, "{DIFF_TARGET_LOCAL_DISPLAY_STRING}"),
-            Self::GitRev(object_id) => write!(f, "Git Rev: {object_id}"),
+            Self::GitRev(git_hash) => write!(f, "Git Rev: {git_hash}"),
         }
     }
 }
@@ -102,9 +102,7 @@ impl ValueParserFactory for DiffTarget {
             if s.eq_ignore_ascii_case(DIFF_TARGET_LOCAL_DISPLAY_STRING) {
                 Ok(Self::Local)
             } else {
-                Ok(Self::GitRev(git2::Oid::from_str(&s)?)) // TODO: does this
-                                                           // work for non full
-                                                           // ids?
+                Ok(Self::GitRev(s))
             }
         })
     }
