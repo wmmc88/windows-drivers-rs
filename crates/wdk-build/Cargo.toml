@@ -42,11 +42,13 @@ clap-verbosity-flag = { workspace = true, optional = true, features = [
 colorchoice-clap = { workspace = true, optional = true }
 git2 = { workspace = true, optional = true }
 ignore = { workspace = true, optional = true }
+indicatif = { workspace = true, optional = true }
 similar = { workspace = true, optional = true, features = [
   "inline",
   "unicode",
 ] }
 tempfile = { workspace = true, optional = true }
+tracing-indicatif = { workspace = true, optional = true }
 tracing-subscriber = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -55,14 +57,16 @@ windows = { workspace = true, features = ["Win32_UI_Shell"] }
 [features]
 default = []
 tools = [
+  "clap-verbosity-flag",
   "colorchoice-clap",
   "console",
   "git2",
   "ignore",
+  "indicatif",
   "similar",
   "tempfile",
+  "tracing-indicatif",
   "tracing-subscriber",
-  "clap-verbosity-flag",
 ]
 
 [lints.rust.unexpected_cfgs]

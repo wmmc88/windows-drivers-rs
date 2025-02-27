@@ -61,7 +61,7 @@ impl Display for DiffBase {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::LatestMain => write!(f, "{DIFF_BASE_LATEST_MAIN_DISPLAY_STRING}"),
-            Self::GitRev(git_hash) => write!(f, "Git Rev: {git_hash}"),
+            Self::GitRev(git_hash) => write!(f, "Git Rev({git_hash})"),
         }
     }
 }
@@ -86,7 +86,7 @@ impl Display for DiffTarget {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Local => write!(f, "{DIFF_TARGET_LOCAL_DISPLAY_STRING}"),
-            Self::GitRev(git_hash) => write!(f, "Git Rev: {git_hash}"),
+            Self::GitRev(git_hash) => write!(f, "Git Rev({git_hash})"),
         }
     }
 }

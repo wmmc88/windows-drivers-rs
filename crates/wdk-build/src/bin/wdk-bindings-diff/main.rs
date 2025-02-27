@@ -11,6 +11,7 @@ use std::{
     path::{Path, PathBuf},
     process::{Command, Stdio},
     sync::LazyLock,
+    time::Duration,
 };
 
 use anyhow::{anyhow, bail, Result};
@@ -20,9 +21,17 @@ use cli::{CommandLineInterface, DiffBase};
 use console::Style;
 use git2::build::CheckoutBuilder;
 use ignore::WalkBuilder;
+use indicatif::ProgressState;
 use similar::{Algorithm, ChangeTag};
 use tempfile::TempDir;
-use tracing_subscriber::fmt::format::FmtSpan;
+use tracing::trace_span;
+use tracing_indicatif::{span_ext::IndicatifSpanExt, style::ProgressStyle, IndicatifLayer};
+use tracing_subscriber::{
+    fmt::format::FmtSpan,
+    layer::SubscriberExt,
+    util::SubscriberInitExt,
+    Layer,
+};
 use wdk_build::PathExt;
 
 static REPO_ROOT: LazyLock<PathBuf> = LazyLock::new(|| {
@@ -51,11 +60,76 @@ fn main() -> Result<()> {
     cli_args.color.write_global();
 
     // initialize tracing based on cli arg
-    tracing_subscriber::fmt()
-        .pretty()
-        .with_max_level(cli_args.verbose.tracing_level_filter())
-        .with_span_events(FmtSpan::FULL)
+    // TODO: add some setting to disable progress bars
+    let indicatif_layer = IndicatifLayer::new()
+        .with_progress_style(
+            ProgressStyle::with_template(
+                "{color_start}{span_child_prefix}{span_fields} -- {span_name} {wide_msg} \
+                 {elapsed_subsec}{color_end}",
+            )?
+            .with_key(
+                "elapsed_subsec",
+                |state: &ProgressState, writer: &mut dyn std::fmt::Write| {
+                    let seconds = state.elapsed().as_secs();
+                    let sub_seconds = (state.elapsed().as_millis() % 1000) / 100;
+                    let _ = write!(writer, "{}.{}s", seconds, sub_seconds);
+                },
+            )
+            .with_key(
+                "color_start",
+                |state: &ProgressState, writer: &mut dyn std::fmt::Write| {
+                    let elapsed = state.elapsed();
+
+                    if elapsed > Duration::from_secs(8) {
+                        // Red
+                        let _ = write!(writer, "\x1b[{}m", 1 + 30);
+                    } else if elapsed > Duration::from_secs(4) {
+                        // Yellow
+                        let _ = write!(writer, "\x1b[{}m", 3 + 30);
+                    }
+                },
+            )
+            .with_key(
+                "color_end",
+                |state: &ProgressState, writer: &mut dyn std::fmt::Write| {
+                    if state.elapsed() > Duration::from_secs(4) {
+                        let _ = write!(writer, "\x1b[0m");
+                    }
+                },
+            ),
+        )
+        .with_span_child_prefix_symbol("↳ ")
+        .with_span_child_prefix_indent(" ");
+
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::fmt::layer()
+                .pretty()
+                .with_span_events(FmtSpan::FULL)
+                .with_writer(indicatif_layer.get_stderr_writer())
+                .with_filter(cli_args.verbose.tracing_level_filter()),
+        )
+        .with(indicatif_layer)
         .init();
+
+    let header_span = trace_span!("header"); //TODO: rename + use the in_scope api
+    header_span.pb_set_style(
+        &ProgressStyle::with_template(
+            &format!("Generating diff between {} and {}.. {{wide_msg}} {{elapsed_subsec}}\n{{wide_bar}}", cli_args.diff_base, cli_args.diff_target),
+        )?
+        .with_key("elapsed_subsec", |state: &ProgressState, writer: &mut dyn std::fmt::Write| {
+                    let seconds = state.elapsed().as_secs();
+                    let sub_seconds = (state.elapsed().as_millis() % 1000) / 100;
+                    let _ = write!(writer, "{}.{}s", seconds, sub_seconds);
+                }
+            )
+        // .progress_chars("---"),
+    );
+    header_span.pb_start();
+
+    // Bit of a hack to show a full "-----" line underneath the header.
+    // header_span.pb_set_length(1);
+    // header_span.pb_set_position(1);
 
     // TODO: set output directory to inside target dir if executed within cargo
     // workspace, otherwise use current working directory
