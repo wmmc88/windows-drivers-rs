@@ -15,7 +15,7 @@ extern crate wdk_panic;
 
 use alloc::{ffi::CString, slice, string::String};
 
-use wdk::println;
+use wdk::{nt_success, println, wdf};
 #[cfg(not(test))]
 use wdk_alloc::WdkAllocator;
 use wdk_sys::{
@@ -25,6 +25,7 @@ use wdk_sys::{
     NTSTATUS,
     PCUNICODE_STRING,
     PDRIVER_OBJECT,
+    STATUS_SUCCESS,
     ULONG,
     UNICODE_STRING,
     WCHAR,
@@ -85,8 +86,7 @@ pub unsafe extern "system" fn driver_entry(
         }
     };
 
-    let driver_attributes = WDF_NO_OBJECT_ATTRIBUTES;
-    let driver_handle_output = WDF_NO_HANDLE.cast::<WDFDRIVER>();
+    // let driver_attributes = WDF_NO_OBJECT_ATTRIBUTES;
 
     let wdf_driver_create_ntstatus;
     // SAFETY: This is safe because:
@@ -95,16 +95,8 @@ pub unsafe extern "system" fn driver_entry(
     //         3. `driver_attributes` is allowed to be null
     //         4. `driver_config` is a valid pointer to a valid `WDF_DRIVER_CONFIG`
     //         5. `driver_handle_output` is expected to be null
-    unsafe {
-        wdf_driver_create_ntstatus = call_unsafe_wdf_function_binding!(
-            WdfDriverCreate,
-            driver as PDRIVER_OBJECT,
-            registry_path,
-            driver_attributes,
-            &mut driver_config,
-            driver_handle_output,
-        );
-    }
+    let wdf_driver =
+        wdf::Driver::try_new(driver, registry_path, None, driver_config).unwrap();
 
     // Translate UTF16 string to rust string
     let registry_path: UNICODE_STRING =
@@ -149,25 +141,33 @@ pub unsafe extern "system" fn driver_entry(
     // support).
     println!("KMDF Driver Entry Complete! Driver Registry Parameter Key: {registry_path}");
 
-    wdf_driver_create_ntstatus
+    STATUS_SUCCESS
 }
 
 extern "C" fn evt_driver_device_add(
-    _driver: WDFDRIVER,
+    driver: WDFDRIVER,
     mut device_init: *mut WDFDEVICE_INIT,
 ) -> NTSTATUS {
+    RUST_evt_driver_device_add(driver, device_init)
+        .map_or_else(|nt_status| nt_status, STATUS_SUCCESS)
+}
+
+fn RUST_evt_driver_device_add(
+    driver: wdf::Driver,
+    mut device_init: *mut WDFDEVICE_INIT,
+) -> Result<(), NTSTATUS> {
     println!("EvtDriverDeviceAdd Entered!");
 
     let mut device_handle_output: WDFDEVICE = WDF_NO_HANDLE.cast();
 
-    let ntstatus;
+    let nt_status;
     // SAFETY: This is safe because:
     //       1. `device_init` is provided by `EvtDriverDeviceAdd` and is never null
     //       2. the argument receiving `WDF_NO_OBJECT_ATTRIBUTES` is allowed to be
     //          null
     //       3. `device_handle_output` is expected to be null
     unsafe {
-        ntstatus = call_unsafe_wdf_function_binding!(
+        nt_status = call_unsafe_wdf_function_binding!(
             WdfDeviceCreate,
             &mut device_init,
             WDF_NO_OBJECT_ATTRIBUTES,
@@ -175,8 +175,11 @@ extern "C" fn evt_driver_device_add(
         );
     }
 
-    println!("WdfDeviceCreate NTSTATUS: {ntstatus:#02x}");
-    ntstatus
+    println!("WdfDeviceCreate NTSTATUS: {nt_status:#02x}");
+
+    nt_success(nt_status)
+            .then(|| ())
+            .ok_or(nt_status)
 }
 
 extern "C" fn driver_exit(_driver: *mut DRIVER_OBJECT) {
