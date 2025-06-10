@@ -1,7 +1,8 @@
 [package]
 edition.workspace = true
+rust-version.workspace = true
 name = "wdk-build"
-version = "0.2.0"
+version = "0.4.0"
 description = "A library to configure a Cargo build script for binding generation and downstream linking of the WDK (Windows Driver Kit)"
 repository.workspace = true
 readme.workspace = true
@@ -9,18 +10,20 @@ license.workspace = true
 keywords = ["wdk", "windows", "build-dependencies"]
 categories = ["development-tools::build-utils", "development-tools::ffi"]
 
-[build-dependencies]
-rustversion.workspace = true
+[features]
+nightly = []
 
 [dependencies]
 anyhow.workspace = true
 bindgen.workspace = true
 camino.workspace = true
 cargo_metadata.workspace = true
+cfg-if.workspace = true
 clap = { workspace = true, features = ["derive"] }
 clap-cargo.workspace = true
-lazy_static.workspace = true
 paste.workspace = true
+rustversion.workspace = true
+semver.workspace = true
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
 thiserror.workspace = true
@@ -29,6 +32,9 @@ windows = { workspace = true, features = [
   "Win32_Foundation",
   "Win32_System_Registry",
 ] }
+
+[build-dependencies]
+rustversion.workspace = true
 
 [dev-dependencies]
 windows = { workspace = true, features = ["Win32_UI_Shell"] }
@@ -42,6 +48,10 @@ windows = { workspace = true, features = ["Win32_UI_Shell"] }
 [lints.rust]
 missing_docs = "warn"
 unsafe_op_in_unsafe_fn = "forbid"
+
+[lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = ["cfg(wdk_build_unstable)", "cfg(skip_umdf_static_crt_check)"]
 
 [lints.clippy]
 # Lint Groups

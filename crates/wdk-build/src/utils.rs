@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation
 // License: MIT OR Apache-2.0
 
+//! Private module for utility code related to the cargo-make experience for
+//! building drivers.
+
 use std::{
     env,
     ffi::CStr,
@@ -46,7 +49,6 @@ pub trait PathExt {
     ///
     /// Returns an error defined by the implementer if unable to strip the
     /// extended path length prefix.
-
     fn strip_extended_length_path_prefix(&self) -> Result<PathBuf, Self::Error>;
 }
 
@@ -124,19 +126,6 @@ pub fn detect_wdk_content_root() -> Option<PathBuf> {
                 path.display()
             );
         }
-    }
-
-    // Check WDKContentRoot environment variable
-    if let Ok(wdk_content_root) = env::var("WDKContentRoot") {
-        let path = Path::new(wdk_content_root.as_str());
-        if path.is_dir() {
-            return Some(path.to_path_buf());
-        }
-        eprintln!(
-            "WDKContentRoot({}) was found in environment, but does not exist or is not a valid \
-             directory.",
-            path.display()
-        );
     }
 
     // Check HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed
@@ -220,12 +209,19 @@ pub fn detect_cpu_architecture_in_build_script() -> CpuArchitecture {
 
 /// Validates that a given string matches the WDK version format (10.xxx.yyy.zzz
 /// where xxx, yyy, and zzz are numeric and not necessarily 3 digits long).
+#[rustversion::attr(
+    nightly,
+    allow(
+        clippy::nonminimal_bool,
+        reason = "is_some_or is not stable until 1.82.0 is released on 10/17/24"
+    )
+)]
 pub fn validate_wdk_version_format<S: AsRef<str>>(version_string: S) -> bool {
     let version = version_string.as_ref();
     let version_parts: Vec<&str> = version.split('.').collect();
 
     // First, check if we have "10" as our first value
-    if !version_parts.first().is_some_and(|first| *first == "10") {
+    if version_parts.first().is_none_or(|first| *first != "10") {
         return false;
     }
 
@@ -300,7 +296,9 @@ fn read_registry_key_string_value(
     // SAFETY: `&mut opened_key_handle` is coerced to a &raw mut, so the address passed as the
     // argument is always valid. `&mut opened_key_handle` is coerced to a pointer of the correct
     // type.
-    unsafe { RegOpenKeyExA(key_handle, sub_key, 0, KEY_READ, &mut opened_key_handle) }.is_ok() {
+    unsafe { RegOpenKeyExA(key_handle, sub_key, 0, KEY_READ, &raw mut opened_key_handle) }
+        .is_ok()
+    {
         if
         // SAFETY: `opened_key_handle` is valid key opened with the `KEY_QUERY_VALUE` access right
         // (included in `KEY_READ`). `&mut len` is coerced to a &raw mut, so the address passed as
@@ -314,7 +312,7 @@ fn read_registry_key_string_value(
                 RRF_RT_REG_SZ,
                 None,
                 None,
-                Some(&mut len),
+                Some(&raw mut len),
             )
         }
         .is_ok()
@@ -335,7 +333,7 @@ fn read_registry_key_string_value(
                     RRF_RT_REG_SZ,
                     None,
                     Some(buffer.as_mut_ptr().cast()),
-                    Some(&mut len),
+                    Some(&raw mut len),
                 )
             }
             .is_ok()
@@ -348,7 +346,7 @@ fn read_registry_key_string_value(
                 return Some(
                     CStr::from_bytes_with_nul(&buffer[..len as usize])
                         .expect(
-                            "RegGetValueA should always return a null terminated string. The read \
+                            "RegGetValueA should always return a null-terminated string. The read \
                              string (REG_SZ) from the registry should not contain any interior \
                              nulls.",
                         )
@@ -464,7 +462,7 @@ mod tests {
         assert_eq!(
             format!("{}", get_wdk_version_number(test_string).err().unwrap()),
             format!(
-                "The WDK version string provided ({}) was not in a valid format.",
+                "the WDK version string provided ({}) was not in a valid format",
                 test_string
             )
         );
@@ -472,7 +470,7 @@ mod tests {
         assert_eq!(
             format!("{}", get_wdk_version_number(test_string).err().unwrap()),
             format!(
-                "The WDK version string provided ({}) was not in a valid format.",
+                "the WDK version string provided ({}) was not in a valid format",
                 test_string
             )
         );
@@ -480,7 +478,7 @@ mod tests {
         assert_eq!(
             format!("{}", get_wdk_version_number(test_string).err().unwrap()),
             format!(
-                "The WDK version string provided ({}) was not in a valid format.",
+                "the WDK version string provided ({}) was not in a valid format",
                 test_string
             )
         );
@@ -488,7 +486,7 @@ mod tests {
         assert_eq!(
             format!("{}", get_wdk_version_number(test_string).err().unwrap()),
             format!(
-                "The WDK version string provided ({}) was not in a valid format.",
+                "the WDK version string provided ({}) was not in a valid format",
                 test_string
             )
         );
@@ -496,7 +494,7 @@ mod tests {
         assert_eq!(
             format!("{}", get_wdk_version_number(test_string).err().unwrap()),
             format!(
-                "The WDK version string provided ({}) was not in a valid format.",
+                "the WDK version string provided ({}) was not in a valid format",
                 test_string
             )
         );
@@ -504,7 +502,7 @@ mod tests {
         assert_eq!(
             format!("{}", get_wdk_version_number(test_string).err().unwrap()),
             format!(
-                "The WDK version string provided ({}) was not in a valid format.",
+                "the WDK version string provided ({}) was not in a valid format",
                 test_string
             )
         );
@@ -512,7 +510,7 @@ mod tests {
         assert_eq!(
             format!("{}", get_wdk_version_number(test_string).err().unwrap()),
             format!(
-                "The WDK version string provided ({}) was not in a valid format.",
+                "the WDK version string provided ({}) was not in a valid format",
                 test_string
             )
         );

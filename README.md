@@ -11,7 +11,7 @@ This repo is a collection of Rust crates that enable developers to develop Windo
 
 To see an example of this repo used to create drivers, see [Windows-rust-driver-samples](https://github.com/microsoft/Windows-rust-driver-samples).
 
-Note: This project is still in early stages of development and is not yet recommended for production use. We encourage community experimentation, suggestions and discussions! We will be using our [GitHub Discussions forum](https://github.com/microsoft/windows-drivers-rs/discussions) as the main form of engagement with the community!
+Note: This project is still in early stages of development and is not yet recommended for production use. We encourage community experimentation and collaboration through our [GitHub Discussions forum](https://github.com/microsoft/windows-drivers-rs/discussions)!
 
 ## <a name="supported-configs">Supported Configurations
 
@@ -87,7 +87,7 @@ The crates in this repository are available from [`crates.io`](https://crates.io
 
    ```rust
    fn main() -> Result<(), wdk_build::ConfigError> {
-      wdk_build::configure_binary_build()
+      wdk_build::configure_wdk_binary_build()
    }
    ```
 
@@ -122,7 +122,7 @@ The crates in this repository are available from [`crates.io`](https://crates.io
 
    ```rust
    use wdk_sys::{
-      DRIVER_OBJECT,
+      PDRIVER_OBJECT,
       NTSTATUS,
       PCUNICODE_STRING,
    };
@@ -147,7 +147,7 @@ The crates in this repository are available from [`crates.io`](https://crates.io
    #!@rust
    //! ```cargo
    //! [dependencies]
-   //! wdk-build = "0.2.0"
+   //! wdk-build = "0.4.0"
    //! ```
    #![allow(unused_doc_comments)]
 
@@ -219,6 +219,12 @@ If you understand these implications, and have installed the test certificate, t
 ```
 cargo make --env WDK_BUILD_ENABLE_SIGNTOOL_VERIFY=true
 ```
+
+## Contact
+
+* For bug reports, feature requests, and other actionable items, please use [GitHub Issues](https://github.com/microsoft/windows-drivers-rs/issues)
+* For broader questions, architectural discussions, and community engagement, please use [GitHub Discussions](https://github.com/microsoft/windows-drivers-rs/discussions)
+* For inquiries not suitable for public forums, email us at <RustWindowsDrivers@microsoft.com>
 
 ## Crates.io Release Policy
 

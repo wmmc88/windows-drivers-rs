@@ -11,19 +11,27 @@
 //! provide a CLI very close to cargo's own, but only exposes the arguments
 //! supported by `rust-driver-makefile.toml`.
 
+use core::{fmt, ops::RangeFrom};
 use std::{
     env,
     panic::UnwindSafe,
     path::{Path, PathBuf},
+    process::Command,
 };
 
 use anyhow::Context;
 use cargo_metadata::{camino::Utf8Path, Metadata, MetadataCommand};
 use clap::{Args, Parser};
+use tracing::{instrument, trace};
 
 use crate::{
     metadata,
-    utils::{detect_wdk_content_root, get_latest_windows_sdk_version, PathExt},
+    utils::{
+        detect_wdk_content_root,
+        get_latest_windows_sdk_version,
+        get_wdk_version_number,
+        PathExt,
+    },
     ConfigError,
     CpuArchitecture,
 };
@@ -60,6 +68,10 @@ const CARGO_MAKE_CURRENT_TASK_NAME_ENV_VAR: &str = "CARGO_MAKE_CURRENT_TASK_NAME
 
 /// `clap` uses an exit code of 2 for usage errors: <https://github.com/clap-rs/clap/blob/14fd853fb9c5b94e371170bbd0ca2bf28ef3abff/clap_builder/src/util/mod.rs#L30C18-L30C28>
 const CLAP_USAGE_EXIT_CODE: i32 = 2;
+
+// This range is inclusive of 25798. FIXME: update with range end after /sample
+// flag is added to InfVerif CLI
+const MISSING_SAMPLE_FLAG_WDK_BUILD_NUMBER_RANGE: RangeFrom<u32> = 25798..;
 
 trait ParseCargoArgs {
     fn parse_cargo_args(&self);
@@ -385,7 +397,7 @@ impl ParseCargoArgs for CompilationOptions {
             );
         }
 
-        configure_wdf_build_output_dir(target, &cargo_make_cargo_profile);
+        configure_wdf_build_output_dir(target.as_ref(), &cargo_make_cargo_profile);
 
         if let Some(timings_option) = &timings {
             timings_option.as_ref().map_or_else(
@@ -653,7 +665,8 @@ pub fn setup_infverif_for_samples<S: AsRef<str> + ToString + ?Sized>(
         .parse::<i32>()
         .expect("Unable to parse the build number of the WDK version string as an int!");
     let sample_flag = if version > MINIMUM_SAMPLES_FLAG_WDK_VERSION {
-        "/samples" // Note: Not currently implemented, so in samples TOML we currently skip infverif
+        "/samples" // Note: Not currently implemented, so in samples TOML we
+                   // currently skip infverif
     } else {
         "/msft"
     };
@@ -775,7 +788,13 @@ pub fn load_rust_driver_sample_makefile() -> Result<(), ConfigError> {
 /// it can be extended from a downstream `Makefile.toml`.
 ///
 /// This is necessary so that paths in the [`wdk_build`] makefile can be
-/// relative to `CARGO_MAKE_CURRENT_TASK_INITIAL_MAKEFILE_DIRECTORY`
+/// relative to `CARGO_MAKE_CURRENT_TASK_INITIAL_MAKEFILE_DIRECTORY`. The
+/// version of `wdk-build` from which the file being symlinked to comes from is
+/// determined by the workding directory of the process that invokes this
+/// function. For example, if this function is ultimately executing in a
+/// `cargo_make` `load_script`, the files will be symlinked from the `wdk-build`
+/// version that is in the `.Cargo.lock` file, and not the `wdk-build` version
+/// specified in the `load_script`.
 ///
 /// # Errors
 ///
@@ -791,10 +810,12 @@ pub fn load_rust_driver_sample_makefile() -> Result<(), ConfigError> {
 ///
 /// This function will panic if the `CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY`
 /// environment variable is not set
-fn load_wdk_build_makefile<S: AsRef<str> + AsRef<Utf8Path> + AsRef<Path>>(
+#[instrument(level = "trace")]
+fn load_wdk_build_makefile<S: AsRef<str> + AsRef<Utf8Path> + AsRef<Path> + fmt::Debug>(
     makefile_name: S,
 ) -> Result<(), ConfigError> {
     let cargo_metadata = MetadataCommand::new().exec()?;
+    trace!(cargo_metadata_output = ?cargo_metadata);
 
     let wdk_build_package_matches = cargo_metadata
         .packages
@@ -923,7 +944,7 @@ where
 ///
 /// # Panics
 ///
-/// Panics if `CARGO_MAKE_CRATE_NAME` is not set in the environment
+/// Panics if `CARGO_MAKE_CURRENT_TASK_NAME` is not set in the environment
 pub fn package_driver_flow_condition_script() -> anyhow::Result<()> {
     condition_script(|| {
         // Get the current package name via `CARGO_MAKE_CRATE_NAME_ENV_VAR` instead of
@@ -956,7 +977,7 @@ pub fn package_driver_flow_condition_script() -> anyhow::Result<()> {
         if !current_package
             .targets
             .iter()
-            .any(|target| target.kind.iter().any(|kind| kind == "cdylib"))
+            .any(|target| target.kind.contains(&cargo_metadata::TargetKind::CDyLib))
         {
             return Err::<(), anyhow::Error>(
                 metadata::TryFromCargoMetadataError::NoWdkConfigurationsDetected.into(),
@@ -987,7 +1008,68 @@ pub fn package_driver_flow_condition_script() -> anyhow::Result<()> {
     })
 }
 
-fn configure_wdf_build_output_dir(target_arg: &Option<String>, cargo_make_cargo_profile: &str) {
+/// `cargo-make` condition script for `generate-certificate` task in
+/// [`rust-driver-makefile.toml`](../rust-driver-makefile.toml)
+///
+/// # Errors
+///
+/// This functions returns an error whenever it determines that the
+/// `generate-certificate` `cargo-make` task should be skipped. This only
+/// occurs when `WdrLocalTestCert` already exists in `WDRTestCertStore`.
+///
+/// # Panics
+///
+/// Panics if `CARGO_MAKE_CURRENT_TASK_NAME` is not set in the environment.
+pub fn generate_certificate_condition_script() -> anyhow::Result<()> {
+    condition_script(|| {
+        let mut command = Command::new("certmgr");
+
+        command.args([
+            "-put".as_ref(),
+            "-s".as_ref(),
+            "WDRTestCertStore".as_ref(),
+            "-c".as_ref(),
+            "-n".as_ref(),
+            "WdrLocalTestCert".as_ref(),
+            get_wdk_build_output_directory()
+                .join("WDRLocalTestCert.cer")
+                .as_os_str(),
+        ]);
+
+        let output = command.output().unwrap_or_else(|err| {
+            panic!(
+                "Failed to run certmgr.exe {} due to error: {}",
+                command
+                    .get_args()
+                    .map(|arg| arg.to_string_lossy())
+                    .collect::<Vec<_>>()
+                    .join(" "),
+                err
+            )
+        });
+
+        match output.status.code() {
+            Some(0) => Err(anyhow::anyhow!(
+                "WDRLocalTestCert found in WDRTestCertStore. Skipping certificate generation."
+            )),
+            Some(1) => {
+                eprintln!(
+                    "WDRLocalTestCert not found in WDRTestCertStore. Generating new certificate."
+                );
+                Ok(())
+            }
+            Some(_) => {
+                eprintln!("Unknown status code found from certmgr. Generating new certificate.");
+                Ok(())
+            }
+            None => {
+                unreachable!("Unreachable, no status code found from certmgr.");
+            }
+        }
+    })
+}
+
+fn configure_wdf_build_output_dir(target_arg: Option<&String>, cargo_make_cargo_profile: &str) {
     let cargo_make_crate_custom_triple_target_directory =
         env::var(CARGO_MAKE_CRATE_CUSTOM_TRIPLE_TARGET_DIRECTORY_ENV_VAR).unwrap_or_else(|_| {
             panic!(
@@ -1052,6 +1134,40 @@ where
     env::set_var(env_var_name, env_var_value);
 }
 
+/// `cargo-make` condition script for `infverif` task in
+/// [`rust-driver-sample-makefile.toml`](../rust-driver-sample-makefile.toml)
+///
+/// # Errors
+///
+/// This function returns an error whenever it determines that the
+/// `infverif` `cargo-make` task should be skipped (i.e. when the WDK Version is
+/// bugged and does not contain /samples flag)
+///
+/// # Panics
+/// Panics if `CARGO_MAKE_CURRENT_TASK_NAME` is not set in the environment
+pub fn driver_sample_infverif_condition_script() -> anyhow::Result<()> {
+    condition_script(|| {
+        let wdk_version = env::var(WDK_VERSION_ENV_VAR).expect(
+            "WDK_BUILD_DETECTED_VERSION should always be set by wdk-build-init cargo make task",
+        );
+        let wdk_build_number = str::parse::<u32>(
+            &get_wdk_version_number(&wdk_version).expect("Failed to get WDK version number"),
+        )
+        .unwrap_or_else(|_| {
+            panic!("Couldn't parse WDK version number! Version number: {wdk_version}")
+        });
+        if MISSING_SAMPLE_FLAG_WDK_BUILD_NUMBER_RANGE.contains(&wdk_build_number) {
+            // cargo_make will interpret returning an error from the rust-script
+            // condition_script as skipping the task
+            return Err::<(), anyhow::Error>(anyhow::Error::msg(format!(
+                "Skipping InfVerif. InfVerif in WDK Build {wdk_build_number} is bugged and does \
+                 not contain the /samples flag.",
+            )));
+        }
+        Ok(())
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use crate::ConfigError;
@@ -1067,7 +1183,7 @@ mod tests {
                 || panic!("Couldn't get OS string"),
                 |os_env_string| os_env_string.to_string_lossy().into_owned(),
             );
-        assert_eq!(env_string.split(' ').last(), Some("/msft"));
+        assert_eq!(env_string.split(' ').next_back(), Some("/msft"));
 
         crate::cargo_make::setup_infverif_for_samples(WDK_TEST_NEW_INF_VERSION)?;
         let env_string = std::env::var_os(crate::cargo_make::WDK_INF_ADDITIONAL_FLAGS_ENV_VAR)
@@ -1075,7 +1191,7 @@ mod tests {
                 || panic!("Couldn't get OS string"),
                 |os_env_string| os_env_string.to_string_lossy().into_owned(),
             );
-        assert_eq!(env_string.split(' ').last(), Some("/samples"));
+        assert_eq!(env_string.split(' ').next_back(), Some("/samples"));
         Ok(())
     }
 }

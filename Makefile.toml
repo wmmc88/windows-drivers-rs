@@ -6,9 +6,10 @@ additional_profiles = ["all-default-tasks"]
 
 [env]
 CARGO_MAKE_SKIP_SLOW_SECONDARY_FLOWS = false
-CARGO_MAKE_CLIPPY_ARGS = "--all-targets -- -D warnings"
-RUSTFLAGS = "-D warnings"
+CARGO_MAKE_CARGO_BUILD_TEST_FLAGS = "${CARGO_MAKE_CARGO_ALL_FEATURES}"
+CARGO_MAKE_CLIPPY_ARGS = "--all-targets --all-features"
 CARGO_MAKE_RUST_DEFAULT_TOOLCHAIN = "stable"
+RUSTFLAGS = "-D warnings"
 RUSTDOCFLAGS = "-D warnings"
 
 [tasks.wdk-pre-commit-flow]
@@ -16,6 +17,7 @@ description = "Run pre-commit tasks and checks"
 category = "Development"
 workspace = false
 dependencies = [
+  "sort-deps",
   "format-flow",
   "format-toml-conditioned-flow",
   "build",
@@ -71,12 +73,10 @@ alias = "pre-test"
 
 [tasks.nightly-test]
 extend = "test"
-env = { CARGO_MAKE_CARGO_BUILD_TEST_FLAGS = "--features nightly" }
 toolchain = "nightly"
 
 [tasks.post-nightly-test]
 extend = "post-test"
-env = { CARGO_MAKE_CARGO_BUILD_TEST_FLAGS = { unset = true } }
 
 [tasks.nightly-clippy-flow]
 extend = "clippy-flow"
@@ -138,3 +138,18 @@ env = { CARGO_MAKE_RUST_DEFAULT_TOOLCHAIN = "${CARGO_MAKE_RUST_DEFAULT_TOOLCHAIN
 [tasks.beta-docs]
 extend = "docs"
 toolchain = "beta"
+
+[tasks.sort-deps]
+workspace = false # Run only at workspace level
+# Installing cargo-sort from main branch since there is an unreleased fix
+# Ref: https://github.com/DevinR528/cargo-sort/issues/67#issuecomment-2486868511
+# Locking down to a specific commit (20th May 2025) until a new stable release is cut out on cargo-sort
+install_script = "cargo install --git=https://github.com/DevinR528/cargo-sort cargo-sort --branch main --rev 4a1ecf093649b87fa610aec32a1bdaa4829d416b --locked --force"
+description = "Sort dependencies in Cargo.toml using cargo-sort"
+command = "cargo"
+args = [
+  "sort",
+  "-w",
+  "-g",
+  "-n",
+] # -w for every crate in workspace, -g for keeping blank lines when sorting groups of deps, -n do not run formatting
