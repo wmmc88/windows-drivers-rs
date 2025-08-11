@@ -10,7 +10,7 @@ name: Test
 jobs:
   test:
     name: Test
-    runs-on: windows-latest
+    runs-on: windows-2025
     strategy:
       matrix:
         wdk:
