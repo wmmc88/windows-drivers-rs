@@ -15,7 +15,7 @@ env:
 jobs:
   build:
     name: Build
-    runs-on: windows-latest
+    runs-on: windows-2025
     strategy:
       matrix:
         wdk:
@@ -46,10 +46,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Winget
-        uses: ./.github/actions/winget-install
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Winget PowerShell Module
+        shell: pwsh
+        run: Install-Module -Name Microsoft.WinGet.Client -Repository PSGallery -Force
 
       - name: Install LLVM ${{ matrix.llvm }}
         run: |
@@ -66,7 +65,7 @@ jobs:
         with:
           version: ${{ matrix.wdk.version }}
           source: ${{ matrix.wdk.source }}
-          host: 'x64' # windows-latest is x64-based
+          host: 'x64' # windows-2025 is x64-based
           target: ${{ matrix.target_triple.arch }}
 
       - name: Install Rust Toolchain (${{ matrix.rust_toolchain }})
@@ -98,7 +97,9 @@ jobs:
         run: cargo +${{ matrix.rust_toolchain }} install --path=crates/cargo-wdk --profile ${{ matrix.cargo_profile }} --locked --force
 
       - name: Build & Package Examples (via cargo-wdk)
-        run: cargo +${{ matrix.rust_toolchain }} wdk build --cwd ./examples --profile ${{ matrix.cargo_profile }} --target-arch ${{ matrix.target_triple.arch }} --sample
+        run: cargo +${{ matrix.rust_toolchain }} wdk build --profile ${{ matrix.cargo_profile }} --target-arch ${{ matrix.target_triple.arch }} --sample
+        working-directory: ./examples
 
       - name: Run build on tests folder (via cargo-wdk)
-        run: cargo +${{ matrix.rust_toolchain }} wdk build --cwd ./tests --profile ${{ matrix.cargo_profile }} --target-arch ${{ matrix.target_triple.arch }}
+        run: cargo +${{ matrix.rust_toolchain }} wdk build --profile ${{ matrix.cargo_profile }} --target-arch ${{ matrix.target_triple.arch }}
+        working-directory: ./tests

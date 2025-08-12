@@ -13,7 +13,7 @@ env:
 jobs:
   build:
     name: Test WDR's local cargo-make Makefile
-    runs-on: windows-latest
+    runs-on: windows-2025
     strategy:
       matrix:
         wdk:
@@ -36,10 +36,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Winget
-        uses: ./.github/actions/winget-install
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Winget PowerShell Module
+        shell: pwsh
+        run: Install-Module -Name Microsoft.WinGet.Client -Repository PSGallery -Force
 
       - name: Install LLVM ${{ matrix.llvm }}
         run: |
@@ -56,7 +55,7 @@ jobs:
         with:
           version: ${{ matrix.wdk.version }}
           source: ${{ matrix.wdk.source }}
-          host: 'x64' # windows-latest is x64-based
+          host: 'x64' # windows-2025 is x64-based
           target: ${{ matrix.target_triple.arch }}
 
       - name: Install Nightly Rust Toolchain (${{ matrix.target_triple.name }})
