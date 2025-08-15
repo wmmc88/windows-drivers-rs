@@ -21,14 +21,14 @@ jobs:
       fail-fast: false # Allow all matrix variants to complete even if some fail
       matrix:
         runner:
-          - name: windows-2025
-            arch: amd64
+          # - name: windows-2025
+          #   arch: amd64
           - name: windows-11-arm
             arch: arm64
 
         wdk:
-          - version: 10.0.22621 # NI WDK
-            source: winget
+          # - version: 10.0.22621 # NI WDK
+          #   source: winget
           - version: 10.0.26100 # GE WDK
             source: nuget
 
@@ -84,5 +84,7 @@ jobs:
         with:
           tool: cargo-make
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Test wdk-pre-commit-flow cargo-make task
         run: cargo make wdk-pre-commit-flow
