@@ -82,3 +82,6 @@ jobs:
 
       - name: Run Cargo Test
         run: cargo +${{ matrix.rust_toolchain }} test --locked --profile ${{ matrix.cargo_profile }} --all-features
+
+      - name: Run workspace-level Tests
+        run: cargo +${{ matrix.rust_toolchain }} make --cwd tests test --locked --profile ${{ matrix.cargo_profile }} --all-features
