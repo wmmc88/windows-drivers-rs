@@ -75,10 +75,10 @@ jobs:
         with:
           toolchain: ${{ matrix.rust_toolchain }}
 
-      - name: Install Cargo Expand
+      - name: Install Cargo Plugins
         uses: taiki-e/install-action@v2
         with:
-          tool: cargo-expand@1.0.85
+          tool: cargo-expand@1.0.85,cargo-make
 
       - name: Run Cargo Test
         run: cargo +${{ matrix.rust_toolchain }} test --locked --profile ${{ matrix.cargo_profile }} --all-features
