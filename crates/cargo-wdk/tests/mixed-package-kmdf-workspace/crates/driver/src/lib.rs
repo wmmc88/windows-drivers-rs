@@ -8,16 +8,16 @@
 
 #![no_std]
 
-extern crate alloc;
+// extern crate alloc;
 
 #[cfg(not(test))]
 extern crate wdk_panic;
 
-use alloc::{ffi::CString, slice, string::String};
+// use alloc::{slice, string::String};
 
 use wdk::println;
-#[cfg(not(test))]
-use wdk_alloc::WdkAllocator;
+// #[cfg(not(test))]
+// use wdk_alloc::WdkAllocator;
 use wdk_sys::{
     call_unsafe_wdf_function_binding,
     ntddk::DbgPrint,
@@ -36,14 +36,11 @@ use wdk_sys::{
     WDF_NO_OBJECT_ATTRIBUTES,
 };
 
-#[cfg(not(test))]
-#[global_allocator]
-static GLOBAL_ALLOCATOR: WdkAllocator = WdkAllocator;
+// #[cfg(not(test))]
+// #[global_allocator]
+// static GLOBAL_ALLOCATOR: WdkAllocator = WdkAllocator;
 
 /// `DriverEntry` function required by WDF
-///
-/// # Panics
-/// Can panic from unwraps of `CStrings` used internally
 ///
 /// # Safety
 /// Function is unsafe since it dereferences raw pointers passed to it from WDF
@@ -53,12 +50,12 @@ pub unsafe extern "system" fn driver_entry(
     registry_path: PCUNICODE_STRING,
 ) -> NTSTATUS {
     // This is an example of directly using DbgPrint binding to print
-    let string = CString::new("Hello World!\n").unwrap();
+    // let string = CString::new("Hello World!\n").unwrap();
 
     // SAFETY: This is safe because `string` is a valid pointer to a null-terminated
     // string
     unsafe {
-        DbgPrint(string.as_ptr());
+        // DbgPrint(string.as_ptr());
     }
 
     let mut driver_config = {
@@ -120,32 +117,32 @@ pub unsafe extern "system" fn driver_entry(
             )
     };
 
-    let registry_path = String::from_utf16_lossy(
-        // SAFETY: This is safe because:
-        //         1. `registry_path.Buffer` is valid for reads for `number_of_slice_elements` *
-        //            `core::mem::size_of::<WCHAR>()` bytes, and is guaranteed to be aligned and it
-        //            must be properly aligned.
-        //         2. `registry_path.Buffer` points to `number_of_slice_elements` consecutive
-        //            properly initialized values of type `WCHAR`.
-        //         3. Windows does not mutate the memory referenced by the returned slice for for
-        //            its entire lifetime.
-        //         4. The total size, `number_of_slice_elements` * `core::mem::size_of::<WCHAR>()`,
-        //            of the slice must be no larger than `isize::MAX`. This is proven by the below
-        //            `debug_assert!`.
-        unsafe {
-            debug_assert!(isize::try_from(
-                number_of_slice_elements * core::mem::size_of::<WCHAR>()
-            )
-            .is_ok());
-            slice::from_raw_parts(registry_path.Buffer, number_of_slice_elements)
-        },
-    );
+    // let registry_path = String::from_utf16_lossy(
+    //     // SAFETY: This is safe because:
+    //     //         1. `registry_path.Buffer` is valid for reads for `number_of_slice_elements` *
+    //     //            `core::mem::size_of::<WCHAR>()` bytes, and is guaranteed to be aligned and it
+    //     //            must be properly aligned.
+    //     //         2. `registry_path.Buffer` points to `number_of_slice_elements` consecutive
+    //     //            properly initialized values of type `WCHAR`.
+    //     //         3. Windows does not mutate the memory referenced by the returned slice for for
+    //     //            its entire lifetime.
+    //     //         4. The total size, `number_of_slice_elements` * `core::mem::size_of::<WCHAR>()`,
+    //     //            of the slice must be no larger than `isize::MAX`. This is proven by the below
+    //     //            `debug_assert!`.
+    //     unsafe {
+    //         debug_assert!(isize::try_from(
+    //             number_of_slice_elements * core::mem::size_of::<WCHAR>()
+    //         )
+    //         .is_ok());
+    //         slice::from_raw_parts(registry_path.Buffer, number_of_slice_elements)
+    //     },
+    // );
 
     // It is much better to use the println macro that has an implementation in
     // wdk::print.rs to call DbgPrint. The println! implementation in
     // wdk::print.rs has the same features as the one in std (ex. format args
     // support).
-    println!("KMDF Driver Entry Complete! Driver Registry Parameter Key: {registry_path}");
+    // println!("KMDF Driver Entry Complete! Driver Registry Parameter Key: {registry_path}");
 
     wdf_driver_create_ntstatus
 }
