@@ -52,6 +52,13 @@ jobs:
           - name: aarch64-pc-windows-msvc
             arch: arm64
 
+        exclude:
+          # Temporary disable: our install-winget action currently results in faulty winget installs on the windows-11-arm GitHub runner image.
+          - runner:
+              name: windows-11-arm
+            wdk:
+              source: winget
+
     runs-on: ${{ matrix.runner.name }}
 
     steps:
