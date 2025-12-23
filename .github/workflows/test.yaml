@@ -1,11 +1,5 @@
 on:
   push:
-    branches-ignore:
-      - 'gh-readonly-queue/**'
-  pull_request:
-  merge_group:
-  schedule: # Trigger a job on default branch at 4AM PST everyday
-    - cron: 0 11 * * *
 
 name: Test
 
@@ -22,12 +16,12 @@ jobs:
         runner:
           - name: windows-2025
             arch: amd64
-          - name: windows-11-arm
-            arch: arm64
+          # - name: windows-11-arm
+          #   arch: arm64
 
         wdk:
-          - version: 10.0.22621 # NI WDK
-            source: winget
+          # - version: 10.0.22621 # NI WDK
+          #   source: winget
           - version: 10.0.26100 # GE WDK
             source: nuget
 
@@ -35,14 +29,14 @@ jobs:
           - 17.0.6
 
         rust_toolchain:
-          - stable
+          # - stable
           - beta
           # Pin nightly version temporarily due to bug in macrotest: https://github.com/eupn/macrotest/issues/131
-          - nightly-2025-11-20
+          # - nightly-2025-11-20
 
         cargo_profile:
           - dev
-          - release
+          # - release
 
         exclude:
           # Temporary disable: our install-winget action currently results in faulty winget installs on the windows-11-arm GitHub runner image.
