@@ -124,14 +124,13 @@ jobs:
       #     SKIP_BUILD_IN_CARGO_WDK_NEW_TESTS: ${{ startsWith(github.head_ref, 'release-plz-') && '1' || '' }}
       #   run: cargo +${{ matrix.rust_toolchain }} test --locked --profile ${{ matrix.cargo_profile }} --all-features
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: test
         run: |
           cd .\tests\config-kmdf
           cargo +beta test --locked --profile dev --test call_unsafe_wdf_function_binding_tests -- tests::macro_expansion::bug_unused_imports_expansion
-
-        
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
 
         
       - name: Run Cargo Test (Top-Level tests Folder via Cargo Make)
