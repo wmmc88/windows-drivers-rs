@@ -91,47 +91,38 @@ jobs:
         with:
           tool: cargo-expand@1.0.119
 
-      # - name: Install Cargo Make
-      #   uses: taiki-e/install-action@v2
-      #   with:
-      #     tool: cargo-make
+      - name: Install Cargo Make
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-make
 
-      # # Code coverage is generated only for amd64 because cargo-llvm-cov
-      # # does not currently support Windows on arm64.
-      # # See issue: https://github.com/taiki-e/cargo-llvm-cov/issues/436
-      # - name: Run Cargo Test with Coverage (workspace)
-      #   if: matrix.runner.arch != 'arm64'
-      #   env:
-      #     # cargo-wdk new tests try to build newly generated
-      #     # driver projects which can fail in release-plz PRs
-      #     # because the dependencies are not yet published.
-      #     # This env var skips such builds for release-plz PRs
-      #     SKIP_BUILD_IN_CARGO_WDK_NEW_TESTS: ${{ startsWith(github.head_ref, 'release-plz-') && '1' || '' }}
-      #   run: cargo +${{ matrix.rust_toolchain }} llvm-cov --workspace --codecov --output-path target/codecov.info --locked --profile ${{ matrix.cargo_profile }} --all-features
+      # Code coverage is generated only for amd64 because cargo-llvm-cov
+      # does not currently support Windows on arm64.
+      # See issue: https://github.com/taiki-e/cargo-llvm-cov/issues/436
+      - name: Run Cargo Test with Coverage (workspace)
+        if: matrix.runner.arch != 'arm64'
+        env:
+          # cargo-wdk new tests try to build newly generated
+          # driver projects which can fail in release-plz PRs
+          # because the dependencies are not yet published.
+          # This env var skips such builds for release-plz PRs
+          SKIP_BUILD_IN_CARGO_WDK_NEW_TESTS: ${{ startsWith(github.head_ref, 'release-plz-') && '1' || '' }}
+        run: cargo +${{ matrix.rust_toolchain }} llvm-cov --workspace --codecov --output-path target/codecov.info --locked --profile ${{ matrix.cargo_profile }} --all-features
 
-      # - name: Upload Coverage to Codecov
-      #   if: matrix.runner.arch != 'arm64' && github.repository == 'microsoft/windows-drivers-rs' # Skip for forks because they may not have CODECOV_TOKEN
-      #   uses: codecov/codecov-action@v5
-      #   with:
-      #     files: target/codecov.info
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     fail_ci_if_error: true
+      - name: Upload Coverage to Codecov
+        if: matrix.runner.arch != 'arm64' && github.repository == 'microsoft/windows-drivers-rs' # Skip for forks because they may not have CODECOV_TOKEN
+        uses: codecov/codecov-action@v5
+        with:
+          files: target/codecov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
 
-      # - name: Run Cargo Test (workspace)
-      #   if: matrix.runner.arch == 'arm64'
-      #   env:
-      #     # Skips build in cargo-wdk new tests for release-plz PRs
-      #     SKIP_BUILD_IN_CARGO_WDK_NEW_TESTS: ${{ startsWith(github.head_ref, 'release-plz-') && '1' || '' }}
-      #   run: cargo +${{ matrix.rust_toolchain }} test --locked --profile ${{ matrix.cargo_profile }} --all-features
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
-      - name: test
-        run: |
-          cd .\tests\config-kmdf
-          cargo +beta test --locked --profile dev --test call_unsafe_wdf_function_binding_tests -- tests::macro_expansion::bug_unused_imports_expansion
-
+      - name: Run Cargo Test (workspace)
+        if: matrix.runner.arch == 'arm64'
+        env:
+          # Skips build in cargo-wdk new tests for release-plz PRs
+          SKIP_BUILD_IN_CARGO_WDK_NEW_TESTS: ${{ startsWith(github.head_ref, 'release-plz-') && '1' || '' }}
+        run: cargo +${{ matrix.rust_toolchain }} test --locked --profile ${{ matrix.cargo_profile }} --all-features
         
       - name: Run Cargo Test (Top-Level tests Folder via Cargo Make)
         run: cargo +${{ matrix.rust_toolchain }} make --cwd ./tests test --locked --profile ${{ matrix.cargo_profile }}
