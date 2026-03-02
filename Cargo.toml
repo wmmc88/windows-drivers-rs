@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/*"]
+members = ["crates/*", "tools/*"]
 # Examples and tests must be excluded from the workspace since only one WDK configuration per build graph is supported.
 exclude = [
   # Each example and test must be explicitly listed since glob is not currently supported for workspace.exclude: https://github.com/rust-lang/cargo/issues/6009
@@ -11,6 +11,10 @@ exclude = [
   "tests/config-wdm",
   "tests/wdk-macros-tests",
   "tests/wdk-sys-tests",
+  "tools/.github",
+  "tools/.specify",
+  "tools/.vscode",
+  "tools/specs",
 ]
 resolver = "3"
 

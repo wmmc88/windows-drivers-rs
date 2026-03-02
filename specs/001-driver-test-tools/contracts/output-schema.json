@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Driver Test Result",
+  "type": "object",
+  "required": [
+    "status"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "error"
+      ]
+    },
+    "driver": {
+      "type": "object",
+      "required": [
+        "name",
+        "type",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "KMDF",
+            "UMDF",
+            "WDM"
+          ]
+        },
+        "version": {
+          "type": "string"
+        },
+        "architecture": {
+          "type": "string",
+          "enum": [
+            "x64",
+            "x86",
+            "arm64"
+          ]
+        }
+      }
+    },
+    "vm": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "snapshot": {
+          "type": "string"
+        }
+      }
+    },
+    "pnp": {
+      "type": "object",
+      "properties": {
+        "device_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "matching_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "loaded_version_ok": {
+          "type": "boolean"
+        }
+      }
+    },
+    "debug": {
+      "type": "object",
+      "properties": {
+        "captured": {
+          "type": "boolean"
+        },
+        "message_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "errors": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "timing_ms": {
+      "type": "object",
+      "properties": {
+        "build": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deploy": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "verify": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "code": {
+      "type": "integer"
+    },
+    "phase": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "details": {
+      "type": "object"
+    }
+  }
+}
