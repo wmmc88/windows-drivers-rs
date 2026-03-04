@@ -1,0 +1,26 @@
+[package]
+name = "driver-test-cli"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.84.0"
+license = "MIT OR Apache-2.0"
+publish = false
+description = "CLI tool to automate Windows driver deployment and testing in Hyper-V VMs."
+
+[workspace]
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+anyhow = "1.0"
+thiserror = "2.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter", "json"] }
+toml = "0.8"
+regex = "1.10"
+walkdir = "2.5"
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "3.1"
