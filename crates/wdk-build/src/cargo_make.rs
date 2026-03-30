@@ -894,10 +894,12 @@ pub fn load_rust_driver_sample_makefile() -> Result<(), ConfigError> {
 /// This function returns:
 /// - [`ConfigError::CargoMetadataError`] if there is an error executing or
 ///   parsing `cargo_metadata`
+/// - [`ConfigError::NoWdkBuildCrateDetected`] if no `wdk-build` crate is found
+///   in the dependency graph
 /// - [`ConfigError::MultipleWdkBuildCratesDetected`] if there are multiple
 ///   versions of the WDK build crate detected
-/// - [`ConfigError::IoError`] if there is an error creating or updating the
-///   symlink to the makefile.
+/// - [`ConfigError::IoError`] if there is an error reading, writing, or
+///   symlinking the makefile.
 ///
 /// # Panics
 ///
@@ -933,7 +935,7 @@ fn load_wdk_build_makefile<S: AsRef<str> + AsRef<Utf8Path> + AsRef<Path> + fmt::
 
     let wdk_build_package = &wdk_build_package_matches[0];
 
-    let rust_driver_makefile_toml_path = wdk_build_package
+    let wdk_build_makefile_toml_path = wdk_build_package
         .manifest_path
         .parent()
         .expect("The parsed manifest_path should have a valid parent directory")
@@ -979,8 +981,8 @@ fn load_wdk_build_makefile<S: AsRef<str> + AsRef<Utf8Path> + AsRef<Path> + fmt::
         // so that cargo treats wdk-build as a registry dep and applies
         // --cap-lints. This prevents the caller's RUSTFLAGS (e.g. -D warnings)
         // from leaking into the published wdk-build crate's compilation.
-        let makefile_content = std::fs::read_to_string(&rust_driver_makefile_toml_path)
-            .map_err(|source| IoError::with_path(&rust_driver_makefile_toml_path, source))?;
+        let makefile_content = std::fs::read_to_string(&wdk_build_makefile_toml_path)
+            .map_err(|source| IoError::with_path(&wdk_build_makefile_toml_path, source))?;
 
         let version = &wdk_build_package.version;
         let patched_content = rewrite_wdk_build_path_deps_to_version(&makefile_content, version);
@@ -1026,10 +1028,10 @@ fn load_wdk_build_makefile<S: AsRef<str> + AsRef<Utf8Path> + AsRef<Path> + fmt::
         let path_occupied = destination_path.symlink_metadata().is_ok();
 
         if !path_occupied {
-            std::os::windows::fs::symlink_file(&rust_driver_makefile_toml_path, &destination_path)
+            std::os::windows::fs::symlink_file(&wdk_build_makefile_toml_path, &destination_path)
                 .map_err(|source| {
                     IoError::with_src_dest_paths(
-                        rust_driver_makefile_toml_path,
+                        wdk_build_makefile_toml_path,
                         destination_path,
                         source,
                     )
@@ -1037,14 +1039,14 @@ fn load_wdk_build_makefile<S: AsRef<str> + AsRef<Utf8Path> + AsRef<Path> + fmt::
         } else if !destination_path.is_symlink()
             || std::fs::read_link(&destination_path)
                 .map_err(|source| IoError::with_path(&destination_path, source))?
-                != rust_driver_makefile_toml_path
+                != wdk_build_makefile_toml_path
         {
             std::fs::remove_file(&destination_path)
                 .map_err(|source| IoError::with_path(&destination_path, source))?;
-            std::os::windows::fs::symlink_file(&rust_driver_makefile_toml_path, &destination_path)
+            std::os::windows::fs::symlink_file(&wdk_build_makefile_toml_path, &destination_path)
                 .map_err(|source| {
                     IoError::with_src_dest_paths(
-                        rust_driver_makefile_toml_path,
+                        wdk_build_makefile_toml_path,
                         destination_path,
                         source,
                     )
@@ -1057,7 +1059,7 @@ fn load_wdk_build_makefile<S: AsRef<str> + AsRef<Utf8Path> + AsRef<Path> + fmt::
 }
 
 /// Rewrites `wdk-build = { path = "." }` dependency specs in a makefile's
-/// content to version-only registry dependencies (`wdk-build = "X.Y.Z"`).
+/// content to exact version registry dependencies (`wdk-build = "=X.Y.Z"`).
 ///
 /// Returns the patched content. If no replacements were made, the content is
 /// returned unchanged.
@@ -1067,7 +1069,7 @@ fn rewrite_wdk_build_path_deps_to_version(
 ) -> String {
     makefile_content.replace(
         r#"wdk-build = { path = "." }"#,
-        &format!("wdk-build = \"{version}\""),
+        &format!("wdk-build = \"={version}\""),
     )
 }
 
@@ -1551,7 +1553,7 @@ mod tests {
             let expected = r#"
 //! ```cargo
 //! [dependencies]
-//! wdk-build = "0.5.1"
+//! wdk-build = "=0.5.1"
 //! ```
 "#;
             assert_eq!(result, expected);
@@ -1591,7 +1593,7 @@ script_runner = "@rust"
 script = '''
 //! ```cargo
 //! [dependencies]
-//! wdk-build = "1.2.3"
+//! wdk-build = "=1.2.3"
 //! ```
 fn main() {}
 '''
@@ -1601,7 +1603,7 @@ script_runner = "@rust"
 script = '''
 //! ```cargo
 //! [dependencies]
-//! wdk-build = "1.2.3"
+//! wdk-build = "=1.2.3"
 //! ```
 fn main() {}
 '''
@@ -1612,7 +1614,7 @@ fn main() {}
         #[test]
         fn no_match_returns_unchanged() {
             let input = r#"
-//! wdk-build = "0.5.1"
+//! wdk-build = "=0.5.1"
 some other content
 "#;
             let version = Version::new(0, 5, 1);
@@ -1724,18 +1726,19 @@ some other content
         }
     }
 
-    /// Shared helpers for [`load_rust_driver_makefile`] and
-    /// [`load_rust_driver_sample_makefile`] tests. These tests run against
-    /// the real workspace (so `cargo metadata` resolves `wdk-build` as a
-    /// path dependency) but use a temporary directory for
-    /// `CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY` to isolate filesystem
-    /// side-effects.
+    /// Creates and returns the `target/` subdirectory inside the given
+    /// temp dir.
     fn create_temp_target_dir(temp: &assert_fs::TempDir) -> std::path::PathBuf {
         let target_dir = temp.path().join("target");
         std::fs::create_dir_all(&target_dir).unwrap();
         target_dir
     }
 
+    /// Calls `load_rust_driver_makefile` with
+    /// `CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY` pointing at the given temp
+    /// dir, and returns the expected destination path. The test runs
+    /// against the real workspace so `cargo metadata` resolves `wdk-build`
+    /// as a path dependency.
     fn load_makefile_in_temp_dir(temp: &assert_fs::TempDir) -> std::path::PathBuf {
         let target_dir = create_temp_target_dir(temp);
 
