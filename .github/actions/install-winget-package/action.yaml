@@ -78,14 +78,14 @@ runs:
               $shouldInstall = $true
               if ($skipIfInstalled) {
                   $existingPackage = $null
-                  for ($preCheckAttempt = 1; $preCheckAttempt -le 3; $preCheckAttempt++) {
+                  for ($preCheckAttempt = 1; $preCheckAttempt -le $maxRetries; $preCheckAttempt++) {
                       try {
                           $existingPackage = Get-WinGetPackage -Id $packageId -Source winget -MatchOption Equals
                           break
                       } catch {
-                          if ($preCheckAttempt -eq 3) { throw }
+                          if ($preCheckAttempt -eq $maxRetries) { throw }
                           Write-Warning "Pre-install check attempt $preCheckAttempt failed: $($_.Exception.Message)"
-                          Start-Sleep -Seconds 10
+                          Start-Sleep -Seconds $delaySeconds
                       }
                   }
                   if ($existingPackage) {
