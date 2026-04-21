@@ -39,6 +39,25 @@ runs:
               # Import WinGet PowerShell module
               Import-Module Microsoft.WinGet.Client -Force
 
+              # Best-effort warm-up of WinGet source catalog
+              $warmupAttempts = 3
+              $warmupDelay = 10
+              for ($i = 1; $i -le $warmupAttempts; $i++) {
+                  try {
+                      Get-WinGetSource -Name winget | Out-Null
+                      Write-Host "✅ WinGet source catalog is ready"
+                      break
+                  } catch {
+                      if ($i -eq $warmupAttempts) {
+                          Write-Warning "WinGet source warm-up failed after $warmupAttempts attempts: $($_.Exception.Message)"
+                      } else {
+                          Write-Warning "Source warm-up attempt $i failed: $($_.Exception.Message)"
+                          Write-Host "Retrying in ${warmupDelay}s..."
+                          Start-Sleep -Seconds $warmupDelay
+                      }
+                  }
+              }
+
               $packageId = '${{ inputs.package-id }}'
               $version = '${{ inputs.version }}'
               $overrideArgs = '${{ inputs.override-args }}'
@@ -58,7 +77,17 @@ runs:
               # Check if package is already installed and skip if appropriate
               $shouldInstall = $true
               if ($skipIfInstalled) {
-                  $existingPackage = Get-WinGetPackage -Id $packageId -Source winget -MatchOption Equals
+                  $existingPackage = $null
+                  for ($preCheckAttempt = 1; $preCheckAttempt -le 3; $preCheckAttempt++) {
+                      try {
+                          $existingPackage = Get-WinGetPackage -Id $packageId -Source winget -MatchOption Equals
+                          break
+                      } catch {
+                          if ($preCheckAttempt -eq 3) { throw }
+                          Write-Warning "Pre-install check attempt $preCheckAttempt failed: $($_.Exception.Message)"
+                          Start-Sleep -Seconds 10
+                      }
+                  }
                   if ($existingPackage) {
                       $installedVersion = $existingPackage.InstalledVersion
                       Write-Host "$packageId is already installed. Installed version: $installedVersion"
