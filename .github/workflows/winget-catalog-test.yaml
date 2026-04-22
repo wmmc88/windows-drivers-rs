@@ -1,0 +1,72 @@
+name: WinGet Catalog Recovery Test
+on: workflow_dispatch
+
+jobs:
+  test-catalog:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-latest, windows-2025]
+        copy: [1, 2, 3, 4, 5, 6, 7, 8]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    steps:
+      - name: Install WinGet PowerShell module
+        shell: pwsh
+        run: |
+          if (-not (Get-PSResourceRepository -Name PSGallery -ErrorAction SilentlyContinue)) {
+            Register-PSResourceRepository -PSGallery -Trusted
+          }
+          Install-PSResource -Name Microsoft.WinGet.Client -Repository PSGallery -TrustRepository -Quiet
+          Import-Module Microsoft.WinGet.Client -Force
+
+      - name: Test PowerShell module catalog (indefinite retry)
+        shell: pwsh
+        run: |
+          Import-Module Microsoft.WinGet.Client -Force
+          $startTime = Get-Date
+          $maxMinutes = 15
+          $attempt = 0
+          $firstFailTime = $null
+          $failCount = 0
+
+          while (((Get-Date) - $startTime).TotalMinutes -lt $maxMinutes) {
+              $attempt++
+              try {
+                  $pkg = Get-WinGetPackage -Id LLVM.LLVM -Source winget -MatchOption Equals
+                  $elapsed = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
+                  if ($failCount -gt 0) {
+                      $recoveryTime = [math]::Round(((Get-Date) - $firstFailTime).TotalSeconds, 1)
+                      Write-Host "PWSH_MODULE SUCCESS on attempt $attempt at ${elapsed}s (recovered after $failCount failures over ${recoveryTime}s)"
+                  } else {
+                      Write-Host "PWSH_MODULE SUCCESS on attempt $attempt at ${elapsed}s (no failures)"
+                  }
+                  break
+              } catch {
+                  $elapsed = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
+                  if (-not $firstFailTime) { $firstFailTime = Get-Date }
+                  $failCount++
+                  Write-Host "PWSH_MODULE FAIL attempt $attempt at ${elapsed}s: $($_.Exception.Message)"
+                  Start-Sleep -Seconds 10
+              }
+          }
+
+          if ($failCount -gt 0 -and -not $pkg) {
+              $totalTime = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
+              Write-Host "PWSH_MODULE NEVER_RECOVERED after $attempt attempts over ${totalTime}s"
+          }
+
+      - name: Test CLI fallback
+        if: always()
+        shell: pwsh
+        run: |
+          $startTime = Get-Date
+          try {
+              $output = & winget list --id LLVM.LLVM --source winget --accept-source-agreements --disable-interactivity 2>&1
+              $elapsed = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
+              Write-Host "CLI SUCCESS at ${elapsed}s"
+              Write-Host $output
+          } catch {
+              $elapsed = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
+              Write-Host "CLI FAIL at ${elapsed}s: $($_.Exception.Message)"
+          }
