@@ -58,7 +58,55 @@ runs:
               # Check if package is already installed and skip if appropriate
               $shouldInstall = $true
               if ($skipIfInstalled) {
-                  $existingPackage = Get-WinGetPackage -Id $packageId -MatchOption Equals
+                  try {
+                      $existingPackage = Get-WinGetPackage -Id $packageId -MatchOption Equals
+                  } catch {
+                      Write-Warning "Get-WinGetPackage failed: $($_.Exception.Message)"
+
+                      # Collect diagnostics to identify root cause
+                      $diagErrors = @()
+                      Write-Host ">>> DIAG: WinGet versions"
+                      try { & winget --version 2>&1 | ForEach-Object { Write-Host "  $_" } } catch { $diagErrors += "winget version: $($_.Exception.Message)" }
+                      try {
+                          $mod = Get-Module Microsoft.WinGet.Client
+                          Write-Host "  Module: $($mod.Version) @ $($mod.ModuleBase)"
+                      } catch { $diagErrors += "module version: $($_.Exception.Message)" }
+
+                      Write-Host ">>> DIAG: WinGet sources"
+                      try {
+                          & winget source list --disable-interactivity 2>&1 | ForEach-Object { Write-Host "  $_" }
+                      } catch { $diagErrors += "source list: $($_.Exception.Message)" }
+
+                      Write-Host ">>> DIAG: CDN connectivity"
+                      try {
+                          $response = Invoke-WebRequest -Uri "https://cdn.winget.microsoft.com/cache" -Method Head -TimeoutSec 10 -UseBasicParsing -ErrorAction Stop
+                          Write-Host "  CDN: StatusCode=$($response.StatusCode)"
+                      } catch {
+                          Write-Host "  CDN: $($_.Exception.Message)"
+                      }
+                      try {
+                          $dns = Resolve-DnsName cdn.winget.microsoft.com -ErrorAction Stop
+                          $dns | Where-Object { $_.QueryType -eq 'A' -or $_.QueryType -eq 'CNAME' } | ForEach-Object {
+                              Write-Host "  DNS: $($_.QueryType)=$($_.NameHost)$($_.IPAddress)"
+                          }
+                      } catch { Write-Host "  DNS: $($_.Exception.Message)" }
+
+                      Write-Host ">>> DIAG: WinGet logs (last log file, last 30 lines)"
+                      try {
+                          $logDir = "$env:LOCALAPPDATA\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState\DiagOutputDir"
+                          $lastLog = Get-ChildItem $logDir -Filter "*.log" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+                          if ($lastLog) {
+                              Write-Host "  File: $($lastLog.Name) ($([math]::Round($lastLog.Length/1KB, 1))KB)"
+                              Get-Content $lastLog.FullName -Tail 30 -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "  $_" }
+                          } else { Write-Host "  No log files found" }
+                      } catch { $diagErrors += "logs: $($_.Exception.Message)" }
+
+                      if ($diagErrors) {
+                          Write-Host ">>> DIAG collection errors: $($diagErrors -join '; ')"
+                      }
+
+                      throw
+                  }
                   if ($existingPackage) {
                       $installedVersion = $existingPackage.InstalledVersion
                       Write-Host "$packageId is already installed. Installed version: $installedVersion"
