@@ -58,7 +58,7 @@ runs:
               # Check if package is already installed and skip if appropriate
               $shouldInstall = $true
               if ($skipIfInstalled) {
-                  $existingPackage = Get-WinGetPackage -Id $packageId -Source winget -MatchOption Equals
+                  $existingPackage = Get-WinGetPackage -Id $packageId -MatchOption Equals
                   if ($existingPackage) {
                       $installedVersion = $existingPackage.InstalledVersion
                       Write-Host "$packageId is already installed. Installed version: $installedVersion"
@@ -134,7 +134,7 @@ runs:
                   try {
                       $elapsedSeconds = [math]::Round(((Get-Date) - $verificationStartTime).TotalSeconds, 1)
                       Write-Host "Verification attempt at $elapsedSeconds seconds..."
-                      $verifyPackage = Get-WinGetPackage -Id $packageId -Source winget -MatchOption Equals
+                      $verifyPackage = Get-WinGetPackage -Id $packageId -MatchOption Equals
                       
                       if ($verifyPackage) {
                           Write-Host "✅ Final verification: $packageId is installed with version: $($verifyPackage.InstalledVersion)"

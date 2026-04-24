@@ -33,11 +33,12 @@ jobs:
         wdk:
           - version: 10.0.22621 # NI WDK
             source: winget
-          - version: 10.0.26100 # GE WDK
-            source: nuget
 
         llvm:
           - 17.0.6
+          - 19.1.7
+          - 20.1.8
+          - 21.1.2
 
         rust_toolchain:
           - stable
