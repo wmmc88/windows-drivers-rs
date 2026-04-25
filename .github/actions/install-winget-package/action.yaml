@@ -47,6 +47,20 @@ runs:
               $maxRetries = [int]'${{ inputs.retry-attempts }}'
               $delaySeconds = [int]'${{ inputs.retry-delay-seconds }}'
 
+              # Log machine IPs for CDN rate-limiting analysis
+              Write-Host ">>> Machine IPs:"
+              try {
+                  Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
+                      Where-Object { $_.IPAddress -ne '127.0.0.1' } |
+                      ForEach-Object { Write-Host "  $($_.InterfaceAlias): $($_.IPAddress)" }
+              } catch {
+                  # Fallback for environments without Get-NetIPAddress
+                  try {
+                      $resp = Invoke-RestMethod -Uri "https://api.ipify.org?format=json" -TimeoutSec 5 -ErrorAction Stop
+                      Write-Host "  Public IP: $($resp.ip)"
+                  } catch { Write-Host "  (could not determine IPs)" }
+              }
+
               Write-Host "Installing WinGet package: $packageId"
               if ($version) {
                   Write-Host "Target version: $version"
