@@ -217,6 +217,28 @@ function Get-AllPayloads {
     }
 }
 
+# Every runner, LLVM, WDK and target combination a consumer can ask for. It is
+# derived from the manifest so that pinning a new version also verifies it.
+# The target only changes what a NuGet-sourced WDK installs, so layout-sourced
+# kits get a single row per runner.
+function Get-VerifyMatrix {
+    param([Parameter(Mandatory)]$Manifest)
+    $runners = @(
+        @{ Name = 'windows-2025'; Arch = 'amd64' }
+        @{ Name = 'windows-11-arm'; Arch = 'arm64' }
+    )
+    foreach ($r in $runners) {
+        foreach ($llvm in $Manifest['llvm']) {
+            foreach ($kits in $Manifest['kits']) {
+                $targets = if ($kits['source'] -eq 'nuget') { @('amd64', 'arm64') } else { @($r.Arch) }
+                foreach ($target in $targets) {
+                    [pscustomobject]@{ runner = $r.Name; arch = $r.Arch; llvm = $llvm['version']; wdk = $kits['version']; target = $target }
+                }
+            }
+        }
+    }
+}
+
 function Get-TreeHash {
     param([Parameter(Mandatory)][string]$Path)
 
@@ -591,7 +613,7 @@ function Install-Toolchain {
 
 Export-ModuleMember -Function @(
     'Get-CiManifest', 'Get-CiManifestPath', 'Get-LlvmEntry', 'Get-KitsEntry',
-    'Get-LlvmPayload', 'Get-KitsPayload', 'Get-AllPayloads', 'ConvertTo-ManifestArch',
+    'Get-LlvmPayload', 'Get-KitsPayload', 'Get-AllPayloads', 'Get-VerifyMatrix', 'ConvertTo-ManifestArch',
     'Get-TextSha256', 'Get-TreeHash',
     'Assert-FileSha256', 'Assert-TreeSha256', 'Assert-ExactFileSet', 'Assert-NoReparsePoints', 'Assert-PayloadVerified',
     'Set-CiEnv', 'Add-CiPath', 'Invoke-Installer',

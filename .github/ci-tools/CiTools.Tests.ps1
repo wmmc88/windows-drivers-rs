@@ -3,6 +3,7 @@
 BeforeAll {
     Import-Module (Join-Path $PSScriptRoot 'CiTools.psm1') -Force -DisableNameChecking
     Import-Module (Join-Path $PSScriptRoot 'CiToolsAcquire.psm1') -Force -DisableNameChecking
+    Import-Module (Join-Path $PSScriptRoot 'CiToolsGuard.psm1') -Force -DisableNameChecking
 
     function script:New-TestManifest {
         Get-Content -LiteralPath (Get-CiManifestPath) -Raw | ConvertFrom-Json -AsHashtable -Depth 20
@@ -321,6 +322,58 @@ Describe 'Install-Toolchain cache misses' {
     It 'rejects a version that is not pinned before looking at the cache' {
         { Install-Toolchain @Params -LlvmRestored $true -KitsRestored $true -LlvmVersion '99.0.0' } |
             Should -Throw '*manifest.json*'
+    }
+}
+
+Describe 'Get-VerifyMatrix' {
+    BeforeAll {
+        $script:Pins = @{
+            llvm = @(@{ version = '17.0.6' }, @{ version = '19.1.7' })
+            kits = @(@{ version = '10.0.22621'; source = 'layout' }, @{ version = '10.0.26100'; source = 'nuget' })
+        }
+        $script:Rows = @(Get-VerifyMatrix -Manifest $Pins)
+    }
+
+    It 'covers every runner, LLVM version and WDK version' {
+        $Rows.Where({ $_.arch -eq 'amd64' -and $_.runner -ceq 'windows-2025' }).Count | Should -Be 6
+        $Rows.Where({ $_.arch -eq 'arm64' -and $_.runner -ceq 'windows-11-arm' }).Count | Should -Be 6
+        @($Rows.llvm | Sort-Object -Unique) | Should -Be @('17.0.6', '19.1.7')
+    }
+
+    It 'varies the target only for NuGet-sourced kits' {
+        @($Rows.Where({ $_.wdk -eq '10.0.26100' -and $_.arch -eq 'amd64' -and $_.llvm -eq '17.0.6' }).target | Sort-Object) | Should -Be @('amd64', 'arm64')
+        @($Rows.Where({ $_.wdk -eq '10.0.22621' -and $_.arch -eq 'arm64' }).target | Sort-Object -Unique) | Should -Be @('arm64')
+    }
+
+    It 'includes every pin in the committed manifest' {
+        $manifest = Get-CiManifest
+        $committed = @(Get-VerifyMatrix -Manifest $manifest)
+        foreach ($v in $manifest['llvm'].version) { $committed.llvm | Should -Contain $v }
+        foreach ($v in $manifest['kits'].version) { $committed.wdk | Should -Contain $v }
+    }
+}
+
+Describe 'Get-BlockedSummary' {
+    It 'groups dropped flows and ignores DNS, loopback, multicast and allowed traffic' {
+        $log = Join-Path $TestDrive 'firewall.log'
+        Set-Content -LiteralPath $log -Value @(
+            '#Version: 1.5'
+            '2025-01-01 10:00:00 DROP TCP 10.0.0.4 20.1.2.3 51000 443 0 - 0 0 0 - - - SEND'
+            '2025-01-01 10:00:01 DROP TCP 10.0.0.4 20.1.2.3 51001 443 0 - 0 0 0 - - - SEND'
+            '2025-01-01 10:00:02 DROP TCP 10.0.0.4 40.9.9.9 51002 80 0 - 0 0 0 - - - SEND'
+            '2025-01-01 10:00:03 DROP UDP 10.0.0.4 8.8.8.8 51003 53 0 - - - - - - - SEND'
+            '2025-01-01 10:00:04 DROP UDP 10.0.0.4 224.0.0.251 5353 5353 0 - - - - - - - SEND'
+            '2025-01-01 10:00:05 ALLOW TCP 10.0.0.4 20.1.2.3 51004 443 0 - 0 0 0 - - - SEND'
+        )
+        $rows = @(Get-BlockedSummary -LogPath $log)
+        $rows.Count | Should -Be 2
+        $rows[0].Flow | Should -Be 'TCP, 20.1.2.3, 443'
+        $rows[0].Count | Should -Be 2
+        $rows[1].Flow | Should -Be 'TCP, 40.9.9.9, 80'
+    }
+
+    It 'reports nothing when the guard never logged' {
+        @(Get-BlockedSummary -LogPath (Join-Path $TestDrive 'missing.log')).Count | Should -Be 0
     }
 }
 

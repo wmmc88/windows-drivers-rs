@@ -4,6 +4,11 @@ name: Cache Update
 # workflow that talks to WinGet, PSGallery or nuget.org, and the only one that
 # saves into the cache. Every payload it saves is checked against the digests
 # pinned in .github/ci-tools/manifest.json before it is saved.
+#
+# The weekly run is also a cold canary: it rebuilds every payload from its
+# source with the cache ignored, so an installer that disappeared upstream is
+# noticed before the cached copy is evicted. It then reports newer NuGet
+# packages and LLVM releases, and opens a pull request for the NuGet bump.
 
 on:
   workflow_dispatch:
@@ -16,6 +21,13 @@ on:
         description: Optional reviewed ref (for example refs/pull/123/head) whose manifest.json is used instead of the default branch copy. Only the manifest data is taken from it, never code.
         type: string
         default: ''
+      check-updates:
+        description: Also look for newer NuGet packages and LLVM releases, as the weekly run does.
+        type: boolean
+        default: false
+  schedule:
+    # Sunday 03:17 UTC, well away from the daily CI runs at 11:00 UTC.
+    - cron: 17 3 * * 0
   push:
     branches:
       - main
@@ -44,12 +56,14 @@ jobs:
       matrix: ${{ steps.plan.outputs.matrix }}
       count: ${{ steps.plan.outputs.count }}
       manifest: ${{ steps.plan.outputs.manifest }}
+      verify: ${{ steps.plan.outputs.verify }}
     env:
       GH_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
       DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
       IGNORE_CACHE: ${{ inputs.ignore-cache || false }}
       MANIFEST_REF: ${{ inputs.manifest-ref }}
+      EVENT_NAME: ${{ github.event_name }}
     steps:
       # Caches are scoped to the ref that saves them, and only the default
       # branch scope is visible to every pull request and merge queue run.
@@ -97,27 +111,38 @@ jobs:
           $manifestPath = '.github/ci-tools/manifest.json'
           $manifest = Get-CiManifest -Path $manifestPath
           $payloads = @(Get-AllPayloads -Manifest $manifest)
+          $ignore = $env:IGNORE_CACHE -eq 'true'
+          $canary = $env:EVENT_NAME -ceq 'schedule'
 
           $existing = @()
-          if ($env:IGNORE_CACHE -ne 'true') {
+          if (-not $ignore) {
             $json = gh cache list --ref "refs/heads/$env:DEFAULT_BRANCH" --key "ci-tools-g$($manifest['generation'])-" --limit 1000 --json key
             if ($LASTEXITCODE -ne 0) { throw 'gh cache list failed.' }
             $existing = @(($json | ConvertFrom-Json) | ForEach-Object { $_.key })
           }
 
-          $missing = @($payloads | Where-Object { $_.Key -cnotin $existing })
+          # The canary and ignore-cache runs acquire every payload from its
+          # source. Only payloads without a cache entry are saved, except under
+          # ignore-cache, which replaces them.
+          $selected = if ($ignore -or $canary) { $payloads } else { @($payloads | Where-Object { $_.Key -cnotin $existing }) }
           $matrix = @{
-            include = @($missing | ForEach-Object { [ordered]@{ name = $_.Name; key = $_.Key; path = $_.Path; kind = $_.Kind } })
+            include = @($selected | ForEach-Object {
+                [ordered]@{ name = $_.Name; key = $_.Key; path = $_.Path; kind = $_.Kind; save = [bool]($ignore -or $_.Key -cnotin $existing) }
+              })
           }
+          $saving = @($matrix.include | Where-Object { $_.save })
+          $verify = @{ include = @(Get-VerifyMatrix -Manifest $manifest) }
 
           Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8 -Value @(
             "matrix=$($matrix | ConvertTo-Json -Compress -Depth 5)"
-            "count=$($missing.Count)"
+            "count=$($selected.Count)"
+            "verify=$($verify | ConvertTo-Json -Compress -Depth 5)"
             "manifest=$(Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json | ConvertTo-Json -Compress -Depth 20)"
           )
 
-          $summary = @("### Cache Update plan", '', "$($payloads.Count) payloads pinned, $($missing.Count) to build (ignore-cache: $env:IGNORE_CACHE).", '')
-          $summary += $missing | ForEach-Object { "- ``$($_.Key)``" }
+          $mode = if ($ignore) { 'ignore-cache' } elseif ($canary) { 'weekly canary' } else { 'seed missing' }
+          $summary = @("### Cache Update plan", '', "Mode: $mode. $($payloads.Count) payloads pinned, $($selected.Count) to acquire, $($saving.Count) to save, $($verify.include.Count) toolchain combinations to verify.", '')
+          $summary += $matrix.include | ForEach-Object { "- ``$($_.key)`` ($(if ($_.save) { 'save' } else { 'verify only' }))" }
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Value $summary
 
   acquire:
@@ -181,6 +206,7 @@ jobs:
           if ($LASTEXITCODE -ne 0 -and $out -notmatch 'Could not find') { throw "gh cache delete failed: $out" }
 
       - name: Save ${{ matrix.name }}
+        if: ${{ matrix.save }}
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ matrix.path }}
@@ -188,7 +214,280 @@ jobs:
 
       - name: Summarize
         shell: pwsh
+        env:
+          SAVED: ${{ matrix.save }}
         run: |
           $bytes = (Get-ChildItem -LiteralPath $env:PAYLOAD_PATH -Recurse -File -Force | Measure-Object Length -Sum).Sum
-          "- Saved ``$env:PAYLOAD_KEY`` ($([math]::Round($bytes / 1MB)) MiB on disk)" |
-            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8
+          $mib = [math]::Round($bytes / 1MB)
+          $line = if ($env:SAVED -ceq 'true') { "- Saved ``$env:PAYLOAD_KEY`` ($mib MiB on disk)" } else { "- Rebuilt ``$env:PAYLOAD_KEY`` from source and verified it ($mib MiB on disk); the cached copy was left alone" }
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Value $line
+
+  # Proves that every pinned combination installs from the cache alone. It runs
+  # the same Setup Toolchain action as the consumer workflows, with outbound
+  # network access blocked for everything except the runner and its bundled
+  # Node.js (which actions/cache needs), so a hidden download fails the job.
+  verify:
+    name: Verify ${{ matrix.runner }} LLVM ${{ matrix.llvm }} WDK ${{ matrix.wdk }} target ${{ matrix.target }}
+    needs: [plan, acquire]
+    # A push only needs verifying when it seeded something. Scheduled and manual
+    # runs always verify, including when nothing was missing.
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.acquire.result != 'failure' && (needs.acquire.result == 'success' || github.event_name != 'push') }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.verify) }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Use the planned manifest
+        if: ${{ inputs.manifest-ref != '' }}
+        shell: pwsh
+        env:
+          MANIFEST_JSON: ${{ needs.plan.outputs.manifest }}
+        run: Set-Content -LiteralPath .github/ci-tools/manifest.json -Value $env:MANIFEST_JSON -Encoding utf8NoBOM
+
+      - name: Block outbound network access
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Import-Module ./.github/ci-tools/CiToolsGuard.psm1 -Force -DisableNameChecking
+          Enable-OfflineGuard
+          Test-OfflineGuard
+
+      - name: Setup Toolchain
+        uses: ./.github/actions/setup-toolchain
+        with:
+          llvm-version: ${{ matrix.llvm }}
+          wdk-version: ${{ matrix.wdk }}
+          arch: ${{ matrix.arch }}
+          target-arch: ${{ matrix.target }}
+
+      # Consumers verify the nupkgs they install from. Hashing the resulting
+      # tree here also shows that the install itself is deterministic.
+      - name: Check the installed NuGet tree
+        shell: pwsh
+        env:
+          WDK_VERSION: ${{ matrix.wdk }}
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Import-Module ./.github/ci-tools/CiTools.psm1 -Force -DisableNameChecking
+
+          $kits = Get-KitsEntry -Manifest (Get-CiManifest) -Version $env:WDK_VERSION
+          if ($kits['source'] -ceq 'nuget') {
+            Assert-TreeSha256 -Path $env:NugetPackagesRoot -Expected $kits['installedTreeSha256']
+            Write-Host "Installed tree of WDK $env:WDK_VERSION matches the manifest."
+          } else {
+            Write-Host "WDK $env:WDK_VERSION is installed from a layout, so there is no package tree to hash."
+          }
+
+      # Informational for now: the guard also drops background traffic from the
+      # operating system. Anything pwsh, nuget or an installer tried has already
+      # failed its step.
+      - name: Restore network access and report blocked traffic
+        if: ${{ always() }}
+        shell: pwsh
+        run: |
+          Import-Module ./.github/ci-tools/CiToolsGuard.psm1 -Force -DisableNameChecking
+          Disable-OfflineGuard
+          $blocked = @(Get-BlockedSummary)
+          $lines = @("### Blocked outbound traffic: $($blocked.Count) distinct flows", '')
+          $lines += $blocked | Select-Object -First 25 | ForEach-Object { "- $($_.Flow) ($($_.Count) packets)" }
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Value $lines
+
+  # Looks for newer NuGet packages for the pinned WDKs and newer LLVM releases.
+  # It runs last so that its nuget.org calls never overlap the acquire jobs.
+  drift:
+    name: Check for updates
+    needs: [plan, acquire, verify]
+    if: ${{ !cancelled() && needs.plan.result == 'success' && (github.event_name == 'schedule' || inputs.check-updates) && inputs.manifest-ref == '' }}
+    runs-on: windows-2025
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.nuget.outputs.changed }}
+      summary: ${{ steps.nuget.outputs.summary }}
+      manifest: ${{ steps.nuget.outputs.manifest }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Look for newer NuGet packages
+        id: nuget
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Import-Module ./.github/ci-tools/CiTools.psm1 -Force -DisableNameChecking
+
+          $current = Get-CiManifest
+          $candidatePath = Join-Path $env:RUNNER_TEMP 'candidate-manifest.json'
+          Copy-Item -LiteralPath .github/ci-tools/manifest.json -Destination $candidatePath
+
+          $nugetKits = @($current['kits'] | Where-Object { $_['source'] -ceq 'nuget' })
+          foreach ($kit in $nugetKits) {
+            ./.github/ci-tools/Update-Manifest.ps1 -RefreshNuget $kit['version'] -ManifestPath $candidatePath -OutPath $candidatePath
+          }
+
+          $candidate = Get-CiManifest -Path $candidatePath
+          $changes = @()
+          foreach ($kit in $nugetKits) {
+            $old = Get-KitsPayload -Manifest $current -Version $kit['version']
+            $new = Get-KitsPayload -Manifest $candidate -Version $kit['version']
+            if ($old.Key -ceq $new.Key) {
+              Write-Host "WDK $($kit['version']) is up to date at $($old.Entry['nugetVersion'])."
+            } elseif ($old.Entry['nugetVersion'] -ceq $new.Entry['nugetVersion']) {
+              # Published packages are immutable, so this is not an update.
+              throw "WDK $($kit['version']) is pinned at $($old.Entry['nugetVersion']), but resolving it again produced different content (key $($old.Key) -> $($new.Key)). Either a package changed on nuget.org or the install is no longer deterministic. Review before changing the pin."
+            } else {
+              $changes += "WDK $($kit['version']): $($old.Entry['nugetVersion']) -> $($new.Entry['nugetVersion'])"
+            }
+          }
+
+          $out = @("changed=$(if ($changes.Count -gt 0) { 'true' } else { 'false' })")
+          if ($changes.Count -gt 0) {
+            $out += "summary=$($changes -join '; ')"
+            $out += "manifest=$(Get-Content -LiteralPath $candidatePath -Raw | ConvertFrom-Json | ConvertTo-Json -Compress -Depth 20)"
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Value (@('### Newer NuGet packages', '') + ($changes | ForEach-Object { "- $_" }))
+          }
+          Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8 -Value $out
+
+      - name: Look for newer LLVM releases
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Import-Module ./.github/ci-tools/CiTools.psm1 -Force -DisableNameChecking
+
+          $tag = gh api repos/llvm/llvm-project/releases/latest --jq .tag_name
+          if ($LASTEXITCODE -ne 0 -or $tag -notmatch '^llvmorg-(\d+\.\d+\.\d+)$') {
+            Write-Host "::warning title=LLVM release check::Could not read the latest LLVM release ('$tag')."
+          } else {
+            $latest = [version]$Matches[1]
+            $pinned = @((Get-CiManifest)['llvm'] | ForEach-Object { [version]$_['version'] } | Sort-Object -Descending)[0]
+            if ($latest -gt $pinned) {
+              $message = "LLVM $latest is available and the newest pin is $pinned. Run Update-Manifest.ps1 -AddLlvm $latest to add it to the matrix."
+              Write-Host "::notice title=Newer LLVM release::$message"
+              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Value @('### Newer LLVM release', '', $message)
+            } else {
+              Write-Host "LLVM $pinned is the newest release."
+            }
+          }
+
+  # Opens or refreshes the pull request that moves a pinned NuGet WDK forward.
+  # The workflow token cannot trigger other workflows, so the pull request needs
+  # to be closed and reopened by a maintainer to run CI.
+  bump:
+    name: Propose NuGet update
+    needs: drift
+    if: ${{ needs.drift.outputs.changed == 'true' }}
+    runs-on: windows-2025
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      BUMP_BRANCH: ci/tool-cache-bump
+      CANDIDATE_JSON: ${{ needs.drift.outputs.manifest }}
+      CHANGE_SUMMARY: ${{ needs.drift.outputs.summary }}
+    steps:
+      # The credential is kept so the next step can push the bump branch. Only
+      # code from the default branch runs in this job.
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true
+
+      - name: Propose the update
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          $candidate = Join-Path $env:RUNNER_TEMP 'candidate-manifest.json'
+          Set-Content -LiteralPath $candidate -Value $env:CANDIDATE_JSON -Encoding utf8NoBOM
+          ./.github/ci-tools/Update-Manifest.ps1 -Format -ManifestPath $candidate -OutPath .github/ci-tools/manifest.json
+
+          git diff --quiet -- .github/ci-tools/manifest.json
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host 'The manifest on the default branch is already current.'
+            exit 0
+          }
+
+          $branch = $env:BUMP_BRANCH
+          $base = $env:DEFAULT_BRANCH
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -C $branch
+          git add .github/ci-tools/manifest.json
+
+          $commitMessage = New-TemporaryFile
+          $bodyFile = New-TemporaryFile
+          try {
+            $title = 'ci: update pinned WDK NuGet packages'
+            Set-Content -LiteralPath $commitMessage -Encoding utf8NoBOM -Value ($title + "`n`n" + $env:CHANGE_SUMMARY + "`n")
+            git commit -F $commitMessage
+            if ($LASTEXITCODE -ne 0) { throw 'git commit failed.' }
+
+            $body = @(
+              ('The weekly Cache Update run found newer NuGet packages for a pinned WDK: ' + $env:CHANGE_SUMMARY + '.')
+              ''
+              'The digests in `manifest.json` come straight from nuget.org and are trusted on first use, so please review them like any other dependency bump. Once this merges, Cache Update saves the new payload for the default branch and later CI runs use it. To warm the cache before merging, run Cache Update manually with `manifest-ref` set to `refs/pull/<this pull request number>/head`.'
+              ''
+              'This pull request was opened with the workflow token, which does not start other workflows. Close and reopen it to run CI.'
+            ) -join "`n"
+            Set-Content -LiteralPath $bodyFile -Encoding utf8NoBOM -Value $body
+
+            $existingPr = gh pr list --head $branch --base $base --state open --json number --jq '.[0].number'
+            if ($LASTEXITCODE -ne 0) { throw 'gh pr list failed.' }
+
+            # Skip the push when the branch already proposes this exact manifest.
+            $remote = git ls-remote --heads origin $branch
+            $same = $false
+            if ($remote) {
+              git fetch --no-tags --depth=1 origin "refs/heads/${branch}:refs/remotes/origin/$branch"
+              if ($LASTEXITCODE -eq 0) {
+                git diff --quiet "origin/$branch" HEAD -- .github/ci-tools/manifest.json
+                $same = $LASTEXITCODE -eq 0
+              }
+            }
+            if ($same -and $existingPr) {
+              Write-Host "Pull request #$existingPr already proposes this manifest."
+              exit 0
+            }
+
+            git push --force origin "HEAD:refs/heads/$branch"
+            if ($LASTEXITCODE -ne 0) { throw 'git push failed.' }
+
+            if ($existingPr) {
+              gh pr edit $existingPr --title $title --body-file $bodyFile
+              if ($LASTEXITCODE -ne 0) { throw "gh pr edit #$existingPr failed." }
+              Write-Host "Updated pull request #$existingPr."
+            } else {
+              $result = gh pr create --base $base --head $branch --title $title --body-file $bodyFile 2>&1 | Out-String
+              if ($LASTEXITCODE -ne 0) {
+                $compare = "$env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY/compare/$base...$branch"
+                Write-Host "::warning title=Could not open the pull request::$result Open one from $compare."
+                Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Value "The update was pushed to ``$branch``. Open a pull request from $compare."
+              } else {
+                Write-Host $result
+              }
+            }
+          } finally {
+            Remove-Item -LiteralPath $commitMessage, $bodyFile -ErrorAction SilentlyContinue
+          }
