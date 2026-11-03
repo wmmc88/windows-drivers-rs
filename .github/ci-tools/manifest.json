@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "generation": 1,
+  "llvm": [
+    {
+      "version": "17.0.6",
+      "wingetId": "LLVM.LLVM",
+      "installers": {
+        "x64": {
+          "sha256": "89DC351AF8E8FA1CAFC6B48411E608AA9457C930A10F984AAD5D21AB020165B2",
+          "bytes": 349078329
+        },
+        "arm64": {
+          "sha256": "1EFDA890C79D597FB9E9C1AE62ECECF53E9B56B979B1E37234B5C8DAC56461FE",
+          "bytes": 314615395
+        }
+      }
+    }
+  ],
+  "kits": [
+    {
+      "version": "10.0.22621",
+      "source": "layout",
+      "components": {
+        "sdk": {
+          "wingetId": "Microsoft.WindowsSDK.10.0.22621",
+          "wingetVersion": "10.0.22621.2428",
+          "bootstrapperSha256": "3F73F59566B0CF3EDDDDAF61AD72BB0C6E4588A5D9E004ABF68115B752EBBBD8",
+          "layoutTreeSha256": "FC99950801880A8C96D4DCAFF9E394216E9DCBD4509A2D51718CE8BC9259C5B1"
+        },
+        "wdk": {
+          "wingetId": "Microsoft.WindowsWDK.10.0.22621",
+          "wingetVersion": "10.1.22621.2428",
+          "bootstrapperSha256": "A891543C0EAF610757EE7852F515C5CE89D0202F22A15DFA31C4D49F2BAFDF27",
+          "layoutTreeSha256": "F8F409942BF4025C822488464B378009567961E82DED3DB8CE80A126F8150AB4"
+        }
+      }
+    },
+    {
+      "version": "10.0.26100",
+      "source": "nuget",
+      "nugetVersion": "10.0.26100.6584",
+      "roots": [
+        "Microsoft.Windows.WDK.x64",
+        "Microsoft.Windows.WDK.ARM64"
+      ],
+      "packages": [
+        {
+          "id": "Microsoft.Windows.SDK.CPP",
+          "version": "10.0.26100.1",
+          "sha256": "B4730A467A8F29145FC0136B2B3F626767E985F6AA6E32F1352953C38D6FF5D2",
+          "bytes": 155613545
+        },
+        {
+          "id": "Microsoft.Windows.SDK.CPP.arm64",
+          "version": "10.0.26100.1",
+          "sha256": "E0D6E5E019E28D92F24C9807AFB04AD9E95EC685A1F742C30C3C7FE5ABD0A109",
+          "bytes": 102748117
+        },
+        {
+          "id": "Microsoft.Windows.SDK.CPP.x64",
+          "version": "10.0.26100.1",
+          "sha256": "7670843DDEE568CA1E89B0FEB36046EDE6A3DF5DBF5FA0106EC2EEE9E8224E38",
+          "bytes": 51584013
+        },
+        {
+          "id": "Microsoft.Windows.WDK.ARM64",
+          "version": "10.0.26100.6584",
+          "sha256": "E705B2A63EAB891DEF8F98087666F93E8F21DA8E3B5DEF81A624B83FEF5BDAE9",
+          "bytes": 45983131
+        },
+        {
+          "id": "Microsoft.Windows.WDK.x64",
+          "version": "10.0.26100.6584",
+          "sha256": "C393D03DFB640B5C92F546B32F6770EF68CD3AAF691956E7D66D8E2C28A1B55E",
+          "bytes": 110872506
+        }
+      ],
+      "installedTreeSha256": "19B3A548E900EC814D8EF9A6A1F66D4588857AAA7EEFF82281F7A9FB77C6EC66"
+    }
+  ]
+}
