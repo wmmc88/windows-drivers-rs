@@ -12,7 +12,10 @@ $script:KitsVersionPattern = '^10\.0\.\d{5}$'
 $script:FullVersionPattern = '^\d+(\.\d+){1,3}$'
 $script:Architectures = @('x64', 'arm64')
 $script:LlvmDir = 'C:\Program Files\LLVM'
-$script:NugetPackagesRoot = 'C:\packages'
+# Not C:\packages: on Azure VMs that is also C:\Packages\Plugins, which the
+# guest agent owns and may recreate at any time. This root is wiped before
+# every install and must hold only the manifest's packages.
+$script:NugetPackagesRoot = 'C:\ci-nuget'
 
 function Get-CiManifestPath {
     Join-Path $PSScriptRoot 'manifest.json'
