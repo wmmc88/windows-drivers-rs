@@ -1,0 +1,81 @@
+name: Setup Toolchain
+description: Restore the pinned LLVM and WDK payloads from the CI tool cache, verify them against .github/ci-tools/manifest.json, and install them offline. Fails if the cache has no entry; it never downloads anything itself.
+inputs:
+  llvm-version:
+    description: LLVM version pinned in .github/ci-tools/manifest.json (for example 17.0.6).
+    required: true
+  wdk-version:
+    description: WDK version pinned in .github/ci-tools/manifest.json (for example 10.0.26100).
+    required: true
+  arch:
+    description: Architecture of the runner, `amd64` or `arm64`.
+    required: true
+  target-arch:
+    description: Architecture the drivers are built for, `amd64` or `arm64`. Only used by WDK versions that ship as NuGet packages. Defaults to `arch`.
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    # Keys and paths come from the manifest in the checkout, so a cache entry can
+    # only be restored under the exact pins this commit asks for.
+    - name: Plan cache keys
+      id: plan
+      shell: pwsh
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        LLVM_VERSION: ${{ inputs.llvm-version }}
+        WDK_VERSION: ${{ inputs.wdk-version }}
+        HOST_ARCH: ${{ inputs.arch }}
+      run: |
+        Set-StrictMode -Version Latest
+        $ErrorActionPreference = 'Stop'
+        Import-Module (Join-Path $env:ACTION_PATH '..\..\ci-tools\CiTools.psm1') -Force -DisableNameChecking
+
+        $manifest = Get-CiManifest
+        $llvm = Get-LlvmPayload -Manifest $manifest -Version $env:LLVM_VERSION -Arch $env:HOST_ARCH
+        $kits = Get-KitsPayload -Manifest $manifest -Version $env:WDK_VERSION
+
+        Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8 -Value @(
+          "llvm-key=$($llvm.Key)"
+          "llvm-path=$($llvm.Path)"
+          "kits-key=$($kits.Key)"
+          "kits-path=$($kits.Path)"
+        )
+
+    - name: Restore LLVM ${{ inputs.llvm-version }}
+      id: llvm
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.llvm-path }}
+        key: ${{ steps.plan.outputs.llvm-key }}
+
+    - name: Restore WDK ${{ inputs.wdk-version }}
+      id: kits
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.kits-path }}
+        key: ${{ steps.plan.outputs.kits-key }}
+
+    - name: Install LLVM and WDK from the verified cache
+      shell: pwsh
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        LLVM_VERSION: ${{ inputs.llvm-version }}
+        WDK_VERSION: ${{ inputs.wdk-version }}
+        HOST_ARCH: ${{ inputs.arch }}
+        TARGET_ARCH: ${{ inputs.target-arch }}
+        LLVM_RESTORED: ${{ steps.llvm.outputs.cache-hit }}
+        KITS_RESTORED: ${{ steps.kits.outputs.cache-hit }}
+      run: |
+        Set-StrictMode -Version Latest
+        $ErrorActionPreference = 'Stop'
+        Import-Module (Join-Path $env:ACTION_PATH '..\..\ci-tools\CiTools.psm1') -Force -DisableNameChecking
+
+        Install-Toolchain `
+          -LlvmVersion $env:LLVM_VERSION `
+          -KitsVersion $env:WDK_VERSION `
+          -HostArch $env:HOST_ARCH `
+          -TargetArch ($env:TARGET_ARCH ? $env:TARGET_ARCH : $env:HOST_ARCH) `
+          -LlvmRestored ($env:LLVM_RESTORED -ceq 'true') `
+          -KitsRestored ($env:KITS_RESTORED -ceq 'true')

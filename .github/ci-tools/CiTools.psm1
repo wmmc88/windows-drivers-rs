@@ -540,16 +540,17 @@ function Install-KitsFromNugetFeed {
 }
 
 function Write-CacheMissAdvice {
-    param([Parameter(Mandatory)]$Payload)
+    param([Parameter(Mandatory)][object[]]$Payload)
     $repo = $env:GITHUB_REPOSITORY
     $server = $env:GITHUB_SERVER_URL ?? 'https://github.com'
     $runs = "$server/$repo/actions/workflows/cache-update.yaml"
-    @(
-        "The CI tool cache has no entry for '$($Payload.Name)' (key $($Payload.Key)).",
+    $lines = @($Payload | ForEach-Object { "The CI tool cache has no entry for '$($_.Name)' (key $($_.Key))." })
+    $lines += @(
         'CI jobs never download tools themselves, so this job cannot continue.',
         "Cache Guard asks for a Cache Update run on the default branch when it is permitted to. Check $runs.",
         'When that run succeeds, re-run this job (or re-queue the pull request). Maintainers can also start Cache Update manually.'
-    ) | ForEach-Object { Write-Host "::error title=CI tool cache miss::$_" }
+    )
+    $lines | ForEach-Object { Write-Host "::error title=CI tool cache miss::$_" }
 }
 
 function Install-Toolchain {
@@ -570,7 +571,7 @@ function Install-Toolchain {
 
     $missing = @(@(@($llvm, $LlvmRestored), @($kits, $KitsRestored)) | Where-Object { -not $_[1] } | ForEach-Object { $_[0] })
     if ($missing.Count -gt 0) {
-        foreach ($p in $missing) { Write-CacheMissAdvice -Payload $p }
+        Write-CacheMissAdvice -Payload $missing
         throw "CI tool cache miss for: $(($missing | ForEach-Object Name) -join ', ')."
     }
 

@@ -303,6 +303,27 @@ Describe 'Get-NupkgIdentity' {
     }
 }
 
+Describe 'Install-Toolchain cache misses' {
+    BeforeAll {
+        $script:Params = @{ LlvmVersion = '17.0.6'; KitsVersion = '10.0.26100'; HostArch = 'amd64'; TargetArch = 'amd64'; Workspace = $TestDrive }
+    }
+
+    It 'fails closed naming every payload that was not restored, without touching the machine' {
+        { Install-Toolchain @Params -LlvmRestored $false -KitsRestored $false 6>$null } |
+            Should -Throw '*llvm-17.0.6-x64*kits-10.0.26100-nuget*'
+    }
+
+    It 'fails closed when only one payload is missing' {
+        { Install-Toolchain @Params -LlvmRestored $true -KitsRestored $false 6>$null } |
+            Should -Throw '*kits-10.0.26100-nuget*'
+    }
+
+    It 'rejects a version that is not pinned before looking at the cache' {
+        { Install-Toolchain @Params -LlvmRestored $true -KitsRestored $true -LlvmVersion '99.0.0' } |
+            Should -Throw '*manifest.json*'
+    }
+}
+
 Describe 'Split-CommandLine' {
     It 'splits a quoted executable' {
         $exe, $rest = Split-CommandLine '"C:\ProgramData\Package Cache\{id}\winsdksetup.exe" /uninstall /quiet'

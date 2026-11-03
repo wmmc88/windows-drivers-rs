@@ -1,0 +1,129 @@
+name: Cache Guard
+
+# Advisory only: consumer jobs restore their own payloads and fail closed on a
+# miss. This workflow tests the cache tooling, and on pull requests and merge
+# groups tells the author early when the pinned tools are not cached yet, asking
+# Cache Update to seed them when it is allowed to.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions: {}
+
+jobs:
+  validate:
+    name: Validate CI tool manifest and scripts
+    runs-on: windows-2025
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The images ship Pester 5 next to the old 3.x. Installing it from
+      # PSGallery here would reintroduce the rate-limited call this avoids.
+      - name: Run Pester tests
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          if (-not (Get-Module -ListAvailable Pester | Where-Object Version -ge '5.0.0')) {
+            throw 'Pester 5 is not installed on this image.'
+          }
+          Import-Module Pester -MinimumVersion 5.0.0
+          $config = New-PesterConfiguration
+          $config.Run.Path = '.github/ci-tools'
+          $config.Run.Exit = $true
+          $config.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $config
+
+      - name: Check the manifest is canonically formatted
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          $formatted = Join-Path $env:RUNNER_TEMP 'manifest.formatted.json'
+          ./.github/ci-tools/Update-Manifest.ps1 -Format -OutPath $formatted
+
+          $normalize = { param($p) (Get-Content -LiteralPath $p -Raw) -replace "`r`n", "`n" }
+          if ((& $normalize '.github/ci-tools/manifest.json') -cne (& $normalize $formatted)) {
+            throw 'manifest.json is not canonically formatted. Run .github/ci-tools/Update-Manifest.ps1 -Format and commit the result.'
+          }
+
+  advise:
+    name: Check the tool cache
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
+    runs-on: windows-2025
+    timeout-minutes: 15
+    # actions: write is only used to start Cache Update. Fork and Dependabot
+    # pull requests get a read-only token, so they only get the advice.
+    permissions:
+      contents: read
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      CAN_DISPATCH: ${{ github.event_name == 'merge_group' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') }}
+      CHECKED_SHA: ${{ github.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: List pinned payloads missing from the cache
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Import-Module ./.github/ci-tools/CiTools.psm1 -Force -DisableNameChecking
+
+          $manifest = Get-CiManifest
+          $payloads = @(Get-AllPayloads -Manifest $manifest)
+          $json = gh cache list --ref "refs/heads/$env:DEFAULT_BRANCH" --key "ci-tools-g$($manifest['generation'])-" --limit 1000 --json key
+          if ($LASTEXITCODE -ne 0) { throw 'gh cache list failed.' }
+          $existing = @(($json | ConvertFrom-Json) | ForEach-Object { $_.key })
+          $missing = @($payloads | Where-Object { $_.Key -cnotin $existing })
+
+          if ($missing.Count -eq 0) {
+            "All $($payloads.Count) pinned payloads are in the cache." | Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8
+            return
+          }
+
+          $runsUrl = "$env:GITHUB_SERVER_URL/$env:GH_REPO/actions/workflows/cache-update.yaml"
+          $summary = @('### Tool cache is missing pinned payloads', '', 'Jobs that restore these will fail until Cache Update has run on the default branch.', '')
+          $summary += $missing | ForEach-Object { "- ``$($_.Name)``" }
+
+          $active = 0
+          foreach ($status in 'queued', 'in_progress', 'pending', 'waiting') {
+            $runs = gh run list --workflow cache-update.yaml --status $status --json databaseId | ConvertFrom-Json
+            $active += @($runs).Count
+          }
+
+          if ($active -gt 0) {
+            $summary += @('', "Cache Update is already queued or running: $runsUrl")
+          } elseif ($env:CAN_DISPATCH -eq 'true') {
+            gh workflow run cache-update.yaml --ref $env:DEFAULT_BRANCH -f "manifest-ref=$env:CHECKED_SHA"
+            if ($LASTEXITCODE -ne 0) { throw 'Could not start Cache Update.' }
+            $summary += @('', "Started Cache Update with the manifest from this run: $runsUrl")
+          } else {
+            $ref = $env:PR_NUMBER ? "refs/pull/$env:PR_NUMBER/head" : $env:CHECKED_SHA
+            $summary += @('', "This run cannot start Cache Update. After reviewing the manifest change, a maintainer can run it at $runsUrl with manifest-ref ``$ref``.")
+          }
+          $summary += @('', 'When Cache Update succeeds, re-run the failed jobs (or re-queue the pull request).')
+
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Value $summary
+          Write-Host "::warning title=CI tool cache is missing $($missing.Count) pinned payload(s)::$(($missing | ForEach-Object Name) -join ', '). See the job summary."
