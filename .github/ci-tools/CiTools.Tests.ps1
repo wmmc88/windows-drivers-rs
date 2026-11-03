@@ -2,6 +2,7 @@
 
 BeforeAll {
     Import-Module (Join-Path $PSScriptRoot 'CiTools.psm1') -Force -DisableNameChecking
+    Import-Module (Join-Path $PSScriptRoot 'CiToolsAcquire.psm1') -Force -DisableNameChecking
 
     function script:New-TestManifest {
         Get-Content -LiteralPath (Get-CiManifestPath) -Raw | ConvertFrom-Json -AsHashtable -Depth 20
@@ -186,6 +187,119 @@ Describe 'payload verification' {
         Remove-Item -LiteralPath "$flat\extra.nupkg"
         New-Item -ItemType Directory -Path "$flat\nested" | Out-Null
         { Assert-ExactFileSet -Directory $flat -Expected @{ 'one.nupkg' = 1 } } | Should -Throw '*Unexpected directories*'
+    }
+}
+
+Describe 'Assert-PayloadVerified' {
+    BeforeEach {
+        $script:Dir = Join-Path $TestDrive ([guid]::NewGuid().ToString('N'))
+        New-Item -ItemType Directory -Path $Dir | Out-Null
+        $script:Manifest = New-TestManifest
+    }
+
+    It 'accepts an LLVM installer that matches its pin and rejects a changed one' {
+        Set-Content -LiteralPath "$Dir\installer.exe" -Value 'installer bytes'
+        $info = $Manifest['llvm'][0]['installers']['x64']
+        $info['sha256'] = (Get-FileHash -LiteralPath "$Dir\installer.exe" -Algorithm SHA256).Hash
+        $info['bytes'] = (Get-Item -LiteralPath "$Dir\installer.exe").Length
+        $payload = Get-LlvmPayload -Manifest $Manifest -Version '17.0.6' -Arch amd64
+
+        { Assert-PayloadVerified -Payload $payload -PayloadDir $Dir } | Should -Not -Throw
+        Add-Content -LiteralPath "$Dir\installer.exe" -Value 'tampered'
+        { Assert-PayloadVerified -Payload $payload -PayloadDir $Dir } | Should -Throw
+    }
+
+    It 'rejects an LLVM payload with an extra file' {
+        Set-Content -LiteralPath "$Dir\installer.exe" -Value 'installer bytes'
+        $info = $Manifest['llvm'][0]['installers']['x64']
+        $info['sha256'] = (Get-FileHash -LiteralPath "$Dir\installer.exe" -Algorithm SHA256).Hash
+        $info['bytes'] = (Get-Item -LiteralPath "$Dir\installer.exe").Length
+        $payload = Get-LlvmPayload -Manifest $Manifest -Version '17.0.6' -Arch amd64
+        Set-Content -LiteralPath "$Dir\extra.dll" -Value 'x'
+
+        { Assert-PayloadVerified -Payload $payload -PayloadDir $Dir } | Should -Throw '*Unexpected contents*'
+    }
+
+    It 'accepts a layout whose sdk and wdk trees match and rejects an unexpected top-level entry' {
+        foreach ($c in 'sdk', 'wdk') {
+            New-Item -ItemType Directory -Path "$Dir\$c" | Out-Null
+            Set-Content -LiteralPath "$Dir\$c\file.bin" -Value $c
+        }
+        $kit = $Manifest['kits'] | Where-Object { $_['version'] -eq '10.0.22621' }
+        foreach ($c in 'sdk', 'wdk') { $kit['components'][$c]['layoutTreeSha256'] = (Get-TreeHash -Path "$Dir\$c").TreeSha256 }
+        $payload = Get-KitsPayload -Manifest $Manifest -Version '10.0.22621'
+
+        { Assert-PayloadVerified -Payload $payload -PayloadDir $Dir } | Should -Not -Throw
+        New-Item -ItemType Directory -Path "$Dir\extra" | Out-Null
+        { Assert-PayloadVerified -Payload $payload -PayloadDir $Dir } | Should -Throw '*Expected only sdk and wdk*'
+    }
+
+    It 'rejects a layout with a modified file' {
+        foreach ($c in 'sdk', 'wdk') {
+            New-Item -ItemType Directory -Path "$Dir\$c" | Out-Null
+            Set-Content -LiteralPath "$Dir\$c\file.bin" -Value $c
+        }
+        $kit = $Manifest['kits'] | Where-Object { $_['version'] -eq '10.0.22621' }
+        foreach ($c in 'sdk', 'wdk') { $kit['components'][$c]['layoutTreeSha256'] = (Get-TreeHash -Path "$Dir\$c").TreeSha256 }
+        $payload = Get-KitsPayload -Manifest $Manifest -Version '10.0.22621'
+        Add-Content -LiteralPath "$Dir\wdk\file.bin" -Value 'tampered'
+
+        { Assert-PayloadVerified -Payload $payload -PayloadDir $Dir } | Should -Throw '*mismatch*'
+    }
+
+    It 'accepts a NuGet feed with exactly the pinned nupkgs and rejects a missing or modified one' {
+        $kit = $Manifest['kits'] | Where-Object { $_['version'] -eq '10.0.26100' }
+        foreach ($p in $kit['packages']) {
+            $file = "$Dir\$($p['id']).$($p['version']).nupkg"
+            Set-Content -LiteralPath $file -Value "$($p['id'])"
+            $p['sha256'] = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash
+            $p['bytes'] = (Get-Item -LiteralPath $file).Length
+        }
+        $payload = Get-KitsPayload -Manifest $Manifest -Version '10.0.26100'
+        { Assert-PayloadVerified -Payload $payload -PayloadDir $Dir } | Should -Not -Throw
+
+        $first = $kit['packages'][0]
+        $firstFile = "$Dir\$($first['id']).$($first['version']).nupkg"
+        Add-Content -LiteralPath $firstFile -Value 'tampered'
+        { Assert-PayloadVerified -Payload $payload -PayloadDir $Dir } | Should -Throw
+        Remove-Item -LiteralPath $firstFile
+        { Assert-PayloadVerified -Payload $payload -PayloadDir $Dir } | Should -Throw '*Unexpected contents*'
+    }
+}
+
+Describe 'Get-NupkgIdentity' {
+    BeforeAll {
+        function script:New-Nupkg([string]$Path, [hashtable]$Entries) {
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $zip = [IO.Compression.ZipFile]::Open($Path, 'Create')
+            try {
+                foreach ($name in $Entries.Keys) {
+                    $stream = $zip.CreateEntry($name).Open()
+                    $writer = [IO.StreamWriter]::new($stream)
+                    $writer.Write($Entries[$name])
+                    $writer.Dispose()
+                }
+            } finally { $zip.Dispose() }
+        }
+        $script:Nuspec = '<package><metadata><id>Contoso.Pkg</id><version>1.2.3.4</version></metadata></package>'
+    }
+
+    It 'reads the id and version from the root nuspec' {
+        $path = Join-Path $TestDrive 'good.nupkg'
+        New-Nupkg $path @{ 'Contoso.Pkg.nuspec' = $Nuspec; 'content/other.nuspec' = '<ignored/>' }
+        $identity = Get-NupkgIdentity -Path $path
+        $identity.Id | Should -Be 'Contoso.Pkg'
+        $identity.Version | Should -Be '1.2.3.4'
+    }
+
+    It 'rejects a package without exactly one root nuspec' {
+        $none = Join-Path $TestDrive 'none.nupkg'
+        New-Nupkg $none @{ 'content/only.nuspec' = $Nuspec }
+        { Get-NupkgIdentity -Path $none } | Should -Throw '*Expected one root .nuspec*'
+
+        $two = Join-Path $TestDrive 'two.nupkg'
+        New-Nupkg $two @{ 'a.nuspec' = $Nuspec; 'b.nuspec' = $Nuspec }
+        { Get-NupkgIdentity -Path $two } | Should -Throw '*Expected one root .nuspec*'
     }
 }
 

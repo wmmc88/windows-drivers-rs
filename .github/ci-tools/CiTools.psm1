@@ -316,16 +316,47 @@ function Invoke-Installer {
     }
 }
 
+function Assert-PayloadVerified {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)]$Payload, [Parameter(Mandatory)][string]$PayloadDir)
+
+    $entry = $Payload.Entry
+    switch ($Payload.Kind) {
+        'llvm' {
+            $info = $entry['installers'][$Payload.Arch]
+            Assert-ExactFileSet -Directory $PayloadDir -Expected @{ 'installer.exe' = $info['sha256'] }
+            Assert-FileSha256 -Path (Join-Path $PayloadDir 'installer.exe') -Expected $info['sha256'] -ExpectedBytes $info['bytes']
+        }
+        'kits-layout' {
+            if (-not (Test-Path -LiteralPath $PayloadDir -PathType Container)) { throw "Missing payload directory '$PayloadDir'." }
+            $top = @(Get-ChildItem -LiteralPath $PayloadDir -Force | ForEach-Object Name | Sort-Object)
+            if (($top -join '|') -ne 'sdk|wdk') {
+                throw "Unexpected contents in '$PayloadDir': $($top -join ', '). Expected only sdk and wdk."
+            }
+            foreach ($c in 'sdk', 'wdk') {
+                Assert-TreeSha256 -Path (Join-Path $PayloadDir $c) -Expected $entry['components'][$c]['layoutTreeSha256']
+            }
+        }
+        'kits-nuget' {
+            $expected = @{}
+            foreach ($p in $entry['packages']) { $expected["$($p['id']).$($p['version']).nupkg"] = $p }
+            Assert-ExactFileSet -Directory $PayloadDir -Expected $expected
+            foreach ($p in $entry['packages']) {
+                Assert-FileSha256 -Path (Join-Path $PayloadDir "$($p['id']).$($p['version']).nupkg") -Expected $p['sha256'] -ExpectedBytes $p['bytes']
+            }
+        }
+        default { throw "Unknown payload kind '$($Payload.Kind)'." }
+    }
+}
+
 function Install-Llvm {
     [CmdletBinding()]
     param([Parameter(Mandatory)]$Payload, [Parameter(Mandatory)][string]$PayloadDir)
 
-    $info = $Payload.Entry['installers'][$Payload.Arch]
     $version = $Payload.Entry['version']
 
-    Assert-ExactFileSet -Directory $PayloadDir -Expected @{ 'installer.exe' = $info['sha256'] }
+    Assert-PayloadVerified -Payload $Payload -PayloadDir $PayloadDir
     $installer = Join-Path $PayloadDir 'installer.exe'
-    Assert-FileSha256 -Path $installer -Expected $info['sha256'] -ExpectedBytes $info['bytes']
 
     # The images ship an LLVM that may or may not be registered in Add/Remove
     # Programs, and overlaying onto it yields a mixed tree. Always start clean.
@@ -412,13 +443,7 @@ function Install-KitsFromLayout {
     param([Parameter(Mandatory)]$Payload, [Parameter(Mandatory)][string]$PayloadDir)
 
     $version = $Payload.Entry['version']
-    foreach ($c in 'sdk', 'wdk') {
-        Assert-TreeSha256 -Path (Join-Path $PayloadDir $c) -Expected $Payload.Entry['components'][$c]['layoutTreeSha256']
-    }
-    $top = @(Get-ChildItem -LiteralPath $PayloadDir -Force | ForEach-Object Name | Sort-Object)
-    if (($top -join '|') -ne 'sdk|wdk') {
-        throw "Unexpected contents in '$PayloadDir': $($top -join ', '). Expected only sdk and wdk."
-    }
+    Assert-PayloadVerified -Payload $Payload -PayloadDir $PayloadDir
     Uninstall-KitsFromRegistry
     Invoke-Installer -File (Join-Path $PayloadDir 'sdk\winsdksetup.exe') -Arguments @('/q')
     Invoke-Installer -File (Join-Path $PayloadDir 'wdk\wdksetup.exe') -Arguments @('/q')
@@ -436,6 +461,34 @@ function Assert-KitsInstalled {
     }
 }
 
+function Install-NugetClosure {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]$Entry,
+        [Parameter(Mandatory)][string]$FeedDir,
+        [Parameter(Mandatory)][string]$PackagesRoot
+    )
+
+    if (Test-Path -LiteralPath $PackagesRoot) { Remove-Item -LiteralPath $PackagesRoot -Recurse -Force }
+
+    # An empty config with <clear /> plus an explicit -Source keeps nuget from
+    # consulting nuget.org or any machine-level feed.
+    $config = Join-Path ($env:RUNNER_TEMP ?? $env:TEMP) 'ci-tools-nuget.config'
+    Set-Content -LiteralPath $config -Encoding utf8 -Value '<?xml version="1.0" encoding="utf-8"?><configuration><packageSources><clear /></packageSources></configuration>'
+
+    foreach ($root in $Entry['roots']) {
+        Write-Host "Installing $root $($Entry['nugetVersion']) from the local feed"
+        & nuget install $root -Version $Entry['nugetVersion'] -OutputDirectory $PackagesRoot -Source $FeedDir -ConfigFile $config -NoCache -DirectDownload -NonInteractive -Verbosity quiet
+        if ($LASTEXITCODE -ne 0) { throw "nuget install $root $($Entry['nugetVersion']) failed with exit code $LASTEXITCODE." }
+    }
+
+    $installed = @(Get-ChildItem -LiteralPath $PackagesRoot -Directory | ForEach-Object { $_.Name.ToLowerInvariant() } | Sort-Object)
+    $wanted = @($Entry['packages'] | ForEach-Object { "$($_['id']).$($_['version'])".ToLowerInvariant() } | Sort-Object)
+    if (($installed -join '|') -ne ($wanted -join '|')) {
+        throw "Installed packages differ from the manifest. Expected: $($wanted -join ', '). Installed: $($installed -join ', ')."
+    }
+}
+
 function Install-KitsFromNugetFeed {
     [CmdletBinding()]
     param(
@@ -450,28 +503,8 @@ function Install-KitsFromNugetFeed {
     $entry = $Payload.Entry
     $sdkVersion = $entry['version']
 
-    $expected = @{}
-    foreach ($p in $entry['packages']) { $expected["$($p['id']).$($p['version']).nupkg"] = $p }
-    Assert-ExactFileSet -Directory $PayloadDir -Expected $expected
-    foreach ($p in $entry['packages']) {
-        Assert-FileSha256 -Path (Join-Path $PayloadDir "$($p['id']).$($p['version']).nupkg") -Expected $p['sha256'] -ExpectedBytes $p['bytes']
-    }
-
-    if (Test-Path -LiteralPath $PackagesRoot) { Remove-Item -LiteralPath $PackagesRoot -Recurse -Force }
-    $config = Join-Path ($env:RUNNER_TEMP ?? $env:TEMP) 'ci-tools-nuget.config'
-    Set-Content -LiteralPath $config -Encoding utf8 -Value '<?xml version="1.0" encoding="utf-8"?><configuration><packageSources><clear /></packageSources></configuration>'
-
-    foreach ($root in $entry['roots']) {
-        Write-Host "Installing $root $($entry['nugetVersion']) from the local feed"
-        & nuget install $root -Version $entry['nugetVersion'] -OutputDirectory $PackagesRoot -Source $PayloadDir -ConfigFile $config -NoCache -DirectDownload -NonInteractive -Verbosity quiet
-        if ($LASTEXITCODE -ne 0) { throw "nuget install $root $($entry['nugetVersion']) failed with exit code $LASTEXITCODE." }
-    }
-
-    $installed = @(Get-ChildItem -LiteralPath $PackagesRoot -Directory | ForEach-Object { $_.Name.ToLowerInvariant() } | Sort-Object)
-    $wanted = @($entry['packages'] | ForEach-Object { "$($_['id']).$($_['version'])".ToLowerInvariant() } | Sort-Object)
-    if (($installed -join '|') -ne ($wanted -join '|')) {
-        throw "Installed packages differ from the manifest. Expected: $($wanted -join ', '). Installed: $($installed -join ', ')."
-    }
+    Assert-PayloadVerified -Payload $Payload -PayloadDir $PayloadDir
+    Install-NugetClosure -Entry $entry -FeedDir $PayloadDir -PackagesRoot $PackagesRoot
     if ($VerifyInstalledTree) {
         Assert-TreeSha256 -Path $PackagesRoot -Expected $entry['installedTreeSha256']
     }
@@ -559,10 +592,10 @@ Export-ModuleMember -Function @(
     'Get-CiManifest', 'Get-CiManifestPath', 'Get-LlvmEntry', 'Get-KitsEntry',
     'Get-LlvmPayload', 'Get-KitsPayload', 'Get-AllPayloads', 'ConvertTo-ManifestArch',
     'Get-TextSha256', 'Get-TreeHash',
-    'Assert-FileSha256', 'Assert-TreeSha256', 'Assert-ExactFileSet', 'Assert-NoReparsePoints',
+    'Assert-FileSha256', 'Assert-TreeSha256', 'Assert-ExactFileSet', 'Assert-NoReparsePoints', 'Assert-PayloadVerified',
     'Set-CiEnv', 'Add-CiPath', 'Invoke-Installer',
     'Install-Llvm', 'Assert-LlvmReady',
     'Get-ArpEntries', 'Get-KitBundles', 'Split-CommandLine', 'Uninstall-KitsFromRegistry',
-    'Install-KitsFromLayout', 'Install-KitsFromNugetFeed', 'Assert-KitsInstalled',
+    'Install-KitsFromLayout', 'Install-NugetClosure', 'Install-KitsFromNugetFeed', 'Assert-KitsInstalled',
     'Write-CacheMissAdvice', 'Install-Toolchain'
 )

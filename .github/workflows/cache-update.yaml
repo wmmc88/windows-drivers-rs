@@ -1,0 +1,194 @@
+name: Cache Update
+
+# Seeds the tool cache that every other workflow restores from. This is the only
+# workflow that talks to WinGet, PSGallery or nuget.org, and the only one that
+# saves into the cache. Every payload it saves is checked against the digests
+# pinned in .github/ci-tools/manifest.json before it is saved.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ignore-cache:
+        description: Rebuild every payload from its source and replace the cached copy, even if one exists.
+        type: boolean
+        default: false
+      manifest-ref:
+        description: Optional reviewed ref (for example refs/pull/123/head) whose manifest.json is used instead of the default branch copy. Only the manifest data is taken from it, never code.
+        type: string
+        default: ''
+  push:
+    branches:
+      - main
+    paths:
+      - .github/ci-tools/**
+      - .github/actions/install-winget/**
+      - .github/workflows/cache-update.yaml
+
+# Runs never cancel each other: a half-finished save must not be abandoned. Each
+# run re-reads the live cache listing, so a queued run is always safe to replace.
+concurrency:
+  group: cache-update
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  plan:
+    name: Plan
+    runs-on: windows-2025
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      count: ${{ steps.plan.outputs.count }}
+      manifest: ${{ steps.plan.outputs.manifest }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      IGNORE_CACHE: ${{ inputs.ignore-cache || false }}
+      MANIFEST_REF: ${{ inputs.manifest-ref }}
+    steps:
+      # Caches are scoped to the ref that saves them, and only the default
+      # branch scope is visible to every pull request and merge queue run.
+      - name: Require the default branch
+        shell: pwsh
+        env:
+          CURRENT_REF: ${{ github.ref }}
+        run: |
+          $default = "refs/heads/$env:DEFAULT_BRANCH"
+          if ($env:CURRENT_REF -cne $default) {
+            throw "Cache Update must run on '$default' (this run is on '$env:CURRENT_REF'). Caches saved from any other ref are not visible to other workflows."
+          }
+
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Overlay manifest from manifest-ref
+        if: ${{ inputs.manifest-ref != '' }}
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          if ($env:MANIFEST_REF -cnotmatch '^[A-Za-z0-9][A-Za-z0-9._/-]{0,199}$') {
+            throw "manifest-ref '$env:MANIFEST_REF' is not a plain git ref."
+          }
+          git fetch --no-tags --depth=1 origin $env:MANIFEST_REF
+          if ($LASTEXITCODE -ne 0) { throw "Could not fetch '$env:MANIFEST_REF'." }
+          git checkout FETCH_HEAD -- .github/ci-tools/manifest.json
+          if ($LASTEXITCODE -ne 0) { throw "'$env:MANIFEST_REF' has no .github/ci-tools/manifest.json." }
+
+          "Manifest taken from ``$env:MANIFEST_REF`` ($(git rev-parse --short FETCH_HEAD))." |
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8
+
+      - name: Find missing payloads
+        id: plan
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Import-Module ./.github/ci-tools/CiTools.psm1 -Force -DisableNameChecking
+
+          $manifestPath = '.github/ci-tools/manifest.json'
+          $manifest = Get-CiManifest -Path $manifestPath
+          $payloads = @(Get-AllPayloads -Manifest $manifest)
+
+          $existing = @()
+          if ($env:IGNORE_CACHE -ne 'true') {
+            $json = gh cache list --ref "refs/heads/$env:DEFAULT_BRANCH" --key "ci-tools-g$($manifest['generation'])-" --limit 1000 --json key
+            if ($LASTEXITCODE -ne 0) { throw 'gh cache list failed.' }
+            $existing = @(($json | ConvertFrom-Json) | ForEach-Object { $_.key })
+          }
+
+          $missing = @($payloads | Where-Object { $_.Key -cnotin $existing })
+          $matrix = @{
+            include = @($missing | ForEach-Object { [ordered]@{ name = $_.Name; key = $_.Key; path = $_.Path; kind = $_.Kind } })
+          }
+
+          Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8 -Value @(
+            "matrix=$($matrix | ConvertTo-Json -Compress -Depth 5)"
+            "count=$($missing.Count)"
+            "manifest=$(Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json | ConvertTo-Json -Compress -Depth 20)"
+          )
+
+          $summary = @("### Cache Update plan", '', "$($payloads.Count) payloads pinned, $($missing.Count) to build (ignore-cache: $env:IGNORE_CACHE).", '')
+          $summary += $missing | ForEach-Object { "- ``$($_.Key)``" }
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Value $summary
+
+  acquire:
+    name: Acquire ${{ matrix.name }}
+    needs: plan
+    if: ${{ needs.plan.outputs.count != '0' }}
+    runs-on: windows-2025
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      actions: write
+    strategy:
+      fail-fast: false
+      # One payload at a time keeps the number of simultaneous WinGet and
+      # PSGallery calls at one.
+      max-parallel: 1
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      IGNORE_CACHE: ${{ inputs.ignore-cache || false }}
+      PAYLOAD_NAME: ${{ matrix.name }}
+      PAYLOAD_KEY: ${{ matrix.key }}
+      PAYLOAD_PATH: ${{ matrix.path }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Winget
+        if: ${{ matrix.kind != 'kits-nuget' }}
+        uses: ./.github/actions/install-winget
+
+      - name: Acquire and verify
+        shell: pwsh
+        env:
+          MANIFEST_JSON: ${{ needs.plan.outputs.manifest }}
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Import-Module ./.github/ci-tools/CiTools.psm1 -Force -DisableNameChecking
+          Import-Module ./.github/ci-tools/CiToolsAcquire.psm1 -Force -DisableNameChecking
+
+          $manifestPath = Join-Path $env:RUNNER_TEMP 'manifest.json'
+          Set-Content -LiteralPath $manifestPath -Value $env:MANIFEST_JSON -Encoding utf8NoBOM
+          $manifest = Get-CiManifest -Path $manifestPath
+
+          $payload = Invoke-PayloadAcquire -Manifest $manifest -Name $env:PAYLOAD_NAME -Workspace $env:GITHUB_WORKSPACE
+          if ($payload.Key -cne $env:PAYLOAD_KEY -or $payload.Path -cne $env:PAYLOAD_PATH) {
+            throw "Planned key/path ('$env:PAYLOAD_KEY', '$env:PAYLOAD_PATH') differ from the manifest ('$($payload.Key)', '$($payload.Path)')."
+          }
+
+      # The verified copy is already on disk, so deleting the old entry only
+      # now keeps a failed rebuild from leaving consumers without a cache.
+      - name: Delete the existing cache entry
+        if: ${{ env.IGNORE_CACHE == 'true' }}
+        shell: pwsh
+        run: |
+          $out = gh cache delete $env:PAYLOAD_KEY 2>&1 | Out-String
+          if ($LASTEXITCODE -ne 0 -and $out -notmatch 'Could not find') { throw "gh cache delete failed: $out" }
+
+      - name: Save ${{ matrix.name }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ matrix.path }}
+          key: ${{ matrix.key }}
+
+      - name: Summarize
+        shell: pwsh
+        run: |
+          $bytes = (Get-ChildItem -LiteralPath $env:PAYLOAD_PATH -Recurse -File -Force | Measure-Object Length -Sum).Sum
+          "- Saved ``$env:PAYLOAD_KEY`` ($([math]::Round($bytes / 1MB)) MiB on disk)" |
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8
