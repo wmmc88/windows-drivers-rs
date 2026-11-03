@@ -66,8 +66,9 @@ function Save-LlvmInstaller {
     $work = Get-WorkDirectory "llvm-$($entry['version'])-$($Payload.Arch)"
     $exe = Export-WinGetInstaller -Id $entry['wingetId'] -Version $entry['version'] -Architecture $wingetArch -Directory $work
 
+    # The signer is null when the installer is unsigned; the manifest digest is the pin.
     $sig = Get-AuthenticodeSignature -LiteralPath $exe.FullName
-    Write-Host "LLVM installer signature: $($sig.Status) $($sig.SignerCertificate.Subject)"
+    Write-Host "LLVM installer signature: $($sig.Status) $($sig.SignerCertificate?.Subject)"
 
     New-Item -ItemType Directory -Path $Destination -Force | Out-Null
     Copy-Item -LiteralPath $exe.FullName -Destination (Join-Path $Destination 'installer.exe')
@@ -129,7 +130,7 @@ function Save-NugetFeed {
     $installDir = Join-Path $work 'packages'
     foreach ($root in $Roots) {
         Write-Host "Resolving $root $NugetVersion from nuget.org"
-        & nuget install $root -Version $NugetVersion -OutputDirectory $installDir -ConfigFile $config -NoCache -DirectDownload -NonInteractive -Verbosity quiet
+        & nuget install $root -Version $NugetVersion -OutputDirectory $installDir -ConfigFile $config -NoCache -DirectDownload -NonInteractive -Verbosity quiet | Out-Host
         if ($LASTEXITCODE -ne 0) { throw "nuget install $root $NugetVersion failed with exit code $LASTEXITCODE." }
     }
 
@@ -137,7 +138,8 @@ function Save-NugetFeed {
     $packages = foreach ($file in @(Get-ChildItem -LiteralPath $installDir -Recurse -Filter *.nupkg -File)) {
         $identity = Get-NupkgIdentity -Path $file.FullName
 
-        & nuget verify -Signatures -All $file.FullName
+        # Out-Host keeps nuget's stdout out of the package list this loop returns.
+        & nuget verify -Signatures -All $file.FullName | Out-Host
         if ($LASTEXITCODE -ne 0) { throw "nuget verify failed for $($file.Name) with exit code $LASTEXITCODE." }
 
         $target = Join-Path $Destination "$($identity.Id).$($identity.Version).nupkg"

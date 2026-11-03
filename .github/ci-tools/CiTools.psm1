@@ -500,7 +500,7 @@ function Install-NugetClosure {
 
     foreach ($root in $Entry['roots']) {
         Write-Host "Installing $root $($Entry['nugetVersion']) from the local feed"
-        & nuget install $root -Version $Entry['nugetVersion'] -OutputDirectory $PackagesRoot -Source $FeedDir -ConfigFile $config -NoCache -DirectDownload -NonInteractive -Verbosity quiet
+        & nuget install $root -Version $Entry['nugetVersion'] -OutputDirectory $PackagesRoot -Source $FeedDir -ConfigFile $config -NoCache -DirectDownload -NonInteractive -Verbosity quiet | Out-Host
         if ($LASTEXITCODE -ne 0) { throw "nuget install $root $($Entry['nugetVersion']) failed with exit code $LASTEXITCODE." }
     }
 
