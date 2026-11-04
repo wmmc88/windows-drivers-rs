@@ -28,9 +28,13 @@ jobs:
           - name: windows-11-arm
             arch: arm64
 
+        # `source` is informational (where Cache Update acquires the kit), but it is part
+        # of the generated job names that are required status checks, so keep it.
         wdk:
           - version: 10.0.22621 # NI WDK
+            source: winget
           - version: 10.0.26100 # GE WDK
+            source: nuget
 
         llvm:
           - 17.0.6
