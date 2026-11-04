@@ -8,7 +8,8 @@ name: Cache Update
 # The weekly run is also a cold canary: it rebuilds every payload from its
 # source with the cache ignored, so an installer that disappeared upstream is
 # noticed before the cached copy is evicted. It then reports newer NuGet
-# packages and LLVM releases, and opens a pull request for the NuGet bump.
+# packages and LLVM releases, and opens a pull request for the NuGet bump. The
+# canary input runs the same thing on demand.
 
 on:
   workflow_dispatch:
@@ -23,6 +24,10 @@ on:
         default: ''
       check-updates:
         description: Also look for newer NuGet packages and LLVM releases, as the weekly run does.
+        type: boolean
+        default: false
+      canary:
+        description: Do now what the weekly run does. Rebuild every payload from its source, save only the ones missing from the cache, verify, and look for updates.
         type: boolean
         default: false
   schedule:
@@ -63,7 +68,7 @@ jobs:
       DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
       IGNORE_CACHE: ${{ inputs.ignore-cache || false }}
       MANIFEST_REF: ${{ inputs.manifest-ref }}
-      EVENT_NAME: ${{ github.event_name }}
+      CANARY: ${{ github.event_name == 'schedule' || inputs.canary || false }}
     steps:
       # Caches are scoped to the ref that saves them, and only the default
       # branch scope is visible to every pull request and merge queue run.
@@ -112,7 +117,7 @@ jobs:
           $manifest = Get-CiManifest -Path $manifestPath
           $payloads = @(Get-AllPayloads -Manifest $manifest)
           $ignore = $env:IGNORE_CACHE -eq 'true'
-          $canary = $env:EVENT_NAME -ceq 'schedule'
+          $canary = $env:CANARY -eq 'true'
 
           $existing = @()
           if (-not $ignore) {
@@ -140,7 +145,7 @@ jobs:
             "manifest=$(Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json | ConvertTo-Json -Compress -Depth 20)"
           )
 
-          $mode = if ($ignore) { 'ignore-cache' } elseif ($canary) { 'weekly canary' } else { 'seed missing' }
+          $mode = if ($ignore) { 'ignore-cache' } elseif ($canary) { 'canary' } else { 'seed missing' }
           $summary = @("### Cache Update plan", '', "Mode: $mode. $($payloads.Count) payloads pinned, $($selected.Count) to acquire, $($saving.Count) to save, $($verify.include.Count) toolchain combinations to verify.", '')
           $summary += $matrix.include | ForEach-Object { "- ``$($_.key)`` ($(if ($_.save) { 'save' } else { 'verify only' }))" }
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Value $summary
@@ -307,7 +312,7 @@ jobs:
   drift:
     name: Check for updates
     needs: [plan, acquire, verify]
-    if: ${{ !cancelled() && needs.plan.result == 'success' && (github.event_name == 'schedule' || inputs.check-updates) && inputs.manifest-ref == '' }}
+    if: ${{ !cancelled() && needs.plan.result == 'success' && (github.event_name == 'schedule' || inputs.canary || inputs.check-updates) && inputs.manifest-ref == '' }}
     runs-on: windows-2025
     timeout-minutes: 45
     permissions:

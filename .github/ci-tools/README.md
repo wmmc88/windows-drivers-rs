@@ -50,7 +50,9 @@ Cache Update runs every Sunday off-peak, away from the daily 11:00 UTC CI runs, 
 3. **Update check.** It looks for newer NuGet packages for each pinned WDK and for newer LLVM releases. A NuGet update opens or refreshes a pull request from `ci/tool-cache-bump`. If a version that is already pinned resolves to different content, the run fails instead of proposing a change.
 4. **Notice.** A newer LLVM release is only reported. Adding it to the matrix stays a deliberate change.
 
-The pull request is opened with the workflow token, so it needs to be closed and reopened to start CI. The same checks can be run on demand with the `check-updates` input.
+The pull request is opened with the workflow token, so it needs to be closed and reopened to start CI.
+
+A manual run with the `canary` input does all four on demand, for example after a change to how payloads are acquired, which would otherwise not run against cached pins until Sunday. The `check-updates` input adds only the update check to a manual run.
 
 ## Repository settings
 
