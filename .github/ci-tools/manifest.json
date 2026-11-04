@@ -15,6 +15,20 @@
           "bytes": 314615395
         }
       }
+    },
+    {
+      "version": "20.1.8",
+      "wingetId": "LLVM.LLVM",
+      "installers": {
+        "x64": {
+          "sha256": "3197846A2B19063687DD56E93E34CD941E3548D907F23A6131571321BDF9FE7B",
+          "bytes": 385658654
+        },
+        "arm64": {
+          "sha256": "7C4AC97EB2AE6B960CA5F9CAF3FF6124C8D2A18CC07A7840A4D2EA15537BAD8E",
+          "bytes": 333744580
+        }
+      }
     }
   ],
   "kits": [
