@@ -37,7 +37,9 @@ To pre-warm the cache for an unmerged pull request, run Cache Update on the defa
 
 ## Forcing a fresh copy
 
-If a newer patch release fixes something CI needs, do not wait for the weekly run: run Cache Update manually with **ignore-cache** enabled. It rebuilds every payload from its source and replaces the cached copy only after the new one has verified. Changing a pin in the manifest also changes its cache key, which is the normal way to move to a new version. Bumping `generation` invalidates everything.
+Every payload is pinned by digest, so a newer release reaches CI only through a manifest change, never through a cache refresh. When a patch release fixes something CI needs, do not wait for the weekly run: update the pin with `Update-Manifest.ps1` and open a pull request. The new pin has a new cache key, Cache Update seeds it as described above, and the failed jobs can then be re-run.
+
+**ignore-cache** is for the versions that are already pinned, for example when a cached copy is suspected to be bad. A manual run with it enabled rebuilds every payload from its source and replaces each cached copy only after the new one has verified. Jobs that restore a payload between the delete and the save miss it and fail closed, so run it while CI is quiet. Bumping `generation` invalidates everything.
 
 ## Weekly run
 
